@@ -158,7 +158,7 @@ const TableMain = ({
                 }
             </thead>
             {
-                body.length > 0 && page > 1
+                body?.length > 0 && page > 1
                     ? <tbody>
                         <tr
                             className={'click'}

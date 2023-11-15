@@ -23,8 +23,7 @@ ol.page_numbers>li.active {
     box-sizing: border-box;
     opacity: 1;
     border: 0.1rem ridge var(--color2);
-    color: var(--color2);
-    filter: brightness(2);
+
 }
 
 table {

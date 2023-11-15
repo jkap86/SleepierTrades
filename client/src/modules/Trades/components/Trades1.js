@@ -3,7 +3,7 @@ import LmTrades from "./LmTrades";
 import PcTrades from "./PcTrades";
 import { setStateTrades } from "../redux/actions";
 
-const Trades1 = () => {
+const Trades1 = ({ secondaryTable }) => {
     const dispatch = useDispatch();
     const { state, allplayers } = useSelector(state => state.common);
     const { type1, type2, leagues } = useSelector(state => state.user);
@@ -132,7 +132,7 @@ const Trades1 = () => {
         </div>
         {
             tabPrimary === "Leaguemate Trades"
-                ? <LmTrades {...props} />
+                ? <LmTrades {...props} secondaryTable={secondaryTable} />
                 : <PcTrades />
         }
     </>

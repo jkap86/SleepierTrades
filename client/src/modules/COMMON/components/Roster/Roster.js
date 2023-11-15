@@ -1,17 +1,22 @@
 import TableMain from "../TableMain";
 import { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
+import useFetchPlayerValues from "../../services/hooks/useFetchPlayerValues";
 
-const Roster = ({ module }) => {
+const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
     const [filter, setFilter] = useState('All');
     const [ppgType, setPpgType] = useState('Total')
-    const { state, allplayers } = useSelector(state => state.common);
-    const { leagues } = useSelector(state => state.user);
-    const { page, itemActive, searched, itemActive2 } = useSelector(state => state.leagues);
+    const { state, allplayers, values } = useSelector(state => state.common);
 
-    const league = leagues.find(l => l.league_id === itemActive);
 
-    const roster = league.rosters.find(x => x.roster_id === itemActive2);
+    console.log({ trade_value_date })
+    const matchup_info = Object.keys(league)
+        .filter(key => key.startsWith('matchups_'))
+        .length > 0
+
+    const player_ids = matchup_info ? [] : roster?.players || [];
+
+    useFetchPlayerValues({ player_ids })
 
     const headers = [
         [
@@ -24,7 +29,7 @@ const Roster = ({ module }) => {
                     <option>TE</option>
                     <option>Picks</option>
                 </select>,
-                colSpan: 6,
+                colSpan: 4,
                 className: 'half'
             },
             {
@@ -33,12 +38,14 @@ const Roster = ({ module }) => {
                 className: 'half'
             },
             {
-                text: <select >
-                    <option>Total</option>
-                    <option>In Lineup</option>
-                    <option>On Bench</option>
-                </select>,
-                colSpan: 6,
+                text: matchup_info
+                    ? < select >
+                        <option>Total</option>
+                        <option>In Lineup</option>
+                        <option>On Bench</option>
+                    </select>
+                    : 'KTC',
+                colSpan: 8,
                 className: 'half'
             }
         ],
@@ -55,12 +62,12 @@ const Roster = ({ module }) => {
 
             },
             {
-                text: <p>{'#'}</p>,
+                text: matchup_info ? '#' : trade_value_date,
                 colSpan: 3,
                 className: 'half left'
             },
             {
-                text: <p>{'PPG'}</p>,
+                text: matchup_info ? 'PPG' : 'Trend',
                 colSpan: 5,
                 className: 'half left end'
             }
@@ -140,11 +147,13 @@ const Roster = ({ module }) => {
                             }
                         },
                         {
-                            text: games?.toString(),
+                            text: matchup_info ? games?.toString() : player_scoring_dict[player_id].trade || '0',
                             colSpan: 3
                         },
                         {
-                            text: (games > 0 && (points / games).toFixed(1)) || '-',
+                            text: matchup_info
+                                ? ((games > 0 && (points / games).toFixed(1)) || '-')
+                                : ((player_scoring_dict[player_id].current || 0) - (player_scoring_dict[player_id].trade || 0)).toString(),
                             colSpan: 5
                         }
                     ]
@@ -159,34 +168,49 @@ const Roster = ({ module }) => {
 
         roster.players
             ?.forEach(player_id => {
-                const total_points = Object.keys(league)
-                    .filter(key => key.startsWith('matchups_') && parseInt(key.split('_')[1]) < state.week)
-                    .reduce(
-                        (acc, cur) => {
-                            const matchup = league[cur]?.find(m => m.roster_id === roster.roster_id)
-                            return {
-                                games_total: acc.games_total + (matchup?.players?.includes(player_id) ? 1 : 0),
-                                points_total: acc.points_total + (matchup?.players_points?.[player_id] || 0),
-                                games_starter: acc.games_starter + (matchup?.starters?.includes(player_id) ? 1 : 0),
-                                points_starter: acc.points_starter + ((matchup?.starters?.includes(player_id) && matchup?.players_points?.[player_id]) || 0),
-                                games_bench: acc.games_bench + ((matchup?.players?.includes(player_id) && !matchup?.starters?.includes(player_id)) ? 1 : 0),
-                                points_bench: acc.points_bench + ((matchup?.players?.includes(player_id) && !matchup?.starters?.includes(player_id) && matchup?.players_points?.[player_id]) || 0),
-                            }
-                        }, {
-                        games_total: 0,
-                        points_total: 0,
-                        games_starter: 0,
-                        points_starter: 0,
-                        games_bench: 0,
-                        points_bench: 0
-                    }
-                    )
+                if (matchup_info) {
+                    const total_points = Object.keys(league)
+                        .filter(key => key.startsWith('matchups_') && parseInt(key.split('_')[1]) < state.week)
+                        .reduce(
+                            (acc, cur) => {
+                                const matchup = league[cur]?.find(m => m.roster_id === roster.roster_id)
+                                return {
+                                    games_total: acc.games_total + (matchup?.players?.includes(player_id) ? 1 : 0),
+                                    points_total: acc.points_total + (matchup?.players_points?.[player_id] || 0),
+                                    games_starter: acc.games_starter + (matchup?.starters?.includes(player_id) ? 1 : 0),
+                                    points_starter: acc.points_starter + ((matchup?.starters?.includes(player_id) && matchup?.players_points?.[player_id]) || 0),
+                                    games_bench: acc.games_bench + ((matchup?.players?.includes(player_id) && !matchup?.starters?.includes(player_id)) ? 1 : 0),
+                                    points_bench: acc.points_bench + ((matchup?.players?.includes(player_id) && !matchup?.starters?.includes(player_id) && matchup?.players_points?.[player_id]) || 0),
+                                }
+                            }, {
+                            games_total: 0,
+                            points_total: 0,
+                            games_starter: 0,
+                            points_starter: 0,
+                            games_bench: 0,
+                            points_bench: 0
+                        }
+                        )
 
-                player_scoring_dict[player_id] = total_points
+                    player_scoring_dict[player_id] = total_points
+                } else {
+                    const value_type = league.roster_positions
+                        ?.filter(p => p === 'QB' || p === 'SUPER_FLEX')
+                        ?.length === 1
+                        ? 'oneqb'
+                        : 'sf'
+
+                    player_scoring_dict[player_id] = {
+                        trade: values[trade_value_date][player_id]?.[value_type],
+                        current: values[current_value_date][player_id]?.[value_type]
+                    }
+                }
+
             })
 
         return player_scoring_dict
     }, [roster, league, state.week])
+
     return <>
         <TableMain
             type={'secondary half'}

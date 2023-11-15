@@ -18,7 +18,8 @@ const initialState = {
     },
     error: null,
     tabPrimary: 'Leaguemate Trades',
-    trade_date: new Date(new Date() - 7 * 24 * 60 * 60 * 1000)
+    tabSecondary: 'Rosters',
+    trade_date: new Date()
 };
 
 const tradesReducer = (state = initialState, action) => {

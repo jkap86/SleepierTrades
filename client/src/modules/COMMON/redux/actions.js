@@ -163,7 +163,23 @@ export const fetchPlayerValues = (player_ids) => {
                 player_ids: player_ids
             })
 
-            dispatch({ type: 'SET_STATE_COMMON', payload: { values: pv.data } })
+            const values_dict = {};
+
+            pv.data
+                .forEach(value_obj => {
+                    if (!values_dict[value_obj.date]) {
+                        values_dict[value_obj.date] = {};
+                    }
+
+                    if (!values_dict[value_obj.date][value_obj.player_id]) {
+                        values_dict[value_obj.date][value_obj.player_id] = {}
+                    }
+
+
+                    values_dict[value_obj.date][value_obj.player_id][value_obj.type] = value_obj.value
+                })
+
+            dispatch({ type: 'SET_STATE_COMMON', payload: { values: values_dict } })
         } catch (err) {
             console.log(err)
         }

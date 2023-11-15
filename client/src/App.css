@@ -52,6 +52,18 @@ li {
   list-style: none;
 }
 
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
+}
+
+.active {
+  color: var(--color2);
+  filter: brightness(2);
+}
 
 ::-webkit-scrollbar {
   background-color: transparent;

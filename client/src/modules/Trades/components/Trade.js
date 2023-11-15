@@ -1,16 +1,16 @@
+import React from "react";
 import TableMain from "../../COMMON/components/TableMain";
 import Avatar from "../../COMMON/components/Avatar";
 import { useSelector } from "react-redux";
 import { getTrendColor } from "../../COMMON/services/helpers/getTrendColor";
 
 const Trade = ({
-    trade
+    trade,
+    trade_value_date
 }) => {
     const { state: stateState, allplayers, values } = useSelector(state => state.common)
 
     const date = new Date().toISOString().split('T')[0];
-
-    const trade_date = new Date(parseInt(trade.status_updated)).toISOString().split('T')[0];
 
     const type = trade['league.roster_positions']
         .filter(p => p === 'QB' || p === 'SUPER_FLEX')
@@ -33,26 +33,26 @@ const Trade = ({
     const te_prem = trade['league.scoring_settings']?.bonus_rec_te || 0
 
     const getTradeValue = (player_id, date, type) => {
+        const formatted_date = `${date.split('-')[1]}-${date.split('-')[2]}-${date.split('-')[0].slice(2, 4)}`
 
-        const value = (values || [])
-            .find(
-                value => (
-                    value.player_id === player_id
-                    || value.player_id
-                        .includes(player_id)
-                )
-                    && (
-                        parseInt(value.date.split('-')[0]) === parseInt(date.split('-')[0])
-                        && parseInt(value.date.split('-')[1]) === parseInt(date.split('-')[1])
-                        && parseInt(value.date.split('-')[2]) === parseInt(date.split('-')[2])
-                    )
-                    && value.type === type
-            )
-        return value?.value
+        const value = (values || {})?.[formatted_date]?.[player_id]?.[type]
+
+
+
+        return value
     }
 
     const getKtcPickName = (pick) => {
-        return `${pick.season} ${pick.order <= 4 ? 'Early' : pick.order >= 9 ? 'Late' : 'Mid'} ${pick.round}`
+
+        const suffix = pick.round === 1
+            ? 'st'
+            : pick.round === 2
+                ? 'nd'
+                : pick.round === 3
+                    ? 'rd'
+                    : 'th'
+
+        return `${pick.season} ${pick.order >= 1 && (pick.order <= 4 ? 'Early' : pick.order >= 9 ? 'Late' : 'Mid') || 'Mid'} ${pick.round}${suffix}`
     }
 
     return <TableMain
@@ -116,11 +116,11 @@ const Trade = ({
 
                     const trade_value_players = Object.keys(trade.adds || {})
                         .filter(a => trade.adds[a] === roster?.user_id)
-                        .reduce((acc, cur) => acc + getTradeValue(cur, trade_date, type) || 0, 0)
+                        .reduce((acc, cur) => acc + getTradeValue(cur, trade_value_date, type) || 0, 0)
 
                     const trade_value_picks = trade.draft_picks
                         .filter(p => p.owner_id === roster?.roster_id)
-                        .reduce((acc, cur) => acc + getTradeValue(getKtcPickName(cur), trade_date, type) || 0, 0)
+                        .reduce((acc, cur) => acc + getTradeValue(getKtcPickName(cur), trade_value_date, type) || 0, 0)
 
                     const trade_value_total = trade_value_players + trade_value_picks
 
@@ -186,7 +186,7 @@ const Trade = ({
 
                                                 const value = getTradeValue(player_id, date, type) || getTradeValue(player_id, new Date(new Date() - 24 * 60 * 60 * 1000).toISOString().split('T')[0], type)
 
-                                                const trade_value = getTradeValue(player_id, trade_date, type) || 0
+                                                const trade_value = getTradeValue(player_id, trade_value_date, type) || 0
 
                                                 const trend = (value || 0) - (trade_value || 0)
 
@@ -225,7 +225,7 @@ const Trade = ({
 
                                                     const value = getTradeValue(ktc_name, date, type) || getTradeValue(ktc_name, new Date(new Date() - 24 * 60 * 60 * 1000).toISOString().split('T')[0], type)
 
-                                                    const trade_value = getTradeValue(ktc_name, trade_date, type) || 0
+                                                    const trade_value = getTradeValue(ktc_name, trade_value_date, type) || 0
 
                                                     const trend = (value || 0) - (trade_value || 0)
                                                     return <tr>
@@ -336,4 +336,4 @@ const Trade = ({
     />
 }
 
-export default Trade;
+export default React.memo(Trade);

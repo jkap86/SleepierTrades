@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import Roster from "../Roster";
 import { useState } from "react";
 
-const Standings = ({ league }) => {
+const Standings = ({ league, trade_value_date, current_value_date }) => {
     const dispatch = useDispatch();
     const [itemActive2, setItemActive2] = useState('')
 
@@ -89,6 +89,8 @@ const Standings = ({ league }) => {
                     league={league}
                     roster={active_roster}
                     module={'Leagues'}
+                    trade_value_date={trade_value_date}
+                    current_value_date={current_value_date}
                 />
                 : <TableMain
                     type={'secondary half'}
