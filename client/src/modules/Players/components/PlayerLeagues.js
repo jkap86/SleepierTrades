@@ -1,0 +1,296 @@
+import TableMain from '../../COMMON/components/TableMain';
+import { useSelector, useDispatch } from "react-redux"
+import { setStatePlayers } from "../redux/actions";
+import { useState, useMemo } from "react";
+import { filterLeagues } from '../../COMMON/services/helpers/filterLeagues';
+import { getTrendColor } from '../../COMMON/services/helpers/getTrendColor';
+import LoadingIcon from '../../COMMON/components/LoadingIcon/LoadingIcon';
+
+const PlayerLeagues = ({
+    leagues_owned,
+    leagues_taken,
+    leagues_available,
+    player_id,
+    secondaryTable
+}) => {
+    const dispatch = useDispatch();
+    const { type1, type2, lmplayershares, isLoadingPS } = useSelector(state => state.user);
+    const { tabSecondary, searchedSecondary } = useSelector(state => state.players);
+    const [page2, setPage2] = useState(1);
+    const [itemActive2, setItemActive2] = useState('')
+
+    console.log({ lmplayershares })
+    let player_leagues_headers = [
+        [
+            {
+                text: 'League',
+                colSpan: 3,
+                className: 'half'
+            },
+            {
+                text: 'Rank',
+                colSpan: 1
+            }
+        ]
+    ]
+
+    if (tabSecondary === 'Taken') {
+        player_leagues_headers[0].push(
+            ...[
+                {
+                    text: 'Manager',
+                    colSpan: 2
+                },
+                {
+                    text: 'Rank',
+                    colSpan: 1
+                }
+            ],
+        )
+    }
+
+    const most_owned = useMemo(() => {
+        let keys;
+
+        switch (`${type1}-${type2}`) {
+            case 'All-All':
+                keys = ['all']
+                break;
+            case 'Redraft-All':
+                keys = ['r_b', 'r_s'];
+
+                break;
+            case 'Dynasty-All':
+                keys = ['d_b', 'd_s'];
+
+                break;
+            case 'All-Bestball':
+                keys = ['r_b', 'd_b'];
+
+                break;
+            case 'All-Standard':
+                keys = ['r_s', 'd_s'];
+
+                break;
+            default:
+                break;
+        }
+
+
+        const most_owned = (lmplayershares || [])
+            ?.filter(lm => lm?.user_id && lm?.playershares?.[player_id])
+            ?.map(lm => {
+                return {
+                    user_id: lm.user_id,
+                    username: lm.username,
+                    avatar: lm.avatar,
+                    count: keys?.reduce((acc, cur) => acc + lm.playershares[player_id]?.[cur]?.[0], 0),
+                    percentage: (
+                        keys?.reduce((acc, cur) => acc + lm.playershares[player_id]?.[cur]?.[0], 0)
+                        / keys?.reduce((acc, cur) => acc + lm.playershares[player_id]?.[cur]?.[1], 0)
+                        * 100
+                    ).toFixed(1)
+
+                }
+            })
+
+        return most_owned;
+    }, [type1, type2, lmplayershares])
+
+    const leagues_display = tabSecondary === 'Owned' ? leagues_owned :
+        tabSecondary === 'Taken' ? leagues_taken :
+            tabSecondary === 'Available' ? leagues_available :
+                []
+
+    const player_leagues_body = filterLeagues(leagues_display, type1, type2)
+        .map(lo => {
+            const { wins, losses, ties } = lo.userRoster.settings
+            const winpct = wins + losses + ties > 0
+                ? (wins / (wins + losses + ties)).toFixed(4)
+                : '-'
+
+            return {
+                id: lo.league_id,
+                list: [
+                    {
+                        text: lo.name,
+                        colSpan: 3,
+                        className: 'left',
+                        image: {
+                            src: lo.avatar,
+                            alt: lo.name,
+                            type: 'league'
+                        }
+                    },
+                    {
+                        text: <p
+                            className={(lo.userRoster?.rank / lo.rosters.length) < .5 ? 'green stat' :
+                                (lo.userRoster?.rank / lo.rosters.length) > .5 ? 'red stat' :
+                                    'stat'}
+                            style={getTrendColor(- ((lo.userRoster.rank / lo.rosters.length) - .5), .0025)
+                            }
+                        >
+                            {lo.userRoster?.rank || '-'}
+                        </p>,
+                        colSpan: 1,
+                        className: lo.userRoster?.rank / lo.rosters.length <= .25 ? 'green' :
+                            lo.userRoster?.rank / lo.rosters.length >= .75 ? 'red' :
+                                null
+                    },
+
+
+                    tabSecondary === 'Taken' ?
+                        {
+                            text: lo.lmRoster?.username || 'Orphan',
+                            colSpan: 2,
+                            className: 'left',
+                            image: {
+                                src: lo.lmRoster?.avatar,
+                                alt: lo.lmRoster?.username,
+                                type: 'user'
+                            }
+                        }
+                        : '',
+                    tabSecondary === 'Taken' ?
+                        {
+                            text: <p
+                                className={(lo.lmRoster?.rank / lo.rosters.length) < .5 ? 'green stat' :
+                                    (lo.lmRoster?.rank / lo.rosters.length) > .5 ? 'red stat' :
+                                        'stat'}
+                                style={getTrendColor(- ((lo.lmRoster.rank / lo.rosters.length) - .5), .0025)
+                                }
+                            >
+                                {lo.lmRoster?.rank}
+                            </p>,
+                            colSpan: 1,
+                            className: lo.lmRoster?.rank / lo.rosters.length <= .25 ? 'green' :
+                                lo.lmRoster?.rank / lo.rosters.length >= .75 ? 'red' :
+                                    null
+                        }
+                        : '',
+
+                ],
+                secondary_table: secondaryTable({ league: lo })
+            }
+        })
+
+
+    const leaguemate_shares_body_count = lmplayershares && most_owned
+        ?.sort((a, b) => b.count - a.count)
+        .slice(0, 25)
+        ?.map(lm => {
+
+            return {
+                id: lm.user_id,
+                list: [
+                    {
+                        text: lm.username,
+                        colSpan: 3,
+                        className: 'left',
+                        image: {
+                            src: lm.avatar,
+                            alt: 'avatar',
+                            type: 'user'
+                        }
+                    },
+                    {
+                        text: lm.count,
+                        colSpan: 1
+                    },
+                    {
+                        text: lm.percentage + '%',
+                        colSpan: 1
+                    }
+                ]
+            }
+        })
+
+    const leaguemate_shares_body_percentage = lmplayershares && most_owned
+        ?.sort((a, b) => b.percentage - a.percentage)
+        .slice(0, 25)
+        ?.map(lm => {
+
+            return {
+                id: lm.user_id,
+                list: [
+                    {
+                        text: lm.username,
+                        colSpan: 3,
+                        className: 'left',
+                        image: {
+                            src: lm.avatar,
+                            alt: 'avatar',
+                            type: 'user'
+                        }
+                    },
+                    {
+                        text: lm.count,
+                        colSpan: 1
+                    },
+                    {
+                        text: lm.percentage + '%',
+                        colSpan: 1
+                    }
+                ]
+            }
+        })
+
+
+    return <>
+        <div className="secondary nav">
+            <button
+                className={tabSecondary === 'Owned' ? 'active click' : 'click'}
+                onClick={(e) => dispatch(setStatePlayers({ tabSecondary: 'Owned' }))}
+            >
+                Owned
+            </button>
+            <button
+                className={tabSecondary === 'Taken' ? 'active click' : 'click'}
+                onClick={(e) => dispatch(setStatePlayers({ tabSecondary: 'Taken' }))}
+            >
+                Taken
+            </button>
+            <button
+                className={tabSecondary === 'Available' ? 'active click' : 'click'}
+                onClick={(e) => dispatch(setStatePlayers({ tabSecondary: 'Available' }))}
+            >
+                Available
+            </button>
+            <button
+                className={tabSecondary === 'Leaguemate Shares' ? 'active click' : 'click'}
+                onClick={(e) => dispatch(setStatePlayers({ tabSecondary: 'Leaguemate Shares' }))}
+            >
+                Leaguemate Shares
+            </button>
+        </div>
+        {
+            tabSecondary === 'Leaguemate Shares'
+                ? isLoadingPS
+                    ? <LoadingIcon />
+                    : <>
+                        <TableMain
+                            type={'secondary half'}
+                            headers={[]}
+                            body={leaguemate_shares_body_count || []}
+                        />
+                        <TableMain
+                            type={'secondary half'}
+                            headers={[]}
+                            body={leaguemate_shares_body_percentage || []}
+                        />
+                    </>
+                : <TableMain
+                    headers={player_leagues_headers}
+                    body={player_leagues_body}
+                    page={page2}
+                    setPage={setPage2}
+                    itemActive={itemActive2}
+                    setItemActive={setItemActive2}
+                    searched={searchedSecondary}
+                    setSearched={(value) => dispatch(setStatePlayers({ searchedSecondary: value }))}
+                />
+        }
+    </>
+}
+
+export default PlayerLeagues;

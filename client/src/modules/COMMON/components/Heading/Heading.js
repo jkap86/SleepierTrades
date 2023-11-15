@@ -1,0 +1,86 @@
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Avatar from '../Avatar';
+import { useSelector, useDispatch } from 'react-redux';
+import { filterLeagues } from '../../services/helpers/filterLeagues';
+import { setStateUser, setStateCommon } from '../../redux/actions';
+import './Heading.css';
+
+const Heading = () => {
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const { progress } = useSelector(state => state.progress);
+    const { isLoadingLeagues, leagues, user_id, avatar, username, type1, type2 } = useSelector(state => state.user);
+    const { state } = useSelector(state => state.common);
+
+    const tab = location.pathname.split('/')[2]
+
+    console.log({ tab })
+
+    const filteredLeagueCount = isLoadingLeagues
+        ? progress
+        : filterLeagues((leagues || []), type1, type2)?.length
+
+    return !user_id ? '' : <>
+        <Link to="/" className="home">
+            Home
+        </Link>
+        <div className="heading">
+            <h1>
+                {state.league_season}
+            </h1>
+            <h1>
+                <p className="image">
+                    {
+                        avatar
+                        && < Avatar
+                            avatar_id={avatar}
+                            alt={username}
+                            type={'user'}
+                        />
+                    }
+                    <strong>
+                        {username}
+                    </strong>
+                </p>
+            </h1>
+
+            {
+                <div className="switch_wrapper">
+                    <div className="switch">
+                        <button className={type1 === 'Redraft' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'Redraft' }))}>Redraft</button>
+                        <button className={type1 === 'All' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'All' }))}>All</button>
+                        <button className={type1 === 'Dynasty' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'Dynasty' }))}>Dynasty</button>
+                    </div>
+                    <div className="switch">
+                        <button className={type2 === 'Bestball' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'Bestball' }))}>Bestball</button>
+                        <button className={type2 === 'All' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'All' }))}>All</button>
+                        <button className={type2 === 'Lineup' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'Lineup' }))}>Lineup</button>
+                    </div>
+                </div>
+            }
+            <h2>
+                {`${filteredLeagueCount} Leagues`}
+            </h2>
+            <div className="navbar">
+                <p className='select'>
+                    {tab}&nbsp;<i className="fa-solid fa-caret-down"></i>
+                </p>
+                <select
+                    className="nav active click"
+                    value={tab}
+                    onChange={(e) => navigate(`/${username}/${e.target.value}`)}
+                >
+                    <option>players</option>
+                    <option>trades</option>
+                    <option>leagues</option>
+                    <option>leaguemates</option>
+                    <option>lineups</option>
+                </select>
+
+            </div>
+        </div>
+    </>
+}
+
+export default Heading;

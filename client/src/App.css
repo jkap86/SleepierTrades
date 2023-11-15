@@ -1,0 +1,64 @@
+html,
+body {
+  --color1: rgb(0, 0, 25);
+  --color2: #00ceb8;
+  --color3: midnightblue;
+  --color4: #1a1c20;
+  --color5: #4169e1;
+  --sticky1: 0rem;
+  --sticky2: 7rem;
+  --sticky3: 14rem;
+  --qb: #ff2a6d;
+  --rb: #00ceb8;
+  --wr: #58a7ff;
+  --te: #ffae58;
+  --font1: 'Ubuntu Mono',
+    sans-serif;
+  --font2: 'Pulang',
+    sans-serif;
+  --font3: 'GROUPE',
+    sans-serif;
+  --font4: 'Monomaniac One',
+    sans-serif;
+  font-size: 1vmin;
+  background-color: var(--color1);
+
+  text-align: center;
+  color: white;
+
+  overflow-x: hidden;
+  width: 100vw;
+  height: 100vh;
+  font-family: 'Ubuntu Mono', sans-serif;
+
+  margin: auto;
+  margin: 0;
+  padding: 0;
+  position: relative;
+
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.click:hover {
+  cursor: pointer;
+}
+
+li {
+  list-style: none;
+}
+
+
+::-webkit-scrollbar {
+  background-color: transparent;
+  width: 1rem;
+  height: 1rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color2);
+}
