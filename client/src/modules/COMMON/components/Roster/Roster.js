@@ -21,7 +21,7 @@ const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
     const headers = [
         [
             {
-                text: <select >
+                text: <select onChange={(e) => setFilter(e.target.value)}>
                     <option>All</option>
                     <option>QB</option>
                     <option>RB</option>
@@ -39,7 +39,7 @@ const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
             },
             {
                 text: matchup_info
-                    ? < select >
+                    ? < select onChange={(e) => setPpgType(e.target.value)}>
                         <option>Total</option>
                         <option>In Lineup</option>
                         <option>On Bench</option>
@@ -106,57 +106,59 @@ const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
                     }
                 })
         } else {
-            if (filter === 'All') {
-                players = roster.players
-            } else {
-                players = roster.players.filter(player_id => allplayers[player_id]?.position === filter)
-            }
 
 
-            return players?.map((slot, index) => {
-                const player_id = roster.starters[index] || slot
-                let games;
-                let points;
-                if (ppgType === 'On Bench') {
-                    games = player_scoring_dict[player_id]?.games_bench;
-                    points = player_scoring_dict[player_id]?.points_bench;
-                } else if (ppgType === 'In Lineup') {
-                    games = player_scoring_dict[player_id]?.games_starter;
-                    points = player_scoring_dict[player_id]?.points_starter;
-                } else {
-                    games = player_scoring_dict[player_id]?.games_total;
-                    points = player_scoring_dict[player_id]?.points_total;
-                }
+            return roster.players?.map((player_id, index) => {
 
-                return {
-                    id: player_id,
-                    list: [
-                        {
-                            text: filter === 'All' ? (league.roster_positions && position_abbrev[league.roster_positions[index]]) || (league.roster_positions && league.roster_positions[index]) || 'BN' : allplayers[player_id]?.position,
-                            colSpan: 4
-                        },
 
-                        {
-                            text: allplayers[player_id]?.full_name,
-                            colSpan: 15,
-                            className: 'left',
-                            image: {
-                                src: player_id,
-                                alt: 'player headshot',
-                                type: 'player'
+
+                if (
+                    filter === 'All'
+                    || allplayers[player_id]?.position === filter
+                ) {
+                    let games;
+                    let points;
+                    if (ppgType === 'On Bench') {
+                        games = player_scoring_dict[player_id]?.games_bench;
+                        points = player_scoring_dict[player_id]?.points_bench;
+                    } else if (ppgType === 'In Lineup') {
+                        games = player_scoring_dict[player_id]?.games_starter;
+                        points = player_scoring_dict[player_id]?.points_starter;
+                    } else {
+                        games = player_scoring_dict[player_id]?.games_total;
+                        points = player_scoring_dict[player_id]?.points_total;
+                    }
+
+                    return {
+                        id: player_id,
+                        list: [
+                            {
+                                text: filter === 'All' ? (league.roster_positions && position_abbrev[league.roster_positions[index]]) || (league.roster_positions && league.roster_positions[index]) || 'BN' : allplayers[player_id]?.position,
+                                colSpan: 4
+                            },
+
+                            {
+                                text: allplayers[player_id]?.full_name,
+                                colSpan: 15,
+                                className: 'left',
+                                image: {
+                                    src: player_id,
+                                    alt: 'player headshot',
+                                    type: 'player'
+                                }
+                            },
+                            {
+                                text: matchup_info ? games?.toString() : player_scoring_dict[player_id].trade || '0',
+                                colSpan: 3
+                            },
+                            {
+                                text: matchup_info
+                                    ? ((games > 0 && (points / games).toFixed(1)) || '-')
+                                    : ((player_scoring_dict[player_id].current || 0) - (player_scoring_dict[player_id].trade || 0)).toString(),
+                                colSpan: 5
                             }
-                        },
-                        {
-                            text: matchup_info ? games?.toString() : player_scoring_dict[player_id].trade || '0',
-                            colSpan: 3
-                        },
-                        {
-                            text: matchup_info
-                                ? ((games > 0 && (points / games).toFixed(1)) || '-')
-                                : ((player_scoring_dict[player_id].current || 0) - (player_scoring_dict[player_id].trade || 0)).toString(),
-                            colSpan: 5
-                        }
-                    ]
+                        ]
+                    }
                 }
             })
         }
