@@ -40,12 +40,15 @@ body {
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+
 }
 
 .click:hover {
   cursor: pointer;
+}
+
+p {
+  margin: 0;
 }
 
 li {
@@ -53,17 +56,15 @@ li {
 }
 
 .red {
-  color: red;
+  color: rgb(255, 0, 0);
 }
 
 .green {
-  color: green;
+  color: rgb(0, 255, 0);
 }
 
-.active {
-  color: var(--color2);
-  filter: brightness(2);
-}
+
+
 
 ::-webkit-scrollbar {
   background-color: transparent;

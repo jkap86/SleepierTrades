@@ -2,6 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import LmTrades from "./LmTrades";
 import PcTrades from "./PcTrades";
 import { setStateTrades } from "../redux/actions";
+import './Trades.css';
 
 const Trades1 = ({ secondaryTable }) => {
     const dispatch = useDispatch();
@@ -99,7 +100,7 @@ const Trades1 = ({ secondaryTable }) => {
     return <>
         <h2>
             {tradeCount?.toLocaleString("en-US")}
-            {` Total ${state.league_season} Trades`}
+            {` Trades`}
 
         </h2>
         <div className='navbar'>

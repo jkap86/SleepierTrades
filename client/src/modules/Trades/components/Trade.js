@@ -64,9 +64,12 @@ const Trade = ({
                     id: 'title',
                     list: [
                         {
-                            text: new Date(parseInt(trade.status_updated)).toLocaleDateString('en-US') + ' ' + new Date(parseInt(trade.status_updated)).toLocaleTimeString('en-US', { hour: "2-digit", minute: "2-digit" }),
+                            text: <div className="timestamp">
+                                <div>{new Date(parseInt(trade.status_updated)).toLocaleDateString('en-US')}</div>
+                                <div>{new Date(parseInt(trade.status_updated)).toLocaleTimeString('en-US', { hour: "2-digit", minute: "2-digit" })}</div>
+                            </div>,
                             colSpan: 3,
-                            className: 'small'
+                            className: 'small wrap'
                         },
                         {
                             text: <>
@@ -206,7 +209,7 @@ const Trade = ({
                                                     <td
                                                         className={trend > 0 ? 'green stat value' : trend < 0 ? 'red stat value' : 'stat value'}
                                                         style={getTrendColor(trend, 1)}
-                                                        colSpan={3}
+                                                        colSpan={4}
                                                     >
                                                         {
                                                             trend > 0 ? '+' : ''
@@ -250,7 +253,7 @@ const Trade = ({
                                                         <td
                                                             className={trend > 0 ? 'green stat value' : trend < 0 ? 'red stat value' : 'stat value'}
                                                             style={getTrendColor(trend, 1.5)}
-                                                            colSpan={3}
+                                                            colSpan={4}
                                                         >
                                                             {
                                                                 trend > 0 ? '+' : ''
@@ -262,7 +265,7 @@ const Trade = ({
                                         }
                                     </tbody>
                                 </table>,
-                                colSpan: 6,
+                                colSpan: 7,
                                 rowSpan: 2,
                                 className: 'small'
                             },
@@ -272,15 +275,13 @@ const Trade = ({
                                         {
                                             Object.keys(trade.drops || {}).filter(d => trade.drops[d] === roster?.user_id).map(player_id =>
 
-                                                <tr
-                                                    className={
-                                                        `${trade.tips?.acquire && trade.tips?.acquire?.find(p => p.player_id === player_id)?.manager?.user_id === rid
+                                                <tr>
+                                                    <td
+                                                        className={'left end' + `${trade.tips?.acquire && trade.tips?.acquire?.find(p => p.player_id === player_id)?.manager?.user_id === rid
                                                             ? 'green'
                                                             : ''
-                                                        }`
-                                                    }
-                                                >
-                                                    <td className='left end' colSpan={4}>
+                                                            }`}
+                                                        colSpan={4}>
 
                                                         <p>
                                                             <span className='end'>
@@ -300,15 +301,16 @@ const Trade = ({
                                                 .filter(p => p.previous_owner_id === roster?.roster_id)
                                                 .sort((a, b) => (a.season) - b.season || a.round - b.round)
                                                 .map(pick =>
-                                                    <tr
-                                                        className={`end ${trade.tips?.acquire && trade.tips?.acquire
-                                                            ?.find(p =>
-                                                                p?.player_id?.season === pick.season
-                                                                && p?.player_id?.round === pick.round
-                                                                && p?.player_id?.order === pick.order
-                                                            )?.manager?.user_id === rid ? 'green left' : 'left'}`}
-                                                    >
-                                                        <td colSpan={4} className='left end'>
+                                                    <tr >
+                                                        <td
+                                                            colSpan={4}
+                                                            className={'left end ' + `${trade.tips?.acquire && trade.tips?.acquire
+                                                                ?.find(p =>
+                                                                    p?.player_id?.season === pick.season
+                                                                    && p?.player_id?.round === pick.round
+                                                                    && p?.player_id?.order === pick.order
+                                                                )?.manager?.user_id === rid ? 'green left' : 'left'}`}
+                                                        >
                                                             <p>
                                                                 <span className="end">
                                                                     {
@@ -322,7 +324,7 @@ const Trade = ({
                                         }
                                     </tbody>
                                 </table>,
-                                colSpan: 5,
+                                colSpan: 4,
                                 rowSpan: 2,
                                 className: 'small'
                             }

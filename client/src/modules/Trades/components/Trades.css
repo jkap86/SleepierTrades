@@ -1,0 +1,42 @@
+select.trades {
+    opacity: 0;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+}
+
+select.trades option {
+    font-family: var(--font3);
+    font-size: 2.5rem;
+    text-align: center;
+    background-color: grey;
+    color: var(--te);
+}
+
+input[type="date"] {
+    background-color: transparent;
+    font-size: 3rem;
+    font-family: var(--font2);
+    color: var(--te);
+    position: relative;
+    border: none;
+    text-align: center;
+    width: fit-content;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    z-index: 1;
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    height: 100%;
+}
+
+div.date {
+    font-size: 3rem;
+    color: var(--te);
+}

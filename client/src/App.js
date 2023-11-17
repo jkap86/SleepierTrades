@@ -1,6 +1,7 @@
 import './App.css';
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingIcon from './modules/COMMON/components/LoadingIcon';
 
 const Home = lazy(() => import('./modules/Home'));
 const Layout = lazy(() => import('./modules/COMMON/components/Layout'));
@@ -12,7 +13,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingIcon />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/:username/leagues" element={<Layout display={<Leagues />} />} />

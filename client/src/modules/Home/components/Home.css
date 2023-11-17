@@ -128,7 +128,7 @@ input.home {
     margin: 1rem;
 }
 
-i {
+i.fa-ranking-star {
     width: 0;
     float: right;
     font-size: 5rem;
@@ -178,7 +178,6 @@ ol.dropdown {
     box-sizing: border-box;
     z-index: 11;
     background-color: var(--color3);
-    filter: contrast(2);
     overflow: auto;
     max-height: 65rem;
     z-index: 2;
@@ -197,7 +196,6 @@ ol.dropdown>li button {
     width: 100%;
     background-color: #9ca7b4;
     color: black;
-    filter: contrast(2);
     border-color: buttonborder;
 }
 
@@ -220,12 +218,12 @@ span.leagues_count {
     font-size: 4rem;
     line-height: 7rem;
     width: fit-content;
-    padding: 0 2rem;
+    padding-left: 2rem;
 }
 
 span.leagues_count:last-of-type {
     text-align: left;
-    padding-right: 1rem;
+    padding-right: 2rem;
 }
 
 span.username {
@@ -233,7 +231,7 @@ span.username {
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
-    padding: 0;
+    padding-left: 2rem;
     font-size: 2.5rem;
     text-align: left;
 
@@ -256,7 +254,6 @@ div.picktracker {
 
 p.home {
     color: var(--color2);
-    filter: brightness(2);
     text-align: center;
     margin-bottom: 2rem;
 }
@@ -273,12 +270,10 @@ div#homepage button {
     border: .5rem ridge white;
     border-radius: 2rem;
     margin: auto;
-    filter: contrast(2);
     box-shadow: inset 0 0 2rem black;
-    background-color: var(--color3);
+    background-color: rgb(41, 20, 41);
     color: white;
     font-family: 'Ubuntu Mono', sans-serif;
-    margin-top: 10%;
-    padding: 10%;
-    width: fit-content;
+
+    width: 100%;
 }

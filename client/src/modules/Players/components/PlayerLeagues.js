@@ -111,6 +111,14 @@ const PlayerLeagues = ({
 
             return {
                 id: lo.league_id,
+                search: {
+                    text: lo.name,
+                    image: {
+                        src: lo.avatar,
+                        alt: 'league avatar',
+                        type: 'league'
+                    }
+                },
                 list: [
                     {
                         text: lo.name,
@@ -280,6 +288,7 @@ const PlayerLeagues = ({
                         />
                     </>
                 : <TableMain
+                    type={'secondary'}
                     headers={player_leagues_headers}
                     body={player_leagues_body}
                     page={page2}

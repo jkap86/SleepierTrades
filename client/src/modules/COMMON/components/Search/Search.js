@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Avatar from "../Avatar";
+import './Search.css';
 
 
 const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => {

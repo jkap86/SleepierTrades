@@ -36,7 +36,7 @@ const TableMain = ({
 
 
     useEffect(() => {
-        if (itemActiveRef.current !== null) {
+        if (itemActiveRef.current !== null && !type.includes('half')) {
             itemActiveRef.current.focus()
             itemActiveRef.current.scrollIntoView({
                 behavior: 'smooth',
@@ -183,12 +183,12 @@ const TableMain = ({
 
                                     <tr
                                         key={index}
-                                    //className={`${type} click ${itemActive === item.id ? 'active_wrapper' : ''}`}
+                                        className={itemActive === item.id ? 'active_wrapper' : ''}
                                     >
                                         <td
                                             colSpan={item.list?.reduce((acc, cur) => acc + (cur.colSpan || 0), 0)}
                                         >
-                                            <table className={`${type}_body`}>
+                                            <table className={`body ${itemActive === item.id ? 'active' : ''}`}>
                                                 <tbody>
                                                     <tr
                                                         className={`click ${itemActive === item.id ? 'active' : ''}`}

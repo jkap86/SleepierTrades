@@ -7,7 +7,7 @@ import { setStatePlayers } from "../redux/actions";
 
 const Records = ({ secondaryTable }) => {
     const dispatch = useDispatch();
-    const { userPlayerShares, type1, type2 } = useSelector(state => state.user);
+    const { userPlayerShares, type1, type2, username } = useSelector(state => state.user);
     const { state, allplayers } = useSelector(state => state.common);
     const { page, itemActive, searched, filters, sortBy } = useSelector(state => state.players);
 
@@ -20,19 +20,49 @@ const Records = ({ secondaryTable }) => {
 
             },
             {
-                text: 'Owned',
+                text: <div className="sort">
+                    <span>
+                        Owned
+                    </span>
+                    <i
+                        onClick={() => dispatch(setStatePlayers({ sortBy: 'Owned' }))}
+                        className="fa-solid fa-sort"
+                    >
+
+                    </i>
+                </div>,
                 colSpan: 5,
             },
             {
-                text: 'Record',
-                colSpan: 4
+                text: <div className="sort">
+                    <span >
+                        {username}
+                    </span>
+                    <i
+                        onClick={() => dispatch(setStatePlayers({ sortBy: 'winpct_user' }))}
+                        className="fa-solid fa-sort"
+                    >
+
+                    </i>
+                </div>,
+                colSpan: 8
             },
             {
-                text: 'Win %',
-                colSpan: 4
+                text: <div className="sort">
+                    <span>
+                        Leaguemates
+                    </span>
+                    <i
+                        onClick={() => dispatch(setStatePlayers({ sortBy: 'winpct_lm' }))}
+                        className="fa-solid fa-sort"
+                    >
+
+                    </i>
+                </div>,
+                colSpan: 8
             }
         ]
-    ]
+    ];
 
     const playerShares_body = (userPlayerShares || [])
 

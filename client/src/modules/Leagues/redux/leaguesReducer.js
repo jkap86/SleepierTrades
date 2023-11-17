@@ -1,7 +1,9 @@
 const initialState = {
     page: 1,
     itemActive: '',
-    searched: ''
+    searched: '',
+    tabSecondary: 'Standings'
+
 }
 
 const leaguesReducer = (state = initialState, action) => {
