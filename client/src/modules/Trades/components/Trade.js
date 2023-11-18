@@ -207,14 +207,17 @@ const Trade = ({
                                                         {trade_value.toString()}
                                                     </td>
                                                     <td
-                                                        className={trend > 0 ? 'green stat value' : trend < 0 ? 'red stat value' : 'stat value'}
-                                                        style={getTrendColor(trend, 1)}
                                                         colSpan={4}
                                                     >
-                                                        {
-                                                            trend > 0 ? '+' : ''
-                                                        }
-                                                        {trend}
+                                                        <p
+                                                            className={'stat value'}
+                                                            style={getTrendColor(trend, 1)}
+                                                        >
+                                                            {
+                                                                trend > 0 ? '+' : ''
+                                                            }
+                                                            {trend}
+                                                        </p>
                                                     </td>
                                                 </tr>
                                             })
@@ -251,14 +254,17 @@ const Trade = ({
                                                             }
                                                         </td>
                                                         <td
-                                                            className={trend > 0 ? 'green stat value' : trend < 0 ? 'red stat value' : 'stat value'}
-                                                            style={getTrendColor(trend, 1.5)}
                                                             colSpan={4}
                                                         >
-                                                            {
-                                                                trend > 0 ? '+' : ''
-                                                            }
-                                                            {trend}
+                                                            <p
+                                                                className={'stat value'}
+                                                                style={getTrendColor(trend, 1)}
+                                                            >
+                                                                {
+                                                                    trend > 0 ? '+' : ''
+                                                                }
+                                                                {trend}
+                                                            </p>
                                                         </td>
                                                     </tr>
                                                 })

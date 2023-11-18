@@ -2,6 +2,7 @@ import TableMain from "../TableMain";
 import { useState, useMemo } from "react";
 import { useSelector } from "react-redux";
 import useFetchPlayerValues from "../../services/hooks/useFetchPlayerValues";
+import { getTrendColor } from "../../services/helpers/getTrendColor";
 
 const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
     const [filter, setFilter] = useState('All');
@@ -62,13 +63,13 @@ const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
 
             },
             {
-                text: matchup_info ? '#' : trade_value_date,
-                colSpan: 3,
+                text: matchup_info ? '#' : new Date(trade_value_date).getMonth() + 1 + '/' + new Date(trade_value_date).getDate(),
+                colSpan: matchup_info ? 3 : 4,
                 className: 'half left'
             },
             {
                 text: matchup_info ? 'PPG' : 'Trend',
-                colSpan: 5,
+                colSpan: matchup_info ? 5 : 4,
                 className: 'half left end'
             }
         ]
@@ -128,6 +129,7 @@ const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
                         games = player_scoring_dict[player_id]?.games_total;
                         points = player_scoring_dict[player_id]?.points_total;
                     }
+                    const trend = (player_scoring_dict[player_id].current || 0) - (player_scoring_dict[player_id].trade || 0)
 
                     return {
                         id: player_id,
@@ -149,13 +151,15 @@ const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
                             },
                             {
                                 text: matchup_info ? games?.toString() : player_scoring_dict[player_id].trade || '0',
-                                colSpan: 3
+                                colSpan: matchup_info ? 3 : 4
                             },
                             {
                                 text: matchup_info
                                     ? ((games > 0 && (points / games).toFixed(1)) || '-')
-                                    : ((player_scoring_dict[player_id].current || 0) - (player_scoring_dict[player_id].trade || 0)).toString(),
-                                colSpan: 5
+                                    : <p className="stat" style={getTrendColor(trend, 1.5)}>
+                                        {trend.toString()}
+                                    </p>,
+                                colSpan: matchup_info ? 5 : 4
                             }
                         ]
                     }

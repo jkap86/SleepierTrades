@@ -66,7 +66,7 @@ const LmTrades = ({
                 list: [
 
                     {
-                        text: <Trade trade={trade} trade_value_date={trade_value_date_formatted} />,
+                        text: <Trade trade={trade} trade_value_date={trade_value_date_raw} />,
                         colSpan: 10,
                         className: `small `
                     }

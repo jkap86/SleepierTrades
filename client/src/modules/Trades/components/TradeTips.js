@@ -2,7 +2,7 @@ import TableMain from "../../COMMON/components/TableMain";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 
-const TradeTips = ({ trade }) => {
+const TradeTips = ({ trade, secondaryTable }) => {
     const { state: stateState, allplayers: stateAllPlayers } = useSelector(state => state.common);
     const { user_id } = useSelector(state => state.user);
     const [itemActive, setItemActive] = useState('');
