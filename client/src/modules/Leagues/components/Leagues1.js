@@ -3,6 +3,8 @@ import useFetchUserInfo from "../../COMMON/services/hooks/useFetchUserInfo";
 
 const Leagues1 = ({ secondaryTable }) => {
 
+    useFetchUserInfo()
+
     return <Records
         secondaryTable={secondaryTable}
     />

@@ -8,6 +8,7 @@ const Layout = lazy(() => import('./modules/COMMON/components/Layout'));
 const Leagues = lazy(() => import('./modules/Leagues'));
 const Players = lazy(() => import('./modules/Players'));
 const Trades = lazy(() => import('./modules/Trades'));
+const Lineups = lazy(() => import('./modules/Lineups'));
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/:username/leagues" element={<Layout display={<Leagues />} />} />
             <Route path="/:username/players" element={<Layout display={<Players />} />} />
             <Route path="/:username/trades" element={<Layout display={<Trades />} />} />
+            <Route path="/:username/lineups" element={<Layout display={<Lineups />} />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

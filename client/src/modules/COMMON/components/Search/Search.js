@@ -7,7 +7,7 @@ const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => 
 
     const [dropdownVisible, setDropdownVisible] = useState(false)
     const [dropdownOptions, setDropdownOptions] = useState([])
-
+    const [reverse, setReverse] = useState(false);
 
 
     const getOptions = useCallback((s) => {
@@ -57,7 +57,12 @@ const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => 
         setDropdownOptions(options)
     }
 
+    const handleMouseEnter = (value) => {
+        setTimeout(() => {
+            setReverse(value);
+        }, 2000)
 
+    }
 
     return <>
         <div
@@ -104,8 +109,8 @@ const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => 
                     </button>
             }
             {
-                dropdownVisible && dropdownOptions.length > 0 && !isLoading ?
-                    <ol
+                dropdownVisible && dropdownOptions.length > 0 && !isLoading
+                    ? <ol
                         onBlur={() => setDropdownVisible(false)}
                         className="dropdown"
                     >
@@ -113,8 +118,10 @@ const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => 
                             .map((option, index) =>
                                 <li key={`${option.text}_${index}`}>
                                     <button
-                                        className="click"
-                                        onMouseDown={() => setSearched(option)}
+                                        className={"click " + (`${option.text}_${index}` === reverse ? 'reverse' : '')}
+                                        onMouseEnter={() => handleMouseEnter(`${option.text}_${index}`)}
+                                        onMouseLeave={() => setReverse(false)}
+                                        onMouseUpCapture={() => setSearched(option)}
                                     >
                                         {
                                             option.image ?
@@ -126,7 +133,7 @@ const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => 
                                                             type={option.image.type}
                                                         />
                                                     }
-                                                    {option.text}
+                                                    <span>{option.text}</span>
                                                 </p>
                                                 :
                                                 option.text

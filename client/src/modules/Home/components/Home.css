@@ -9,18 +9,7 @@ div#homepage a {
     filter: drop-shadow(0 0 .5rem white)
 }
 
-a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    font-size: inherit;
-
-    padding: 5%;
-    border-radius: 100rem;
-
-}
-
-a.home {
+div#homepage a.home {
     margin: 1rem;
     padding: 1rem;
     font-size: 3rem;
@@ -29,13 +18,14 @@ a.home {
 
 }
 
-a.link {
+div#homepage a.link {
     font-size: 3.5rem;
     margin: 1.5rem;
     padding: 1.5rem;
+    border-radius: 10rem;
 }
 
-img.home {
+div#homepage img.home {
     width: 100%;
     border-radius: 50%;
     filter: brightness(0.25) drop-shadow(0 0 3rem white);
@@ -50,7 +40,7 @@ img.home {
     z-index: 0;
 }
 
-div.home_wrapper {
+div#homepage div.home_wrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -58,13 +48,13 @@ div.home_wrapper {
     margin: auto;
 }
 
-input::placeholder {
+div#homepage input::placeholder {
     color: black;
     opacity: .5;
     font-family: 'Ubuntu Mono', sans-serif;
 }
 
-input {
+div#homepage input {
     background-color: var(--color2);
     border-radius: 5rem;
     box-shadow: inset 0 0 2.5rem black, 0 0 2rem white;
@@ -74,7 +64,7 @@ input {
     border: ridge var(--color3);
 }
 
-img.home {
+div#homepage img.home {
     width: 100%;
     border-radius: 50%;
     filter: brightness(0.25) drop-shadow(0 0 3rem white);
@@ -89,7 +79,7 @@ img.home {
     z-index: 0;
 }
 
-div.home_title {
+div#homepage div.home_title {
     position: relative;
     z-index: 1;
     display: flex;
@@ -101,7 +91,7 @@ div.home_title {
     filter: contrast(2);
 }
 
-strong.home {
+div#homepage strong.home {
     font-family: 'Pulang', sans-serif;
     width: fit-content;
     height: fit-content;
@@ -112,7 +102,7 @@ strong.home {
 
 }
 
-div.user_input {
+div#homepage div.user_input {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -120,7 +110,7 @@ div.user_input {
     width: 100%;
 }
 
-input.home {
+div#homepage input.home {
     padding: 2rem 0;
     border-width: 2rem;
     font-size: 5rem;
@@ -128,7 +118,7 @@ input.home {
     margin: 1rem;
 }
 
-i.fa-ranking-star {
+div#homepage i.fa-ranking-star {
     width: 0;
     float: right;
     font-size: 5rem;
@@ -136,7 +126,7 @@ i.fa-ranking-star {
 }
 
 
-div.dropdown_wrapper {
+div#homepage div.dropdown_wrapper {
     position: absolute;
     width: 50rem;
     height: 75rem;
@@ -148,7 +138,7 @@ div.dropdown_wrapper {
     z-index: 11;
 }
 
-p.dropdown_header {
+div#homepage p.dropdown_header {
     margin: 0;
     padding: 0;
     position: absolute;
@@ -166,7 +156,7 @@ p.dropdown_header {
     z-index: 3;
 }
 
-ol.dropdown {
+div#homepage ol.dropdown {
     position: absolute;
     white-space: nowrap;
     height: fit-content;
@@ -185,11 +175,11 @@ ol.dropdown {
 
 }
 
-li {
+div#homepage li {
     list-style: none;
 }
 
-ol.dropdown>li button {
+div#homepage ol.dropdown>li button {
     font-size: 2.5rem;
     margin: 0;
     padding: 0;
@@ -199,7 +189,7 @@ ol.dropdown>li button {
     border-color: buttonborder;
 }
 
-ol.dropdown button p {
+div#homepage ol.dropdown button p {
     white-space: nowrap;
     display: flex;
     align-items: center;
@@ -214,19 +204,19 @@ ol.dropdown button p {
 
 }
 
-span.leagues_count {
+div#homepage span.leagues_count {
     font-size: 4rem;
     line-height: 7rem;
     width: fit-content;
     padding-left: 2rem;
 }
 
-span.leagues_count:last-of-type {
+div#homepage span.leagues_count:last-of-type {
     text-align: left;
     padding-right: 2rem;
 }
 
-span.username {
+div#homepage span.username {
     width: 35rem;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -237,7 +227,7 @@ span.username {
 
 }
 
-div.picktracker {
+div#homepage div.picktracker {
     width: fit-content;
     display: flex;
     justify-content: space-evenly;
@@ -252,13 +242,13 @@ div.picktracker {
 
 }
 
-p.home {
+div#homepage p.home {
     color: var(--color2);
     text-align: center;
     margin-bottom: 2rem;
 }
 
-input.picktracker {
+div#homepage input.picktracker {
     padding: 1rem 0;
     float: left;
     border-width: 1rem;

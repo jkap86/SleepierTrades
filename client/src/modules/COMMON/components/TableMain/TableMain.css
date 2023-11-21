@@ -245,6 +245,35 @@ th>select {
     font-size: inherit;
 }
 
+th.left {
+    padding: 0;
+}
+
+th>p.select {
+    font-family: var(--font2);
+    font-size: inherit;
+    width: 100%;
+    position: relative;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: block;
+    z-index: 0;
+}
+
+th>p.select>select.hidden_behind {
+    position: absolute;
+    opacity: 0;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+}
+
 
 td.left:hover>p>span.end {}
 
@@ -336,7 +365,7 @@ table.secondary table.half tr.active_wrapper {
 
 
 table.primary th {
-    background-image: radial-gradient(black 0, white 700%);
+    background-image: radial-gradient(white -250%, black 100%);
 }
 
 table.primary td {

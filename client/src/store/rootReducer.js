@@ -6,6 +6,7 @@ import leaguesReducer from '../modules/Leagues/redux/leaguesReducer';
 import playersReducer from '../modules/Players/redux/playersReducer';
 import progressReducer from '../modules/COMMON/redux/progressReducer';
 import tradesReducer from '../modules/Trades/redux/tradesReducer';
+import lineupsReducer from '../modules/Lineups/redux/lineupsReducer';
 
 
 
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     common: commonReducer,
     leagues: leaguesReducer,
     players: playersReducer,
-    trades: tradesReducer
+    trades: tradesReducer,
+    lineups: lineupsReducer
 });
 
 export default rootReducer;
