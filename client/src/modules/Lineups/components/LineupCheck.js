@@ -406,7 +406,6 @@ const LineupCheck = ({
                 <button
                     className={secondaryContent1 === 'Lineup' ? 'active click' : 'click'}
                     onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Lineup' }))}
-                    style={{ opacity: league.settings.best_ball === 1 ? 0 : 1 }}
                 >
                     Lineup
                 </button>

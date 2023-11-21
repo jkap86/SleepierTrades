@@ -48,6 +48,9 @@ body {
   cursor: pointer;
 }
 
+.relative {
+  position: relative;
+}
 a {
   color: white;
   text-decoration: none;

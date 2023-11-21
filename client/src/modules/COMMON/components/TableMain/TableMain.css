@@ -29,7 +29,7 @@ ol.page_numbers>li.active {
 div.nav {
     display: flex;
     height: 7rem;
-    background-color: black;
+    background-color: var(--color4);
     justify-content: space-evenly;
     width: 100%;
 }
@@ -44,12 +44,42 @@ div.nav>button {
     padding: 0.25rem;
 }
 
+div.nav>div {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+    align-items:center ;
+}
+
 div.nav>button.active {
     border: 0.25rem solid var(--color2);
     color: var(--color2);
     opacity: 1;
 }
 
+div.secondary.nav p.username {
+    font-family: var(--font2);
+    color: var(--te);
+}
+
+div.nav>div>button {
+    height: 100%;
+    font-size: inherit;
+    font-family: var(--font1);
+    background-color: transparent;
+    color: grey;
+    border: none;
+}
+
+div.nav>div>button.active{
+    height: 100%;
+    font-size: inherit;
+    font-family: var(--font1);
+    background-color: transparent;
+    color: var(--color2);
+    border: none;
+    box-shadow: inset 0 0 1rem var(--color2);
+}
 div.timestamp {
     display: flex;
     flex-direction: column;
@@ -166,12 +196,13 @@ td.red, td.green, td.greenb, td.redb {
 td.greenb, td.redb {
     font-size: 5rem;
 }
-
+tr.active>td.redb,
 td.redb {
     background-image: radial-gradient( black -50%, rgb(255, 0, 0) 100%) !important;
     position: relative;
 }
 
+tr.active>td.greenb,
 td.greenb {
     background-image: radial-gradient( black -50%, rgb(0, 255, 0) 100%) !important; 
     position: relative;
@@ -193,6 +224,25 @@ td.greenb {
 .fa-trophy {
     color: goldenrod;
     text-shadow: 0 0 1rem black;
+}
+
+div.nav>button.sync {
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   position: relative;
+   align-items: center;
+   opacity: 1;
+}
+
+i.fa-arrows-rotate {
+    color: var(--color2);
+    filter: brightness(2) drop-shadow(0 0 .5rem var(--te)) ;
+    border-radius: 50%;
+    position: absolute;
+    font-size: 7rem;
+    
 }
 
 table.body td {

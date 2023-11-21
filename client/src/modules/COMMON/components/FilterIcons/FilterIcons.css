@@ -1,0 +1,16 @@
+i.fa-ban {
+    color: red;
+    position: absolute;
+    font-size: 7rem;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+img.thumbnail.icon {
+    font-size: 7rem;
+    height: 7rem;
+    width: 7rem;
+}
+

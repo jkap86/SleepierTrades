@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setStateLineups } from "../redux/actions";
 import { getColumnValue, getColumnValuePrev } from '../services/helpers/getColumns';
 import { filterLeagues } from '../../COMMON/services/helpers/filterLeagues';
+import FilterIcons from "../../COMMON/components/FilterIcons";
 
 const LineupChecks = ({ secondaryTable }) => {
     const dispatch = useDispatch();
@@ -106,8 +107,7 @@ const LineupChecks = ({ secondaryTable }) => {
                 className: 'small half left'
             },
             {
-                text: <label className="select">
-                    <p className="left">{week < state.week ? column2_prev : column2}</p>
+                text: <p className="select">{week < state.week ? column2_prev : column2}
                     <select
                         value={week < state.week ? column2_prev : column2}
                         className="hidden_behind click"
@@ -123,13 +123,13 @@ const LineupChecks = ({ secondaryTable }) => {
                                     return <option key={column}>{column}</option>
                                 })
                         }
-                    </select></label>,
+                    </select>
+                    </p>,
                 colSpan: 2,
                 className: 'small half'
             },
             {
-                text: <label className="select">
-                    <p className="left">{week < state.week ? column3_prev : column3}</p>
+                text: <p className="select">{week < state.week ? column3_prev : column3}
                     <select
                         value={week < state.week ? column3_prev : column3}
                         className="hidden_behind click"
@@ -145,13 +145,14 @@ const LineupChecks = ({ secondaryTable }) => {
                                     return <option key={column}>{column}</option>
                                 })
                         }
-                    </select></label>,
+                    </select>
+                    </p>,
                 colSpan: 2,
                 className: 'small half'
             },
             {
-                text: <label className="select">
-                    <p className="left">{week < state.week ? column4_prev : column4}</p><select
+                text: <p className="select">{week < state.week ? column4_prev : column4}
+                <select
                         value={week < state.week ? column4_prev : column4}
                         className="hidden_behind click"
                         onChange={(e) => dispatch(setStateLineups({ [week < state.week ? 'column4_prev' : 'column4']: e.target.value }, 'LINEUPS'))}
@@ -166,7 +167,7 @@ const LineupChecks = ({ secondaryTable }) => {
                                     return <option key={column}>{column}</option>
                                 })
                         }
-                    </select></label>,
+                    </select></p>,
                 colSpan: 2,
                 className: 'small half end'
             }
@@ -393,7 +394,13 @@ const LineupChecks = ({ secondaryTable }) => {
         search={true}
         searched={searched}
         setSearched={(value) => dispatch(setStateLineups({ searched: value }))}
-    //options1={[includeTaxiIcon(includeTaxi, (value) => dispatch(setState({ includeTaxi: value }, 'LINEUPS')))]}
+        options1={[
+            <FilterIcons
+                type={'taxi'}
+                includeTaxi={includeTaxi}
+                setIncludeTaxi={(value) => dispatch(setStateLineups({ includeTaxi: value }))}
+            />
+        ]}
     />
 }
 
