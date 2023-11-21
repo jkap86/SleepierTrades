@@ -1,12 +1,15 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setStateLineups } from "../redux/actions";
-
+import { setStateUser } from "../../COMMON/redux/actions";
+import { fetchCommon } from "../../COMMON/redux/actions";
+import { fetchMatchups } from "../redux/actions";
+import { getRecordDict } from "./helpers/getRecordDict";
 
 
 const useGetLineupChecks = () => {
     const dispatch = useDispatch();
-    const { state, tab, allplayers, schedule, projections } = useSelector(state => state.main)
+    const { state, tab, allplayers, schedule, projections } = useSelector(state => state.common)
     const { user_id, leagues, matchups, syncing, isLoadingMatchups } = useSelector(state => state.user);
     const {
         includeTaxi,
@@ -20,16 +23,17 @@ const useGetLineupChecks = () => {
         secondaryContent2,
     } = useSelector(state => state.lineups);
 
-
+console.log({state: useSelector(state => state)})
     console.log({ schedule })
     useEffect(() => {
+    if (leagues && state){
         if (!schedule || !projections || (!matchups && !isLoadingMatchups)) {
             if (!schedule) {
-                dispatch(fetchMain('schedule'));
+                dispatch(fetchCommon('schedule'));
             } else if (!matchups && !isLoadingMatchups) {
                 dispatch(fetchMatchups())
             } else if (!projections) {
-                dispatch(fetchMain('projections'))
+                dispatch(fetchCommon('projections'))
             }
 
         } else {
@@ -77,9 +81,9 @@ const useGetLineupChecks = () => {
                         })
                 })
 
-            dispatch(setState({ playerLineupDict: player_lineup_dict }, 'LINEUPS'));
+            dispatch(setStateLineups({ playerLineupDict: player_lineup_dict }, 'LINEUPS'));
         }
-
+}
     }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, dispatch])
 
 
@@ -97,7 +101,7 @@ const useGetLineupChecks = () => {
         const getProjectedRecords = (week_to_fetch, includeTaxi, includeLocked, league_ids) => {
 
 
-            dispatch(setState({ isLoadingProjectionDict: true }, 'LINEUPS'));
+            dispatch(setStateLineups({ isLoadingProjectionDict: true }, 'LINEUPS'));
 
             const worker = new Worker('/getRecordDictWeekWorker.js')
 
@@ -110,7 +114,7 @@ const useGetLineupChecks = () => {
 
             if (result.week < state.week) {
 
-                dispatch(setState({
+                dispatch(setStateLineups({
                     lineupChecks: {
                         ...lineupChecks,
                         [result.week]: {
@@ -124,7 +128,7 @@ const useGetLineupChecks = () => {
 
             } else {
                 console.log({ result })
-                dispatch(setState({
+                dispatch(setStateLineups({
                     lineupChecks: {
                         ...lineupChecks,
                         [result.week]: {
@@ -229,8 +233,8 @@ const useGetLineupChecks = () => {
                     )
                 )
             ) {
-                dispatch(setState({ isLoadingProjectionDict: false }, 'LINEUPS'));
-                syncing && dispatch(setState({ syncing: false }, 'USER'));
+                dispatch(setStateLineups({ isLoadingProjectionDict: false }, 'LINEUPS'));
+                syncing && dispatch(setStateUser({ syncing: false }, 'USER'));
             }
         }
     }, [dispatch, isLoadingProjectionDict, week, state, lineupChecks, includeTaxi, syncing, weeks])
@@ -282,7 +286,7 @@ const useGetLineupChecks = () => {
                 })
 
             dispatch(
-                setState({
+                setStateLineups({
                     lineupChecks: {
                         ...lineupChecks,
                         totals: season_totals_all
@@ -294,9 +298,9 @@ const useGetLineupChecks = () => {
 
     useEffect(() => {
         if (itemActive2) {
-            dispatch(setState({ secondaryContent: 'Options' }, 'LINEUPS'));
+            dispatch(setStateLineups({ secondaryContent: 'Options' }, 'LINEUPS'));
         } else {
-            dispatch(setState({ secondaryContent: 'Optimal' }, 'LINEUPS'));
+            dispatch(setStateLineups({ secondaryContent: 'Optimal' }, 'LINEUPS'));
         }
     }, [itemActive2, dispatch])
 

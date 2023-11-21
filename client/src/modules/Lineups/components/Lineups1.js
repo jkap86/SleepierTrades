@@ -1,12 +1,12 @@
-import LineupCheck from "./LineupCheck";
+import LineupChecks from "./LineupChecks";
 import useGetLineupChecks from "../services/useGetLineupChecks";
 
 
-const Linups1 = () => {
+const Linups1 = ({secondaryTable}) => {
 
     useGetLineupChecks()
 
-    return <LineupCheck />
+    return <LineupChecks secondaryTable={secondaryTable} />
 }
 
 export default Linups1;

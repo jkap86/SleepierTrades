@@ -1,5 +1,5 @@
 const initialState = {
-    state: {},
+    state: false,
     allplayers: false,
     schedule: false,
     projections: false,

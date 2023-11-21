@@ -63,10 +63,10 @@ export const fetchMatchups = () => {
                                         !(
                                             league.settings.current_matchups_update > new Date().getTime() - 6 * 60 * 60 * 1000
                                         ) || (
-                                            state.main.schedule[display_week].find(g => parseInt(g.gameSecondsRemaining) > 0 && parseInt(g.gameSecondsRemaining) < 3600)
+                                            state.common.schedule[display_week].find(g => parseInt(g.gameSecondsRemaining) > 0 && parseInt(g.gameSecondsRemaining) < 3600)
                                             && !(league.settings.current_matchups_update > new Date().getTime() - 15 * 60 * 1000)
                                         ) || (
-                                            state.main.schedule[display_week].find(g => parseInt(g.gameSecondsRemaining) === 0)
+                                            state.common.schedule[display_week].find(g => parseInt(g.gameSecondsRemaining) === 0)
                                             && !(league.settings.current_matchups_update > new Date().getTime() - 3.5 * 60 * 60 * 1000)
                                         )
                                     )
@@ -104,6 +104,7 @@ export const fetchMatchups = () => {
                 }
             })
 
+            console.log({all_matchups_to_update})
         if (all_matchups_to_update?.length > 0) {
             try {
                 dispatch({ type: 'FETCH_MATCHUPS_START' });
@@ -122,4 +123,80 @@ export const fetchMatchups = () => {
             console.log('No matchups to update...')
         }
     }
+}
+
+export const syncLeague = (league_id, user_id, username, week) => {
+    return async (dispatch, getState) => {
+        dispatch({ type: 'SYNC_LEAGUE_START' });
+
+        const state = getState();
+        const { common} = state;
+
+        try {
+            const updated_league = await axios.post(`/league/sync`, {
+                league_id: league_id,
+                username: username,
+                week: week
+            })
+            console.log(updated_league.data)
+            const hash = `${state.lineups.includeTaxi}-${state.lineups.includeLocked}`;
+            const lineupChecks = state.lineups.lineupChecks;
+
+            const userRoster = updated_league.data.rosters
+                ?.find(r => r.user_id === user_id || r.co_owners?.find(co => co?.user_id === user_id))
+
+            dispatch({
+                type: 'SYNC_LEAGUES_SUCCESS',
+                payload: {
+                    league: {
+                        ...updated_league.data,
+                        userRoster: userRoster
+                    },
+                    state: common.state
+                }
+            });
+
+            if (week < common.state.display_week) {
+                dispatch({
+                    type: 'SET_STATE_LINEUPS',
+                    payload: {
+                        lineupChecks: {
+                            ...lineupChecks,
+                            [week]: {
+                                ...lineupChecks[week],
+                                [league_id]: {
+                                    ...lineupChecks[week][league_id],
+                                    edited: true
+                                }
+                            }
+                        }
+                    }
+                })
+            } else {
+                dispatch({
+                    type: 'SET_STATE_LINEUPS',
+                    payload: {
+                        lineupChecks: {
+                            ...lineupChecks,
+                            [week]: {
+                                ...lineupChecks[week],
+                                [hash]: {
+                                    ...lineupChecks[week][hash],
+                                    [league_id]: {
+                                        ...lineupChecks[week][hash][league_id],
+                                        edited: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+        } catch (error) {
+            console.error(error.message)
+            dispatch({ type: 'SYNC_LEAGUES_FAILURE' })
+        }
+
+    };
 }

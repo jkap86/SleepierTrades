@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import useFetchPlayerValues from "../../services/hooks/useFetchPlayerValues";
 import { getTrendColor } from "../../services/helpers/getTrendColor";
 
-const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
+const Roster = ({ roster, league, trade_value_date, current_value_date, type }) => {
     const [filter, setFilter] = useState('All');
     const [ppgType, setPpgType] = useState('Total')
     const { state, allplayers, values } = useSelector(state => state.common);
@@ -219,7 +219,7 @@ const Roster = ({ roster, league, trade_value_date, current_value_date }) => {
 
     return <>
         <TableMain
-            type={'secondary half'}
+            type={type || 'secondary half'}
             headers={headers}
             body={body()}
 

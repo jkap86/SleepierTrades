@@ -159,6 +159,42 @@ td {
     font-weight: 100;
 }
 
+td.red, td.green, td.greenb, td.redb {
+    font-weight: 900;
+}
+
+td.greenb, td.redb {
+    font-size: 5rem;
+}
+
+td.redb {
+    background-image: radial-gradient( black -50%, rgb(255, 0, 0) 100%) !important;
+    position: relative;
+}
+
+td.greenb {
+    background-image: radial-gradient( black -50%, rgb(0, 255, 0) 100%) !important; 
+    position: relative;
+}
+
+.fa-trophy,
+.fa-poop {
+    font-size: 50%;
+    position: absolute;
+    top: .25rem;
+    right: .25rem;
+}
+
+.fa-poop {
+    color: rgb(97, 39, 0);
+    text-shadow: 0 0 1rem white;
+}
+
+.fa-trophy {
+    color: goldenrod;
+    text-shadow: 0 0 1rem black;
+}
+
 table.body td {
     padding: .5rem;
 }
