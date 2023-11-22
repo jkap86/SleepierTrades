@@ -1,6 +1,29 @@
-export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, act_proj, opp_opt_proj, opp_act_proj, proj_median, projections, week) => {
+import { getTrendColor } from "../../../COMMON/services/helpers/getTrendColor"
+
+
+export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, act_proj, opp_opt_proj, opp_act_proj, proj_median, projections, week, opp_roster) => {
     if (league.settings.status === 'in_season') {
         switch (header) {
+            case 'Rank':
+                return {
+                    text: <p
+                        className="stat check"
+                        style={getTrendColor(-((league.userRoster.rank / league.rosters.length) - .5), .0025)}
+                    >
+                        {league.userRoster.rank}
+                    </p>,
+                    colSpan: 2
+                }
+            case 'Opp Rank':
+                return {
+                    text: <p
+                    className="stat check"
+                    style={getTrendColor(-((opp_roster.rank / league.rosters.length) - .5), .0025)}
+                >
+                    {opp_roster.rank}
+                </p>,
+                colSpan: 2
+                }
             case 'Proj FP':
                 return {
                     text: league.settings.best_ball === 1
@@ -37,7 +60,7 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                         '√',
                     colSpan: 2,
                     className: !matchup?.matchup_id || !lineup_check ? '' : lineup_check.filter(x => x.notInOptimal).length > 0 ?
-                        'red' : 'green'
+                        'red check' : 'green check'
                 }
             case 'Early/Late Flex':
                 return {
@@ -50,8 +73,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     className: !matchup?.matchup_id || !lineup_check
                         ? ''
                         : lineup_check.filter(x => x.earlyInFlex).length + lineup_check.filter(x => x.lateNotInFlex).length > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                 }
             case 'Open Taxi':
                 return {
@@ -63,8 +86,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     colSpan: 2,
                     className: (league.settings.taxi_slots > 0 && league.settings.best_ball !== 1)
                         ? league.settings.taxi_slots - (league.userRoster.taxi?.length || 0) > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                         : ''
                 }
             case 'Non QB in SF':
@@ -78,8 +101,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     className: !matchup?.matchup_id || !lineup_check
                         ? ''
                         : lineup_check.filter(x => x.nonQBinSF).length > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                 }
             case 'Open Roster':
                 const user_active_players = league.userRoster.players.filter(p => !league.userRoster.taxi?.includes(p) && !league.userRoster.reserve?.includes(p))
@@ -89,8 +112,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                         : '√',
                     colSpan: 2,
                     className: league.roster_positions.length !== user_active_players?.length
-                        ? 'red'
-                        : 'green',
+                        ? 'red check'
+                        : 'green check',
                 }
             case 'Open IR':
                 if (projections[week]) {
@@ -112,8 +135,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                             : '√',
                         colSpan: 2,
                         className: (open_ir > 0 && eligible_ir > 0)
-                            ? 'red'
-                            : 'green',
+                            ? 'red check'
+                            : 'green check',
                     }
                 } else {
                     return {
@@ -132,8 +155,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     className: !matchup?.matchup_id || !lineup_check
                         ? ''
                         : lineup_check.filter(x => projections[week][x.current_player]?.injury_status === 'Out').length > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                 }
             case 'Doubtful':
                 return {
@@ -146,8 +169,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     className: !matchup?.matchup_id || !lineup_check
                         ? ''
                         : lineup_check.filter(x => projections[week][x.current_player]?.injury_status === 'Doubtful').length > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                 }
             case 'Ques':
                 return {
@@ -160,8 +183,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     className: !matchup?.matchup_id || !lineup_check
                         ? ''
                         : lineup_check.filter(x => projections[week][x.current_player]?.injury_status === 'Questionable').length > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                 }
             case 'IR':
                 return {
@@ -174,8 +197,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     className: !matchup?.matchup_id || !lineup_check
                         ? ''
                         : lineup_check.filter(x => projections[week][x.current_player]?.injury_status === 'IR').length > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                 }
             case 'Sus':
                 return {
@@ -188,8 +211,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     className: !matchup?.matchup_id || !lineup_check
                         ? ''
                         : lineup_check.filter(x => projections[week][x.current_player]?.injury_status === 'Sus').length > 0
-                            ? 'red'
-                            : 'green'
+                            ? 'red check'
+                            : 'green check'
                 }
             case 'Opt-Act':
                 return {

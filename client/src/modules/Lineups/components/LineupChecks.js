@@ -59,7 +59,9 @@ const LineupChecks = ({ secondaryTable }) => {
             'Ques',
             'IR',
             'Sus',
-            'Opt-Act'
+            'Opt-Act',
+            'Rank',
+            'Opp Rank'
         ];
 
     const lineups_headers = [
@@ -268,16 +270,16 @@ const LineupChecks = ({ secondaryTable }) => {
                                 : '-',
                         },
                         {
-                            ...getColumnValue(column1, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week)
+                            ...getColumnValue(column1, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week, opp_roster)
                         },
                         {
-                            ...getColumnValue(column2, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week)
+                            ...getColumnValue(column2, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week, opp_roster)
                         },
                         {
-                            ...getColumnValue(column3, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week)
+                            ...getColumnValue(column3, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week, opp_roster)
                         },
                         {
-                            ...getColumnValue(column4, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week)
+                            ...getColumnValue(column4, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week, opp_roster)
                         }
                     ],
                     secondary_table: secondaryTable({

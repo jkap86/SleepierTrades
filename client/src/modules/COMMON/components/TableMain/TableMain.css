@@ -189,6 +189,10 @@ td {
     font-weight: 100;
 }
 
+td.red.check, td.green.check, p.stat.check {
+    font-size: 4rem;
+}
+
 td.red, td.green, td.greenb, td.redb {
     font-weight: 900;
 }
@@ -290,6 +294,7 @@ td.type {
     font-family: var(--font2);
     font-size: 75%;
 }
+
 
 
 
@@ -470,7 +475,7 @@ table.secondary td {
 
 table.secondary.half td,
 table.half:first-child td {
-    background-image: radial-gradient(#000 -250%, orchid 500%);
+    background-image: radial-gradient(#000 -50%, orchid 250%);
 }
 
 

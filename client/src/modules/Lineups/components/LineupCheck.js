@@ -18,7 +18,8 @@ const LineupCheck = ({
      proj_score_user_actual,
      proj_score_user_optimal, 
      proj_score_opp_actual,
-     proj_score_opp_optimal
+     proj_score_opp_optimal,
+     opp_username
 }) => {
     const dispatch = useDispatch();
     const { state, projections, allplayers, rankings, schedule } = useSelector(state => state.common);
@@ -27,8 +28,7 @@ const LineupCheck = ({
         week,
         secondaryContent1,
         secondaryContent2,
-        itemActive2,
-        opp_username
+        itemActive2
     } = useSelector(state => state.lineups);
 
     const oppRoster = league?.rosters.find(r => r.roster_id === matchup_opp?.roster_id);
@@ -45,6 +45,8 @@ const LineupCheck = ({
         dispatch(syncLeague(league_id, user_id, username, week))
         dispatch(fetchMatchups())
     }
+
+    console.log({oppRoster})
 
     const getInjuryAbbrev = (injury_status) => {
         switch (injury_status) {
