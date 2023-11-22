@@ -478,7 +478,7 @@ const LineupCheck = ({
                         players_points={matchup_user?.players_points}
                         total_points={
                             secondaryContent1 === 'Lineup'
-                                ? matchup_user.points
+                                ? matchup_user?.points
                                 : proj_score_user_optimal
                         }
                     />

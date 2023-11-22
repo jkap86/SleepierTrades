@@ -4,13 +4,48 @@ import { useSelector } from "react-redux";
 import useFetchPlayerValues from "../../services/hooks/useFetchPlayerValues";
 import { getTrendColor } from "../../services/helpers/getTrendColor";
 
-const Roster = ({ roster, league, trade_value_date, current_value_date, type }) => {
+const Roster = ({
+    roster,
+    league,
+    trade_value_date,
+    current_value_date,
+    type,
+    previous,
+    players_points,
+    players_projections
+}) => {
     const [filter, setFilter] = useState('All');
     const [ppgType, setPpgType] = useState('Total')
-    const { state, allplayers, values } = useSelector(state => state.common);
+    const { state, allplayers, values, projections } = useSelector(state => state.common);
+    const { week } = useSelector(state => state.lineups);
 
 
-    console.log({ trade_value_date })
+    const getPlayerScore = (stats_array, scoring_settings, total = false) => {
+
+        let total_breakdown = {};
+
+        stats_array?.map(stats_game => {
+            Object.keys(stats_game?.stats || {})
+                .filter(x => Object.keys(scoring_settings).includes(x))
+                .map(key => {
+                    if (!total_breakdown[key]) {
+                        total_breakdown[key] = {
+                            stats: 0,
+                            points: 0
+                        }
+                    }
+                    total_breakdown[key] = {
+                        stats: total_breakdown[key].stats + stats_game.stats[key],
+                        points: total_breakdown[key].points + (stats_game.stats[key] * scoring_settings[key])
+                    }
+                })
+        })
+
+        return total
+            ? Object.keys(total_breakdown).reduce((acc, cur) => acc + total_breakdown[cur].points, 0)
+            : total_breakdown;
+    }
+
     const matchup_info = Object.keys(league)
         .filter(key => key.startsWith('matchups_'))
         .length > 0
@@ -39,7 +74,9 @@ const Roster = ({ roster, league, trade_value_date, current_value_date, type }) 
                 className: 'half'
             },
             {
-                text: matchup_info
+                text: previous 
+                ? null
+                : matchup_info
                     ? < select onChange={(e) => setPpgType(e.target.value)}>
                         <option>Total</option>
                         <option>In Lineup</option>
@@ -63,12 +100,20 @@ const Roster = ({ roster, league, trade_value_date, current_value_date, type }) 
 
             },
             {
-                text: matchup_info ? '#' : new Date(trade_value_date).getMonth() + 1 + '/' + new Date(trade_value_date).getDate(),
+                text: previous
+                    ? 'Proj'
+                    : matchup_info
+                        ? '#'
+                        : new Date(trade_value_date).getMonth() + 1 + '/' + new Date(trade_value_date).getDate(),
                 colSpan: matchup_info ? 3 : 4,
                 className: 'half left'
             },
             {
-                text: matchup_info ? 'PPG' : 'Trend',
+                text: previous
+                    ? 'Actual'
+                    : matchup_info
+                        ? 'PPG'
+                        : 'Trend',
                 colSpan: matchup_info ? 5 : 4,
                 className: 'half left end'
             }
@@ -109,7 +154,7 @@ const Roster = ({ roster, league, trade_value_date, current_value_date, type }) 
         } else {
 
 
-            return roster.players?.map((player_id, index) => {
+            return (filter === 'All' ? [...roster.starters, ...roster.players.filter(player_id => !roster.starters.includes(player_id))] : roster.players)?.map((player_id, index) => {
 
 
 
@@ -150,15 +195,21 @@ const Roster = ({ roster, league, trade_value_date, current_value_date, type }) 
                                 }
                             },
                             {
-                                text: matchup_info ? games?.toString() : player_scoring_dict[player_id].trade || '0',
+                                text: previous
+                                    ? getPlayerScore([projections[week][player_id]], league.scoring_settings, true)?.toFixed(1) || '-'
+                                    : matchup_info
+                                        ? games?.toString()
+                                        : player_scoring_dict[player_id].trade || '0',
                                 colSpan: matchup_info ? 3 : 4
                             },
                             {
-                                text: matchup_info
-                                    ? ((games > 0 && (points / games).toFixed(1)) || '-')
-                                    : <p className="stat" style={getTrendColor(trend, 1.5)}>
-                                        {trend.toString()}
-                                    </p>,
+                                text: previous
+                                    ? players_points[player_id]?.toFixed(1) || '-'
+                                    : matchup_info
+                                        ? ((games > 0 && (points / games).toFixed(1)) || '-')
+                                        : <p className="stat" style={getTrendColor(trend, 1.5)}>
+                                            {trend.toString()}
+                                        </p>,
                                 colSpan: matchup_info ? 5 : 4
                             }
                         ]

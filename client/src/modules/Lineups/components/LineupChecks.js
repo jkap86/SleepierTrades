@@ -369,19 +369,26 @@ const LineupChecks = ({ secondaryTable }) => {
                                         : '-'
                         },
                         {
-                            ...getColumnValuePrev(column1_prev, league.league_id, matchup_user, matchup_opp, act_median)
+                            ...getColumnValuePrev(column1_prev, league.league_id, matchup_user, matchup_opp, act_median, lineupChecks, week)
                         },
                         {
-                            ...getColumnValuePrev(column2_prev, league.league_id, matchup_user, matchup_opp, act_median)
+                            ...getColumnValuePrev(column2_prev, league.league_id, matchup_user, matchup_opp, act_median, lineupChecks, week)
                         },
                         {
-                            ...getColumnValuePrev(column3_prev, league.league_id, matchup_user, matchup_opp, act_median)
+                            ...getColumnValuePrev(column3_prev, league.league_id, matchup_user, matchup_opp, act_median, lineupChecks, week)
                         },
                         {
-                            ...getColumnValuePrev(column4_prev, league.league_id, matchup_user, matchup_opp, act_median)
+                            ...getColumnValuePrev(column4_prev, league.league_id, matchup_user, matchup_opp, act_median, lineupChecks, week)
                         }
                     ],
-                    secondary_table: secondaryTable()
+                    secondary_table: secondaryTable({
+                        league,
+                        matchup_user,
+                        matchup_opp,
+                        players_projections,
+                        proj_score_user_optimal,
+                        proj_score_opp_optimal
+                    })
                 }
             }
         })

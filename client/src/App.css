@@ -96,6 +96,10 @@ p.stat {
   display: inline;
 }
 
+p.stat.value {
+  display: block;
+}
+
 ::-webkit-scrollbar {
   background-color: transparent;
   width: 1rem;
