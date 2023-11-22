@@ -12,7 +12,8 @@ const Roster = ({
     type,
     previous,
     players_points,
-    players_projections
+    players_projections,
+    total_points
 }) => {
     const [filter, setFilter] = useState('All');
     const [ppgType, setPpgType] = useState('Total')
@@ -69,20 +70,20 @@ const Roster = ({
                 className: 'half'
             },
             {
-                text: '',
+                text: previous ? total_points : '',
                 colSpan: 15,
                 className: 'half'
             },
             {
-                text: previous 
-                ? null
-                : matchup_info
-                    ? < select onChange={(e) => setPpgType(e.target.value)}>
-                        <option>Total</option>
-                        <option>In Lineup</option>
-                        <option>On Bench</option>
-                    </select>
-                    : 'KTC',
+                text: previous
+                    ? null
+                    : matchup_info
+                        ? < select onChange={(e) => setPpgType(e.target.value)}>
+                            <option>Total</option>
+                            <option>In Lineup</option>
+                            <option>On Bench</option>
+                        </select>
+                        : 'KTC',
                 colSpan: 8,
                 className: 'half'
             }

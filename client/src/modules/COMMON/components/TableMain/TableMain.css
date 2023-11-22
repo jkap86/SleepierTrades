@@ -159,6 +159,14 @@ th.half {
     height: 3.5rem;
 }
 
+th>em:last-of-type {
+    float: right;
+}
+
+th>em:only-child {
+    float: unset;
+}
+
 div.sort {
     width: 100%;
     height: 100%;

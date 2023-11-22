@@ -9,7 +9,7 @@ import { getRecordDict } from "./helpers/getRecordDict";
 
 const useGetLineupChecks = () => {
     const dispatch = useDispatch();
-    const { state, tab, allplayers, schedule, projections } = useSelector(state => state.common)
+    const { state, allplayers, schedule, projections } = useSelector(state => state.common)
     const { user_id, leagues, matchups, syncing, isLoadingMatchups } = useSelector(state => state.user);
     const {
         includeTaxi,
@@ -23,67 +23,66 @@ const useGetLineupChecks = () => {
         secondaryContent2,
     } = useSelector(state => state.lineups);
 
-console.log({state: useSelector(state => state)})
-    console.log({ schedule })
+
     useEffect(() => {
-    if (leagues && state){
-        if (!schedule || !projections || (!matchups && !isLoadingMatchups)) {
-            if (!schedule) {
-                dispatch(fetchCommon('schedule'));
-            } else if (!matchups && !isLoadingMatchups) {
-                dispatch(fetchMatchups())
-            } else if (!projections) {
-                dispatch(fetchCommon('projections'))
+        if (leagues && state) {
+            if (!schedule || !projections || (!matchups && !isLoadingMatchups)) {
+                if (!schedule) {
+                    dispatch(fetchCommon('schedule'));
+                } else if (!matchups && !isLoadingMatchups) {
+                    dispatch(fetchMatchups())
+                } else if (!projections) {
+                    dispatch(fetchCommon('projections'))
+                }
+
+            } else {
+                const player_lineup_dict = {};
+
+                leagues
+                    .forEach(league => {
+                        const matchup_user = league[`matchups_${week}`]?.find(m => m.roster_id === league.userRoster.roster_id);
+                        const matchup_opp = league[`matchups_${week}`]?.find(m => m.matchup_id === matchup_user.matchup_id && m.roster_id !== matchup_user.roster_id);
+
+                        matchup_user?.players
+                            ?.forEach(player_id => {
+                                if (!player_lineup_dict[player_id]) {
+                                    player_lineup_dict[player_id] = {
+                                        start: [],
+                                        bench: [],
+                                        start_opp: [],
+                                        bench_opp: []
+                                    }
+                                }
+
+                                if (matchup_user.starters?.includes(player_id)) {
+                                    player_lineup_dict[player_id].start.push(league)
+                                } else {
+                                    player_lineup_dict[player_id].bench.push(league)
+                                }
+                            })
+
+                        matchup_opp?.players
+                            ?.forEach(player_id => {
+                                if (!player_lineup_dict[player_id]) {
+                                    player_lineup_dict[player_id] = {
+                                        start: [],
+                                        bench: [],
+                                        start_opp: [],
+                                        bench_opp: []
+                                    }
+                                }
+
+                                if (matchup_opp.starters?.includes(player_id)) {
+                                    player_lineup_dict[player_id].start_opp.push(league)
+                                } else {
+                                    player_lineup_dict[player_id].bench_opp.push(league)
+                                }
+                            })
+                    })
+
+                dispatch(setStateLineups({ playerLineupDict: player_lineup_dict }, 'LINEUPS'));
             }
-
-        } else {
-            const player_lineup_dict = {};
-
-            leagues
-                .forEach(league => {
-                    const matchup_user = league[`matchups_${week}`]?.find(m => m.roster_id === league.userRoster.roster_id);
-                    const matchup_opp = league[`matchups_${week}`]?.find(m => m.matchup_id === matchup_user.matchup_id && m.roster_id !== matchup_user.roster_id);
-
-                    matchup_user?.players
-                        ?.forEach(player_id => {
-                            if (!player_lineup_dict[player_id]) {
-                                player_lineup_dict[player_id] = {
-                                    start: [],
-                                    bench: [],
-                                    start_opp: [],
-                                    bench_opp: []
-                                }
-                            }
-
-                            if (matchup_user.starters?.includes(player_id)) {
-                                player_lineup_dict[player_id].start.push(league)
-                            } else {
-                                player_lineup_dict[player_id].bench.push(league)
-                            }
-                        })
-
-                    matchup_opp?.players
-                        ?.forEach(player_id => {
-                            if (!player_lineup_dict[player_id]) {
-                                player_lineup_dict[player_id] = {
-                                    start: [],
-                                    bench: [],
-                                    start_opp: [],
-                                    bench_opp: []
-                                }
-                            }
-
-                            if (matchup_opp.starters?.includes(player_id)) {
-                                player_lineup_dict[player_id].start_opp.push(league)
-                            } else {
-                                player_lineup_dict[player_id].bench_opp.push(league)
-                            }
-                        })
-                })
-
-            dispatch(setStateLineups({ playerLineupDict: player_lineup_dict }, 'LINEUPS'));
         }
-}
     }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, dispatch])
 
 

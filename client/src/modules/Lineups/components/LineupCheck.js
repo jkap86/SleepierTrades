@@ -109,9 +109,9 @@ const LineupCheck = ({
             }
         ]
     ]
-    console.log({ lineup_check })
+    console.log({ itemActive2 })
 
-    const lineup_body = secondaryContent1 === 'Lineup'
+    const lineup_body = (secondaryContent1 === 'Lineup' || league.settings.best_ball === 1)
         ? lineup_check?.map((slot, index) => {
             const color = (
                 !optimal_lineup.find(x => x.player === slot.current_player) ? 'red'
@@ -163,17 +163,17 @@ const LineupCheck = ({
         })
         : optimal_lineup?.map((ol, index) => {
             return {
-                id: ol.player,
+                id: ol.slot + '__' + index,
                 list: [
                     {
                         text: ol.slot,
                         colSpan: 3,
-                        className: 'green'
+
                     },
                     {
                         text: allplayers[ol.player]?.full_name || ol.player?.toString(),
                         colSpan: 10,
-                        className: 'left green',
+                        className: 'left',
                         image: {
                             src: ol.player,
                             alt: allplayers[ol.player]?.full_name,
@@ -186,25 +186,34 @@ const LineupCheck = ({
                             ?.team
                             ?.find(team => matchTeam(team.id) !== allplayers[ol.player]?.team)
                             ?.id) || 'FA',
-                        colSpan: 3,
-                        className: 'green'
+                        colSpan: 3
                     },
                     {
                         text: rankings
                             ? rankings[ol.player]?.prevRank || 999
                             : (players_projections[ol.player] || 0).toFixed(1),
-                        colSpan: 3,
-                        className: 'green'
+                        colSpan: 3
                     },
                     {
                         text: matchup_user?.players_points[ol.player] && matchup_user?.players_points[ol.player].toFixed(1) || '-',
-                        colSpan: 4,
-                        className: 'green'
+                        colSpan: 4
                     }
                 ]
             }
         })
 
+    let suboptimal_options = (matchup_user.players || [])
+        ?.filter(player_id => !optimal_lineup.find(ol => ol.player === player_id))
+
+    itemActive2.split('__')[0] === 'SF'
+        ? suboptimal_options = suboptimal_options.filter(player_id => ['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[player_id]?.position))
+        : itemActive2.split('__')[0] === 'WRT'
+            ? suboptimal_options = suboptimal_options.filter(player_id => ['RB', 'FB', 'WR', 'TE'].includes(allplayers[player_id]?.position))
+            : itemActive2.split('__')[0] === 'W R'
+                ? suboptimal_options = suboptimal_options.filter(player_id => ['RB', 'FB', 'WR'].includes(allplayers[player_id]?.position))
+                : itemActive2.split('__')[0] === 'W T'
+                    ? suboptimal_options = suboptimal_options.filter(player_id => ['WR', 'TE'].includes(allplayers[player_id]?.position))
+                    : suboptimal_options = suboptimal_options.filter(player_id => allplayers[player_id]?.position === itemActive2.split('__')[0])
 
     const subs_headers = [
         [
@@ -259,76 +268,118 @@ const LineupCheck = ({
     ]
 
     const subs_body = itemActive2
-        ? [
-            {
-                id: 'warning',
-                list: [
-                    {
-                        text: lineup_check?.find(x => x.slot_index === itemActive2)?.current_player === '0' ? 'Empty Slot' :
-                            lineup_check?.find(x => x.slot_index === itemActive2)?.notInOptimal ? 'Move Out Of Lineup' :
-                                lineup_check?.find(x => x.slot_index === itemActive2)?.earlyInFlex ? 'Move Out Of Flex' :
-                                    lineup_check?.find(x => x.slot_index === itemActive2)?.lateNotInFlex ? 'Move Into Flex'
-                                        : '√',
-                        colSpan: 23,
-                        className: lineup_check?.find(x => x.slot_index === itemActive2)?.notInOptimal ? 'red'
-                            : lineup_check?.find(x => x.slot_index === itemActive2)?.earlyInFlex || lineup_check?.find(x => x.slot_index === itemActive2)?.lateNotInFlex ? 'yellow'
-                                : 'green'
-                    }
-                ]
-
-            },
-
-            ...(lineup_check?.find(x => x.slot_index === itemActive2)?.slot_options || [])
-                ?.sort(
-                    (a, b) => (rankings && (rankings[a]?.prevRank || 999) - (rankings[b]?.prevRank || 999))
-                        || players_projections[b] - players_projections[a]
-                )
-                ?.map((so, index) => {
-                    const color = optimal_lineup.find(x => x.player === so) ? 'green' :
-                        allplayers[so]?.rank_ecr < allplayers[active_player]?.rank_ecr ? 'yellow' : ''
+        ? itemActive2.includes('__')
+            ? suboptimal_options
+                ?.sort((a, b) => (players_projections[b] || 0) - (players_projections[a] || 0))
+                ?.map((opt_starter, index) => {
                     return {
-                        id: so,
+                        id: opt_starter,
                         list: [
                             {
-                                text: 'BN',
-                                colSpan: 3,
-                                className: color
+                                text: allplayers[opt_starter]?.position,
+                                colSpan: 3
                             },
                             {
-                                text: <>{allplayers[so]?.full_name}<span className="player_inj_status">{getInjuryAbbrev(projections[week]?.[so]?.injury_status)}</span></> || 'Empty',
+                                text: allplayers[opt_starter]?.full_name || 'Empty',
                                 colSpan: 10,
-                                className: color + " left",
+                                className: 'left',
                                 image: {
-                                    src: so,
-                                    alt: allplayers[so]?.full_name,
+                                    src: opt_starter,
+                                    alt: allplayers[opt_starter]?.full_name,
                                     type: 'player'
                                 }
                             },
                             {
                                 text: matchTeam(schedule[state.week]
-                                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[so]?.team))
+                                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opt_starter]?.team))
                                     ?.team
-                                    ?.find(team => matchTeam(team.id) !== allplayers[so]?.team)
+                                    ?.find(team => matchTeam(team.id) !== allplayers[opt_starter]?.team)
                                     ?.id) || 'FA',
                                 colSpan: 3,
-                                className: color
                             },
                             {
                                 text: rankings
-                                    ? rankings[so]?.prevRank || 999
-                                    : (players_projections[so] || 0).toFixed(1),
-                                colSpan: 3,
-                                className: color
+                                    ? rankings[opt_starter]?.prevRank || 999
+                                    : (players_projections[opt_starter] || 0).toFixed(1),
+                                colSpan: 3
                             },
                             {
-                                text: matchup_user?.players_points[so].toFixed(1) || '-',
-                                colSpan: 4,
-                                className: color
+                                text: matchup_opp?.players_points[opt_starter]?.toFixed(1) || '-',
+                                colSpan: 4
                             }
                         ]
                     }
                 })
-        ]
+            : [
+                {
+                    id: 'warning',
+                    list: [
+                        {
+                            text: lineup_check?.find(x => x.slot_index === itemActive2)?.current_player === '0' ? 'Empty Slot' :
+                                lineup_check?.find(x => x.slot_index === itemActive2)?.notInOptimal ? 'Move Out Of Lineup' :
+                                    lineup_check?.find(x => x.slot_index === itemActive2)?.earlyInFlex ? 'Move Out Of Flex' :
+                                        lineup_check?.find(x => x.slot_index === itemActive2)?.lateNotInFlex ? 'Move Into Flex'
+                                            : '√',
+                            colSpan: 23,
+                            className: lineup_check?.find(x => x.slot_index === itemActive2)?.notInOptimal ? 'red'
+                                : lineup_check?.find(x => x.slot_index === itemActive2)?.earlyInFlex || lineup_check?.find(x => x.slot_index === itemActive2)?.lateNotInFlex ? 'yellow'
+                                    : 'green'
+                        }
+                    ]
+
+                },
+
+                ...(lineup_check?.find(x => x.slot_index === itemActive2)?.slot_options || [])
+                    ?.sort(
+                        (a, b) => (rankings && (rankings[a]?.prevRank || 999) - (rankings[b]?.prevRank || 999))
+                            || players_projections[b] - players_projections[a]
+                    )
+                    ?.map((so, index) => {
+                        const color = optimal_lineup.find(x => x.player === so) ? 'green' :
+                            allplayers[so]?.rank_ecr < allplayers[active_player]?.rank_ecr ? 'yellow' : ''
+                        return {
+                            id: so,
+                            list: [
+                                {
+                                    text: 'BN',
+                                    colSpan: 3,
+                                    className: color
+                                },
+                                {
+                                    text: <>{allplayers[so]?.full_name}<span className="player_inj_status">{getInjuryAbbrev(projections[week]?.[so]?.injury_status)}</span></> || 'Empty',
+                                    colSpan: 10,
+                                    className: color + " left",
+                                    image: {
+                                        src: so,
+                                        alt: allplayers[so]?.full_name,
+                                        type: 'player'
+                                    }
+                                },
+                                {
+                                    text: matchTeam(schedule[state.week]
+                                        ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[so]?.team))
+                                        ?.team
+                                        ?.find(team => matchTeam(team.id) !== allplayers[so]?.team)
+                                        ?.id) || 'FA',
+                                    colSpan: 3,
+                                    className: color
+                                },
+                                {
+                                    text: rankings
+                                        ? rankings[so]?.prevRank || 999
+                                        : (players_projections[so] || 0).toFixed(1),
+                                    colSpan: 3,
+                                    className: color
+                                },
+                                {
+                                    text: matchup_user?.players_points[so].toFixed(1) || '-',
+                                    colSpan: 4,
+                                    className: color
+                                }
+                            ]
+                        }
+                    })
+            ]
         : secondaryContent2 === 'Optimal'
             ? optimal_lineup_opp?.map((opp_starter, index) => {
                 return {
@@ -416,6 +467,7 @@ const LineupCheck = ({
                     <button
                         className={secondaryContent1 === 'Lineup' ? 'active click' : 'click'}
                         onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Lineup' }))}
+
                     >
                         Lineup
                     </button>
@@ -423,6 +475,7 @@ const LineupCheck = ({
                     <button
                         className={secondaryContent1 === 'Optimal' ? 'active click' : 'click'}
                         onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Optimal' }))}
+                        disabled={true}
                     >
                         Optimal
                     </button>
@@ -430,6 +483,7 @@ const LineupCheck = ({
                 <button
                     className={`sync ${syncing ? 'rotate' : 'click'}`}
                     onClick={syncing ? null : () => handleSync(league.league_id)}
+
                 >
                     <i className={`fa-solid fa-arrows-rotate ${syncing ? 'rotate' : ''}`}></i>
                 </button>
@@ -447,7 +501,7 @@ const LineupCheck = ({
                                 <button
                                     className={secondaryContent2 === 'Lineup' ? 'active click' : 'click'}
                                     onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Lineup' }, 'LINEUPS'))}
-                                    style={{ opacity: league.settings.best_ball === 1 ? 0 : 1 }}
+
                                 >
                                     Lineup
                                 </button>
@@ -455,6 +509,7 @@ const LineupCheck = ({
                                 <button
                                     className={secondaryContent2 === 'Optimal' ? 'active click' : 'click'}
                                     onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Optimal' }, 'LINEUPS'))}
+                                    disabled={true}
                                 >
                                     Optimal
                                 </button>
@@ -506,15 +561,15 @@ const LineupCheck = ({
             <div className="secondary nav">
                 <div>
                     <button
-                        className={secondaryContent1 === 'Lineup' ? 'active click' : 'click'}
+                        className={(secondaryContent1 === 'Lineup' || league.settings.best_ball === 1) ? 'active click' : 'click'}
                         onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Lineup' }, 'LINEUPS'))}
-                        style={{ opacity: league.settings.best_ball === 1 ? 0 : 1 }}
+
                     >
                         Lineup
                     </button>
                     <p className="username">{username}</p>
                     <button
-                        className={secondaryContent1 === 'Optimal' ? 'active click' : 'click'}
+                        className={(secondaryContent1 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
                         onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Optimal' }, 'LINEUPS'))}
                     >
                         Optimal
@@ -538,15 +593,15 @@ const LineupCheck = ({
                             : <>
 
                                 <button
-                                    className={secondaryContent2 === 'Lineup' ? 'active click' : 'click'}
+                                    className={(secondaryContent2 === 'Lineup' || league.settings.best_ball === 1) ? 'active click' : 'click'}
                                     onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Lineup' }, 'LINEUPS'))}
-                                    style={{ opacity: league.settings.best_ball === 1 ? 0 : 1 }}
+
                                 >
                                     Lineup
                                 </button>
                                 <p className="username">{opp_username}</p>
                                 <button
-                                    className={secondaryContent2 === 'Optimal' ? 'active click' : 'click'}
+                                    className={(secondaryContent2 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
                                     onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Optimal' }, 'LINEUPS'))}
                                 >
                                     Optimal
