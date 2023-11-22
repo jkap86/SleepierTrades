@@ -26,6 +26,7 @@ const initialState = {
     secondaryContent2: 'Lineup',
     secondaryContent3: 'Starters',
     itemActive2: '',
+    itemActive3: '',
     isLoadingProjectionDict: false,
     sortBy: 'start',
     page2_start: 1,

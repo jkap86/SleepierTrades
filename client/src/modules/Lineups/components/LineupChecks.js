@@ -296,7 +296,8 @@ const LineupChecks = ({ secondaryTable }) => {
                         proj_score_opp_actual,
                         proj_score_opp_optimal,
                         opp_username: opp_roster?.username || 'Orphan',
-                        opp_avatar: opp_roster?.avatar
+                        opp_avatar: opp_roster?.avatar,
+                        proj_median
                     })
                 }
             } else {
