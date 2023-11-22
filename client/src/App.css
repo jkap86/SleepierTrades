@@ -5,6 +5,7 @@ body {
   --color3: midnightblue;
   --color4: #1a1c20;
   --color5: #4169e1;
+  --color6: rgb(50, 50, 50);
   --sticky1: 0rem;
   --sticky2: 7rem;
   --sticky3: 14rem;
@@ -51,6 +52,11 @@ body {
 .relative {
   position: relative;
 }
+
+.font2 {
+  font-family: var(--font2);
+}
+
 a {
   color: white;
   text-decoration: none;
@@ -87,10 +93,7 @@ p.stat {
   font-size: 2.5rem;
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+  display: inline;
 }
 
 ::-webkit-scrollbar {

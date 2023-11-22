@@ -24,6 +24,7 @@ const initialState = {
     primaryContent: 'Lineup Check',
     secondaryContent1: 'Lineup',
     secondaryContent2: 'Lineup',
+    secondaryContent3: 'Starters',
     itemActive2: '',
     isLoadingProjectionDict: false,
     sortBy: 'start',
