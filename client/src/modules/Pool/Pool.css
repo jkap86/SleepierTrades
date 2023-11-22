@@ -1,0 +1,33 @@
+p.image {
+    position: relative;
+    display: flex;
+    width: fit-content;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap;
+}
+
+p.image>strong {
+    position: absolute;
+    font-size: 5rem;
+    color: var(--color2);
+    font-family: var(--font2);
+    letter-spacing: .5rem;
+    text-shadow: 0 0 .5rem black;
+}
+
+a.home {
+    position: absolute;
+    font-size: 3rem;
+    padding: 2rem;
+    left: 0;
+}
+
+select {
+    font-size: 3rem;
+    background-color: black;
+    color: white;
+    border: none;
+    font-family: var(--font1);
+}

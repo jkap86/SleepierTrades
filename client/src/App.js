@@ -9,6 +9,8 @@ const Leagues = lazy(() => import('./modules/Leagues'));
 const Players = lazy(() => import('./modules/Players'));
 const Trades = lazy(() => import('./modules/Trades'));
 const Lineups = lazy(() => import('./modules/Lineups'));
+const PickTracker = lazy(() => import('./modules/Picktracker'));
+const Pool = lazy(() => import('./modules/Pool'));
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
             <Route path="/:username/players" element={<Layout display={<Players />} />} />
             <Route path="/:username/trades" element={<Layout display={<Trades />} />} />
             <Route path="/:username/lineups" element={<Layout display={<Lineups />} />} />
+            <Route path='/picktracker/:league_id' element={<PickTracker />} />
+            <Route path='/pools/rof' element={<Pool pool={'rof'} title={'Ring of Fire'} startSeason={2021} />} />
           </Routes>
         </Suspense>
       </BrowserRouter>
