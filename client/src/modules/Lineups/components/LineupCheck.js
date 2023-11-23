@@ -219,20 +219,19 @@ const LineupCheck = ({
         [
             {
                 text: (
-                    secondaryContent2 === 'Lineup'
-                        ? <>
-                            {matchup_opp?.points} <em>({proj_score_opp_actual?.toFixed(2)})</em>
-                            {
-                                parseFloat(proj_median)
-                                    ? <em> Median: ({proj_median.toFixed(2)})</em>
-                                    : null
-                            }
-                        </>
-
-                        : secondaryContent2 === 'Optimal'
-                            ? <>{opp_opt_points?.toFixed(2)} <em>({proj_score_opp_optimal?.toFixed(2)})</em></>
-
-                            : ''
+                    <>
+                        {(secondaryContent2 === 'Lineup' && league.settings.best_ball !== 1)
+                            ? <>{matchup_opp?.points} <em>({proj_score_opp_actual?.toFixed(2)})</em></>
+                            : (secondaryContent2 === 'Optimal' || league.settings.best_ball === 1)
+                                ? <>{opp_opt_points?.toFixed(2)} <em>({proj_score_opp_optimal?.toFixed(2)})</em></>
+                                : ''
+                        }
+                        {
+                            parseFloat(proj_median)
+                                ? <em> Median: ({proj_median.toFixed(2)})</em>
+                                : null
+                        }
+                    </>
                 ),
                 colSpan: 23,
                 className: 'half'

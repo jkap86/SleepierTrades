@@ -68,7 +68,7 @@ const PlayerLeagues = ({
                 keys = ['r_b', 'd_b'];
 
                 break;
-            case 'All-Standard':
+            case 'All-Lineup':
                 keys = ['r_s', 'd_s'];
 
                 break;

@@ -126,7 +126,7 @@ const LineupChecks = ({ secondaryTable }) => {
                                 })
                         }
                     </select>
-                    </p>,
+                </p>,
                 colSpan: 2,
                 className: 'small half'
             },
@@ -148,13 +148,13 @@ const LineupChecks = ({ secondaryTable }) => {
                                 })
                         }
                     </select>
-                    </p>,
+                </p>,
                 colSpan: 2,
                 className: 'small half'
             },
             {
                 text: <p className="select">{week < state.week ? column4_prev : column4}
-                <select
+                    <select
                         value={week < state.week ? column4_prev : column4}
                         className="hidden_behind click"
                         onChange={(e) => dispatch(setStateLineups({ [week < state.week ? 'column4_prev' : 'column4']: e.target.value }, 'LINEUPS'))}
@@ -232,15 +232,15 @@ const LineupChecks = ({ secondaryTable }) => {
                             text: <>
                                 {
                                     (lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user && lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp)
-                                        ? league.settings.best_ball !== 1
-                                            ? proj_score_user_actual > proj_score_opp_actual
-                                                ? 'W'
-                                                : proj_score_user_actual < proj_score_opp_actual
-                                                    ? 'L'
-                                                    : '-'
-                                            : proj_score_user_optimal > proj_score_opp_optimal
+                                        ? league.settings.best_ball === 1
+                                            ? proj_score_user_optimal > proj_score_opp_optimal
                                                 ? 'W'
                                                 : proj_score_user_optimal < proj_score_opp_optimal
+                                                    ? 'L'
+                                                    : '-'
+                                            : proj_score_user_actual > proj_score_opp_actual
+                                                ? 'W'
+                                                : proj_score_user_actual < proj_score_opp_actual
                                                     ? 'L'
                                                     : '-'
                                         : '-'

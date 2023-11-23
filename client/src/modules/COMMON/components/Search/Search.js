@@ -121,7 +121,7 @@ const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => 
                                         className={"click " + (`${option.text}_${index}` === reverse ? 'reverse' : '')}
                                         onMouseEnter={() => handleMouseEnter(`${option.text}_${index}`)}
                                         onMouseLeave={() => setReverse(false)}
-                                        onMouseUpCapture={() => setSearched(option)}
+                                        onMouseDown={() => setSearched(option)}
                                     >
                                         {
                                             option.image ?
