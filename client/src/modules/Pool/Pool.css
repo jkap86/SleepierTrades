@@ -6,6 +6,13 @@ p.image {
     justify-content: center;
     align-items: center;
     white-space: nowrap;
+ 
+}
+
+p.image>img {
+    border-radius: 50%;
+    height: 10rem;
+    width: 10rem;
 }
 
 p.image>strong {

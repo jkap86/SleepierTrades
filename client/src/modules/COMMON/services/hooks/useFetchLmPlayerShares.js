@@ -5,13 +5,14 @@ import { fetchLmPlayerShares } from "../../redux/actions";
 const useFetchLmPlayerShares = () => {
     const dispatch = useDispatch();
     const { user_id, lmplayershares } = useSelector(state => state.user);
-    const { tabSecondary } = useSelector(state => state.players);
+
+    console.log({lmplayershares})
 
     useEffect(() => {
-        if (user_id && !lmplayershares && tabSecondary === 'Leaguemate Shares') {
+        if (user_id && !lmplayershares) {
             dispatch(fetchLmPlayerShares(user_id))
         }
-    }, [user_id, lmplayershares, tabSecondary, dispatch])
+    }, [user_id, lmplayershares, dispatch])
 
 }
 

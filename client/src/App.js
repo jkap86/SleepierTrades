@@ -9,6 +9,7 @@ const Leagues = lazy(() => import('./modules/Leagues'));
 const Players = lazy(() => import('./modules/Players'));
 const Trades = lazy(() => import('./modules/Trades'));
 const Lineups = lazy(() => import('./modules/Lineups'));
+const Leaguemates = lazy(() => import('./modules/Leaguemates'));
 const PickTracker = lazy(() => import('./modules/Picktracker'));
 const Pool = lazy(() => import('./modules/Pool'));
 
@@ -23,8 +24,10 @@ function App() {
             <Route path="/:username/players" element={<Layout display={<Players />} />} />
             <Route path="/:username/trades" element={<Layout display={<Trades />} />} />
             <Route path="/:username/lineups" element={<Layout display={<Lineups />} />} />
+            <Route path='/:username/leaguemates' element={<Layout display={<Leaguemates />} />} />
             <Route path='/picktracker/:league_id' element={<PickTracker />} />
             <Route path='/pools/rof' element={<Pool pool={'rof'} title={'Ring of Fire'} startSeason={2021} />} />
+            <Route path='/pools/osr' element={<Pool pool={'osr'} title={'Save the Sharks'} startSeason={2020} />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

@@ -70,7 +70,7 @@ const Roster = ({
                 className: 'half'
             },
             {
-                text: previous ? total_points : '',
+                text: previous ? total_points :<p className="username">{roster.username}</p>,
                 colSpan: 15,
                 className: 'half'
             },

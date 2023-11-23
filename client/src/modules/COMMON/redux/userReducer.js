@@ -3,6 +3,7 @@ const initialState = {
     username: false,
     avatar: null,
     leagues: false,
+    leaguemates: false,
     userPlayerShares: false,
     isLoadingUserPS: false,
     lmplayershares: false,
