@@ -98,9 +98,7 @@ const Records = ({
                     },
                     {
                         text: <p
-                            className={(rank / league.rosters.length) < .5 ? 'green stat' :
-                                (rank / league.rosters.length) > .5 ? 'red stat' :
-                                    'stat'}
+                            className={'stat check'}
                             style={getTrendColor(-((rank / league.rosters.length) - .5), .0025)}
                         >
                             {rank || '-'}

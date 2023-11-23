@@ -175,7 +175,7 @@ const Roster = ({
                         games = player_scoring_dict[player_id]?.games_total;
                         points = player_scoring_dict[player_id]?.points_total;
                     }
-                    const trend = (player_scoring_dict[player_id].current || 0) - (player_scoring_dict[player_id].trade || 0)
+                    const trend =  (player_scoring_dict[player_id]?.current || 0) - (player_scoring_dict[player_id]?.trade || 0)
 
                     return {
                         id: player_id,

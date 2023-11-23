@@ -144,7 +144,9 @@ thead {
     filter: drop-shadow(0 0 1rem silver);
 }
 
-
+tr.active table.trade_summary table.body>tbody>tr>td{
+    box-shadow: inset 0 0 3rem var(--color2);
+}
 th,
 td {
     height: 7rem;

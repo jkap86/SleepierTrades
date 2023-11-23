@@ -3,9 +3,9 @@ import useFetchLmTrades from "../services/hooks/useFetchLmTrades";
 import { useSelector, useDispatch } from "react-redux";
 import Trade from "./Trade";
 import { setStateTrades, fetchLmTrades, fetchFilteredLmTrades } from "../redux/actions";
-import { useEffect, useMemo } from "react";
+import {  useMemo } from "react";
 import useFetchPlayerValues from "../../COMMON/services/hooks/useFetchPlayerValues";
-
+import LoadingIcon from '../../COMMON/components/LoadingIcon';
 
 const LmTrades = ({
     trades_headers,
@@ -19,7 +19,7 @@ const LmTrades = ({
     const { lmTrades, trade_date, isLoading } = useSelector(state => state.trades);
 
     useFetchLmTrades()
-    console.log({ values })
+
     const hash = `${type1}-${type2}`
 
     const tradesDisplay = (!lmTrades.searched_player?.id && !lmTrades.searched_manager?.id)
@@ -96,27 +96,29 @@ const LmTrades = ({
         }
     }
 
-    console.log({ PAGE: lmTrades.page })
 
-    return <>
-        <div className="trade_search_wrapper">
 
-        </div>
-        <TableMain
-            id={'trades'}
-            type={'primary'}
-            headers={trades_headers}
-            body={trades_body}
-            itemActive={lmTrades.itemActive}
-            setItemActive={(item) => dispatch(setStateTrades({ lmTrades: { ...lmTrades, itemActive: item } }))}
-            page={lmTrades.page}
-            setPage={(page) => dispatch(setStateTrades({ lmTrades: { ...lmTrades, page: page } }))}
-            partial={tradesDisplay?.length < tradeCount ? true : false}
-            loadMore={loadMore}
-            isLoading={isLoading}
-        />
+    return isLoading
+        ? <LoadingIcon />
+        : <>
+            <div className="trade_search_wrapper">
 
-    </>
+            </div>
+            <TableMain
+                id={'trades'}
+                type={'primary'}
+                headers={trades_headers}
+                body={trades_body}
+                itemActive={lmTrades.itemActive}
+                setItemActive={(item) => dispatch(setStateTrades({ lmTrades: { ...lmTrades, itemActive: item } }))}
+                page={lmTrades.page}
+                setPage={(page) => dispatch(setStateTrades({ lmTrades: { ...lmTrades, page: page } }))}
+                partial={tradesDisplay?.length < tradeCount ? true : false}
+                loadMore={loadMore}
+                isLoading={isLoading}
+            />
+
+        </>
 }
 
 export default LmTrades;
