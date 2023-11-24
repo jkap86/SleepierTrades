@@ -23,6 +23,8 @@ const useGetLineupChecks = () => {
         secondaryContent2,
     } = useSelector(state => state.lineups);
 
+    const hash = `${includeTaxi}-${true}`
+
 
     useEffect(() => {
         if (leagues && state) {
@@ -35,13 +37,20 @@ const useGetLineupChecks = () => {
                     dispatch(fetchCommon('projections'))
                 }
 
-            } else {
+            } else if (lineupChecks[week]?.[hash]) {
                 const player_lineup_dict = {};
 
                 leagues
                     .forEach(league => {
                         const matchup_user = league[`matchups_${week}`]?.find(m => m.roster_id === league.userRoster.roster_id);
                         const matchup_opp = league[`matchups_${week}`]?.find(m => m.matchup_id === matchup_user.matchup_id && m.roster_id !== matchup_user.roster_id);
+
+                        const optimal_lineup = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user?.optimal_lineup
+                        const optimal_lineup_opp = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp?.optimal_lineup
+
+                        const user_starters = league.settings.best_ball === 1
+                            ? optimal_lineup?.map(ol => ol.player) || []
+                            : matchup_user?.starters || []
 
                         matchup_user?.players
                             ?.forEach(player_id => {
@@ -54,12 +63,16 @@ const useGetLineupChecks = () => {
                                     }
                                 }
 
-                                if (matchup_user.starters?.includes(player_id)) {
+                                if (user_starters?.includes(player_id)) {
                                     player_lineup_dict[player_id].start.push(league)
                                 } else {
                                     player_lineup_dict[player_id].bench.push(league)
                                 }
                             })
+
+                        const opp_starters = league.settings.best_ball === 1
+                            ? optimal_lineup_opp?.map(ol => ol.player) || []
+                            : matchup_opp?.starters || []
 
                         matchup_opp?.players
                             ?.forEach(player_id => {
@@ -72,7 +85,7 @@ const useGetLineupChecks = () => {
                                     }
                                 }
 
-                                if (matchup_opp.starters?.includes(player_id)) {
+                                if (opp_starters?.includes(player_id)) {
                                     player_lineup_dict[player_id].start_opp.push(league)
                                 } else {
                                     player_lineup_dict[player_id].bench_opp.push(league)
@@ -83,7 +96,7 @@ const useGetLineupChecks = () => {
                 dispatch(setStateLineups({ playerLineupDict: player_lineup_dict }, 'LINEUPS'));
             }
         }
-    }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, dispatch])
+    }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, lineupChecks, week, hash, dispatch])
 
 
 

@@ -228,15 +228,16 @@ const PlayerLeagues = ({
                             alt: 'avatar',
                             type: 'user'
                         }
-                    }, 
+                    },
                     {
-                        text: <>
-                            {lm.count}
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        text: <div className='flex'>
+                            <p>
+                                {lm.count}
+                            </p>
                             <em>
                                 {lm.percentage + '%'}
                             </em>
-                        </>,
+                        </div>,
                         colSpan: 2
                     }
                 ]

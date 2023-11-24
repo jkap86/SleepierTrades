@@ -12,7 +12,7 @@ const Leaguemates2 = ({ ...props }) => {
 
     return <>
         <div className="secondary nav">
-            <div>
+
                 <button
                     className={secondaryContent === 'Leagues' ? 'active click' : 'click'}
                     onClick={() => dispatch(setStateLeaguemates({ secondaryContent: 'Leagues' }))}
@@ -32,7 +32,7 @@ const Leaguemates2 = ({ ...props }) => {
                 >
                     Players <em className="small">(all leagues)</em>
                 </button>
-            </div>
+   
         </div>
         {
             secondaryContent === 'Leagues'

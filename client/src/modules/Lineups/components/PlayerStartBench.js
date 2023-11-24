@@ -126,7 +126,7 @@ const PlayerStartBench = ({
                             colSpan: 1
                         },
                         {
-                            text: <>
+                            text: <div className="flex">
                                 <p
                                     className="stat check"
                                     style={getTrendColor(((proj_fp - proj_fp_opp) / Math.max(proj_fp, proj_fp_opp)), .001)}
@@ -139,11 +139,11 @@ const PlayerStartBench = ({
                                             className="stat check"
                                             style={getTrendColor(((proj_fp - proj_median) / Math.max(proj_fp, proj_median)), .001)}
                                         >
-                                            &nbsp;&nbsp;&nbsp;&nbsp;{proj_median?.toFixed(1)}
+                                           {proj_median?.toFixed(1)}
                                         </p></em>
                                         : null
                                 }
-                            </>,
+                            </div>,
                             colSpan: 2
                         }
                     ],

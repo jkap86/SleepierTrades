@@ -167,24 +167,26 @@ const Records = ({ secondaryTable }) => {
                         }
                     },
                     {
-                        text: <>
-                            {leagues_owned?.length.toString()}
-                            &nbsp;
+                        text: <div className="flex">
+                            <span>
+                                {
+                                leagues_owned?.length.toString()
+                                }
+                            </span>
                             < em >
                                 {((leagues_owned?.length / (leagues_owned.length + leagues_available.length + leagues_available.length)) * 100).toFixed(1) + '%'}
                             </em >
-                        </>,
+                        </div>,
                         colSpan: 5
                     },
                     {
-                        text: <>
+                        text: <div className="flex">
                             <p
                                 className="stat"
                                 style={getTrendColor(winpct - .5, .0005)}
                             >
                                 {record}
                             </p>
-                            &nbsp;
                             <em>
                                 <p
                                     className="stat"
@@ -193,19 +195,18 @@ const Records = ({ secondaryTable }) => {
                                     {winpct}
                                 </p>
                             </em>
-                        </>,
+                        </div>,
                         colSpan: 7,
                         className: "stat"
                     },
                     {
-                        text: <>
+                        text: <div className="flex">
                             <p
                                 className="stat"
                                 style={getTrendColor(winpct_lm - .5, .0005)}
                             >
                                 {record_lm}
                             </p>
-                            &nbsp;
                             <em>
                                 <p
                                     className="stat"
@@ -214,7 +215,7 @@ const Records = ({ secondaryTable }) => {
                                     {winpct_lm}
                                 </p>
                             </em>
-                        </>,
+                        </div>,
                         colSpan: 7,
                         className: "stat"
                     }

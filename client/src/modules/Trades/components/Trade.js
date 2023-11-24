@@ -98,7 +98,8 @@ const Trade = ({
                                 src: trade?.['league.avatar'],
                                 alt: 'league avatar',
                                 type: 'league'
-                            }
+                            },
+                            className: 'left'
                         },
                         {
                             text: <>

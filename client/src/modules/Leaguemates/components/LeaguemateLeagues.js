@@ -76,9 +76,7 @@ const LeaguemateLeagues = ({
                 },
                 {
                     text: <p
-                        className={(lm_league.lmRoster?.rank / lm_league.rosters.length) < .5 ? 'green stat' :
-                            (lm_league.lmRoster?.rank / lm_league.rosters.length) > .5 ? 'red stat' :
-                                'stat'}
+                        className={'stat check'}
                         style={getTrendColor(- ((lm_league.lmRoster.rank / lm_league.rosters.length) - .5), .0025)
                         }
                     >
@@ -95,9 +93,7 @@ const LeaguemateLeagues = ({
                 },
                 {
                     text: <p
-                        className={(lm_league.userRoster?.rank / lm_league.rosters.length) < .5 ? 'green stat' :
-                            (lm_league.userRoster?.rank / lm_league.rosters.length) > .5 ? 'red stat' :
-                                'stat'}
+                        className={'stat check'}
                         style={getTrendColor(- ((lm_league.userRoster.rank / lm_league.rosters.length) - .5), .0025)
                         }
                     >

@@ -101,21 +101,29 @@ const Roster = ({
 
             },
             {
-                text: previous
-                    ? 'Proj'
-                    : matchup_info
-                        ? '#'
-                        : new Date(trade_value_date).getMonth() + 1 + '/' + new Date(trade_value_date).getDate(),
-                colSpan: matchup_info ? 3 : 4,
-                className: 'half left'
-            },
-            {
-                text: previous
-                    ? 'Actual'
-                    : matchup_info
-                        ? 'PPG'
-                        : <em>Trend</em>,
-                colSpan: matchup_info ? 5 : 4,
+                text: <div className="flex">
+                    {
+                        previous
+                            ? <p>Actual</p>
+                            : matchup_info
+                                ? <p>PPG</p>
+                                : <p>
+                                    {
+                                        new Date(trade_value_date).getMonth() + 1 + '/' + new Date(trade_value_date).getDate()
+                                    }
+                                </p>
+                    }
+                    {
+                        previous
+                            ? <em>Proj</em>
+                            : matchup_info
+                                ? <em>#</em>
+                                : <em>Trend</em>
+
+                    }
+
+                </div>,
+                colSpan: 8,
                 className: 'half left end'
             }
         ]
@@ -197,30 +205,28 @@ const Roster = ({
                             },
                             {
                                 text: previous
-                                    ? <>
-                                        <span>
-                                            {getPlayerScore([projections[week][player_id]], league.scoring_settings, true)?.toFixed(1) || '-'}
-                                        </span>
-                                        &nbsp;
+                                    ? <div className="flex">
                                         <span>
                                             {players_points[player_id]?.toFixed(1) || '-'}
                                         </span>
-                                    </>
+                                        <em>
+                                            {getPlayerScore([projections[week][player_id]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                        </em>
+                                    </div>
                                     : matchup_info
-                                        ? <>
-                                            <span>{games?.toString()}</span>
-                                            &nbsp;
+                                        ? <div className="flex">
                                             <span>{((games > 0 && (points / games).toFixed(1)) || '-')}</span>
-                                        </>
-                                        : <>
+                                            <em>{games?.toString()}</em>
+                                        </div>
+                                        : <div className="flex">
                                             <span>{player_scoring_dict[player_id].trade || '0'}</span>
-                                            &nbsp;
+
                                             <em>
                                                 <p className="stat" style={getTrendColor(trend, 1.5)}>
                                                     {trend.toString()}
                                                 </p>
                                             </em>
-                                        </>,
+                                        </div>,
                                 colSpan: 8
                             }
                         ]
