@@ -85,7 +85,7 @@ const Search = ({ id, placeholder, list, isLoading, searched, setSearched }) => 
                 onFocus={() => setDropdownVisible(true)}
 
                 id={id === undefined ? null : id}
-                placeholder={placeholder}
+                placeholder={"Search..."}
                 type="text"
                 value={searched?.text || searched}
                 autoComplete={'off'}

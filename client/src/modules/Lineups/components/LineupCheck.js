@@ -98,13 +98,19 @@ const LineupCheck = ({
                 className: 'half'
             },
             {
-                text: rankings ? 'Rank' : 'Proj',
-                colSpan: 3,
-                className: 'half'
-            },
-            {
-                text: 'Points',
-                colSpan: 4,
+                text: <div className="flex">
+                    <p>Pts</p>
+                    {
+                        rankings
+                            ? <p>
+                                Rank
+                            </p>
+                            : <em>
+                                Proj
+                            </em>
+                    }
+                </div>,
+                colSpan: 7,
                 className: 'half'
             }
         ]
@@ -128,9 +134,18 @@ const LineupCheck = ({
                         className: color
                     },
                     {
-                        text: <>{allplayers[slot.current_player]?.full_name}<span className="player_inj_status">{getInjuryAbbrev(projections[week]?.[slot.current_player]?.injury_status)}</span></> || 'Empty',
+                        text: <>
+                            {
+                                allplayers[slot.current_player]?.full_name || 'Empty'
+                            }
+                            <span className="player_inj_status">
+                                {
+                                    getInjuryAbbrev(projections[week]?.[slot.current_player]?.injury_status)
+                                }
+                            </span>
+                        </>,
                         colSpan: 10,
-                        className: color + " left",
+                        className: color + " left relative",
                         image: {
                             src: slot.current_player,
                             alt: allplayers[slot.current_player]?.full_name,
@@ -147,15 +162,30 @@ const LineupCheck = ({
                         className: color
                     },
                     {
-                        text: rankings
-                            ? rankings[slot.current_player]?.prevRank || 999
-                            : players_projections[slot.current_player]?.toFixed(1) || '-',
-                        colSpan: 3,
-                        className: color
-                    },
-                    {
-                        text: matchup_user?.players_points[slot.current_player]?.toFixed(1) || '-',
-                        colSpan: 4,
+                        text: <div className="flex">
+                            <p>
+                                {
+                                    matchup_user?.players_points[slot.current_player]?.toFixed(1)
+                                    || '-'
+                                }
+                            </p>
+                            {
+                                rankings
+                                    ? <p>
+                                        {
+                                            rankings[slot.current_player]?.prevRank
+                                            || 999
+                                        }
+                                    </p>
+                                    : <em>
+                                        {
+                                            players_projections[slot.current_player]?.toFixed(1)
+                                            || '-'
+                                        }
+                                    </em>
+                            }
+                        </div>,
+                        colSpan: 7,
                         className: color
                     }
                 ]
@@ -171,9 +201,16 @@ const LineupCheck = ({
 
                     },
                     {
-                        text: allplayers[ol.player]?.full_name || ol.player?.toString(),
+                        text: <>
+                            {allplayers[ol.player]?.full_name || ol.player?.toString()}
+                            <span className="player_inj_status">
+                                {
+                                    getInjuryAbbrev(projections[week]?.[ol.player]?.injury_status)
+                                }
+                            </span>
+                            </>,
                         colSpan: 10,
-                        className: 'left',
+                        className: 'left relative',
                         image: {
                             src: ol.player,
                             alt: allplayers[ol.player]?.full_name,
@@ -189,32 +226,51 @@ const LineupCheck = ({
                         colSpan: 3
                     },
                     {
-                        text: rankings
-                            ? rankings[ol.player]?.prevRank || 999
-                            : (players_projections[ol.player] || 0).toFixed(1),
-                        colSpan: 3
-                    },
-                    {
-                        text: matchup_user?.players_points[ol.player] && matchup_user?.players_points[ol.player].toFixed(1) || '-',
-                        colSpan: 4
+                        text: <div className="flex">
+                            <p>
+                                {
+                                    matchup_user?.players_points[ol.player].toFixed(1)
+                                    || '-'
+                                }
+                            </p>
+                            {
+                                rankings
+                                    ? <p>
+                                        {
+                                            rankings[ol.player]?.prevRank
+                                            || 999
+                                        }
+                                    </p>
+                                    : <em>
+                                        {
+                                            (players_projections[ol.player] || 0).toFixed(1)
+                                            || '-'
+                                        }
+                                    </em>
+                            }
+                        </div>,
+                        colSpan: 7
                     }
                 ]
             }
         })
 
-    let suboptimal_options = (matchup_user.players || [])
-        ?.filter(player_id => !optimal_lineup.find(ol => ol.player === player_id))
+    let suboptimal_options;
 
-    itemActive2.split('__')[0] === 'SF'
-        ? suboptimal_options = suboptimal_options.filter(player_id => ['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[player_id]?.position))
-        : itemActive2.split('__')[0] === 'WRT'
-            ? suboptimal_options = suboptimal_options.filter(player_id => ['RB', 'FB', 'WR', 'TE'].includes(allplayers[player_id]?.position))
-            : itemActive2.split('__')[0] === 'W R'
-                ? suboptimal_options = suboptimal_options.filter(player_id => ['RB', 'FB', 'WR'].includes(allplayers[player_id]?.position))
-                : itemActive2.split('__')[0] === 'W T'
-                    ? suboptimal_options = suboptimal_options.filter(player_id => ['WR', 'TE'].includes(allplayers[player_id]?.position))
-                    : suboptimal_options = suboptimal_options.filter(player_id => allplayers[player_id]?.position === itemActive2.split('__')[0])
+    if (week >= state.week) {
+        suboptimal_options = (matchup_user?.players || [])
+            ?.filter(player_id => !optimal_lineup.find(ol => ol.player === player_id))
 
+        itemActive2.split('__')[0] === 'SF'
+            ? suboptimal_options = suboptimal_options.filter(player_id => ['QB', 'RB', 'FB', 'WR', 'TE'].includes(allplayers[player_id]?.position))
+            : itemActive2.split('__')[0] === 'WRT'
+                ? suboptimal_options = suboptimal_options.filter(player_id => ['RB', 'FB', 'WR', 'TE'].includes(allplayers[player_id]?.position))
+                : itemActive2.split('__')[0] === 'W R'
+                    ? suboptimal_options = suboptimal_options.filter(player_id => ['RB', 'FB', 'WR'].includes(allplayers[player_id]?.position))
+                    : itemActive2.split('__')[0] === 'W T'
+                        ? suboptimal_options = suboptimal_options.filter(player_id => ['WR', 'TE'].includes(allplayers[player_id]?.position))
+                        : suboptimal_options = suboptimal_options.filter(player_id => allplayers[player_id]?.position === itemActive2.split('__')[0])
+    }
     const subs_headers = [
         [
             {
@@ -254,13 +310,19 @@ const LineupCheck = ({
                 className: 'half'
             },
             {
-                text: rankings ? 'Rank' : 'Proj',
-                colSpan: 3,
-                className: 'half'
-            },
-            {
-                text: 'Points',
-                colSpan: 4,
+                text: <div className="flex">
+                    <p>Pts</p>
+                    {
+                        rankings
+                            ? <p>
+                                Rank
+                            </p>
+                            : <em>
+                                Proj
+                            </em>
+                    }
+                </div>,
+                colSpan: 7,
                 className: 'half'
             }
         ]
@@ -279,9 +341,18 @@ const LineupCheck = ({
                                 colSpan: 3
                             },
                             {
-                                text: allplayers[opt_starter]?.full_name || 'Empty',
+                                text: <>
+                                    {
+                                        allplayers[opt_starter]?.full_name || 'Empty'
+                                    }
+                                    <span className="player_inj_status">
+                                        {
+                                            getInjuryAbbrev(projections[week]?.[opt_starter]?.injury_status)
+                                        }
+                                    </span>
+                                </>,
                                 colSpan: 10,
-                                className: 'left',
+                                className: 'left relative',
                                 image: {
                                     src: opt_starter,
                                     alt: allplayers[opt_starter]?.full_name,
@@ -297,14 +368,30 @@ const LineupCheck = ({
                                 colSpan: 3,
                             },
                             {
-                                text: rankings
-                                    ? rankings[opt_starter]?.prevRank || 999
-                                    : (players_projections[opt_starter] || 0).toFixed(1),
-                                colSpan: 3
-                            },
-                            {
-                                text: matchup_opp?.players_points[opt_starter]?.toFixed(1) || '-',
-                                colSpan: 4
+                                text: <div className="flex">
+                                    <p>
+                                        {
+                                            (matchup_opp?.players_points[opt_starter] || 0)?.toFixed(1)
+
+                                        }
+                                    </p>
+                                    {
+                                        rankings
+                                            ? <p>
+                                                {
+                                                    rankings[opt_starter]?.prevRank
+                                                    || 999
+                                                }
+                                            </p>
+                                            : <em>
+                                                {
+                                                    (players_projections[opt_starter] || 0).toFixed(1)
+                                                    || '-'
+                                                }
+                                            </em>
+                                    }
+                                </div>,
+                                colSpan: 7
                             }
                         ]
                     }
@@ -345,9 +432,18 @@ const LineupCheck = ({
                                     className: color
                                 },
                                 {
-                                    text: <>{allplayers[so]?.full_name}<span className="player_inj_status">{getInjuryAbbrev(projections[week]?.[so]?.injury_status)}</span></> || 'Empty',
+                                    text: <>
+                                        {
+                                            allplayers[so]?.full_name || 'Empty'
+                                        }
+                                        <span className="player_inj_status">
+                                            {
+                                                getInjuryAbbrev(projections[week]?.[so]?.injury_status)
+                                            }
+                                        </span>
+                                    </>,
                                     colSpan: 10,
-                                    className: color + " left",
+                                    className: color + " left relative",
                                     image: {
                                         src: so,
                                         alt: allplayers[so]?.full_name,
@@ -364,16 +460,30 @@ const LineupCheck = ({
                                     className: color
                                 },
                                 {
-                                    text: rankings
-                                        ? rankings[so]?.prevRank || 999
-                                        : (players_projections[so] || 0).toFixed(1),
-                                    colSpan: 3,
-                                    className: color
-                                },
-                                {
-                                    text: matchup_user?.players_points[so].toFixed(1) || '-',
-                                    colSpan: 4,
-                                    className: color
+                                    text: <div className="flex">
+                                        <p>
+                                            {
+                                                matchup_user?.players_points[so].toFixed(1)
+                                                || '-'
+
+                                            }
+                                        </p>
+                                        {
+                                            rankings
+                                                ? <p>
+                                                    {
+                                                        rankings[so]?.prevRank
+                                                        || 999
+                                                    }
+                                                </p>
+                                                : <em>
+                                                    {
+                                                        (players_projections[so] || 0).toFixed(1)
+                                                    }
+                                                </em>
+                                        }
+                                    </div>,
+                                    colSpan: 7
                                 }
                             ]
                         }
@@ -389,9 +499,18 @@ const LineupCheck = ({
                             colSpan: 3
                         },
                         {
-                            text: allplayers[opp_starter.player || opp_starter]?.full_name || 'Empty',
+                            text: <>
+                                {
+                                    allplayers[opp_starter.player || opp_starter]?.full_name || 'Empty'
+                                }
+                                <span className="player_inj_status">
+                                    {
+                                        getInjuryAbbrev(projections[week]?.[opp_starter.player || opp_starter]?.injury_status)
+                                    }
+                                </span>
+                            </>,
                             colSpan: 10,
-                            className: 'left',
+                            className: 'left relative',
                             image: {
                                 src: opp_starter.player || opp_starter,
                                 alt: allplayers[opp_starter.player || opp_starter]?.full_name,
@@ -407,14 +526,30 @@ const LineupCheck = ({
                             colSpan: 3,
                         },
                         {
-                            text: rankings
-                                ? rankings[opp_starter.player || opp_starter]?.prevRank || 999
-                                : (players_projections[opp_starter.player] || 0).toFixed(1),
-                            colSpan: 3
-                        },
-                        {
-                            text: matchup_opp?.players_points[opp_starter.player || opp_starter]?.toFixed(1),
-                            colSpan: 4
+                            text: <div className="flex">
+                                <p>
+                                    {
+                                        matchup_opp?.players_points[opp_starter.player || opp_starter]?.toFixed(1)
+                                        || '-'
+                                    }
+                                </p>
+                                {
+                                    rankings
+                                        ? <p>
+                                            {
+                                                rankings[opp_starter.player || opp_starter]?.prevRank
+                                                || 999
+                                            }
+                                        </p>
+                                        : <em>
+                                            {
+                                                (players_projections[opp_starter.player] || 0).toFixed(1)
+                                                || '-'
+                                            }
+                                        </em>
+                                }
+                            </div>,
+                            colSpan: 7
                         }
                     ]
                 }
@@ -428,9 +563,18 @@ const LineupCheck = ({
                             colSpan: 3
                         },
                         {
-                            text: allplayers[opp_starter]?.full_name || 'Empty',
+                            text: <>
+                                {
+                                    allplayers[opp_starter]?.full_name || 'Empty'
+                                }
+                                <span className="player_inj_status">
+                                    {
+                                        getInjuryAbbrev(projections[week]?.[opp_starter]?.injury_status)
+                                    }
+                                </span>
+                            </>,
                             colSpan: 10,
-                            className: 'left',
+                            className: 'left relative',
                             image: {
                                 src: opp_starter,
                                 alt: allplayers[opp_starter]?.full_name,
@@ -446,14 +590,30 @@ const LineupCheck = ({
                             colSpan: 3,
                         },
                         {
-                            text: rankings
-                                ? rankings[opp_starter]?.prevRank || 999
-                                : (players_projections[opp_starter] || 0).toFixed(1),
-                            colSpan: 3
-                        },
-                        {
-                            text: matchup_opp?.players_points[opp_starter]?.toFixed(1) || '-',
-                            colSpan: 4
+                            text: <div className="flex">
+                                <p>
+                                    {
+                                        matchup_opp?.players_points[opp_starter]?.toFixed(1)
+                                        || '-'
+                                    }
+                                </p>
+                                {
+                                    rankings
+                                        ? <p>
+                                            {
+                                                rankings[opp_starter]?.prevRank
+                                                || 999
+                                            }
+                                        </p>
+                                        : <em>
+                                            {
+                                                (players_projections[opp_starter] || 0).toFixed(1)
+                                                || '-'
+                                            }
+                                        </em>
+                                }
+                            </div>,
+                            colSpan: 7
                         }
                     ]
                 }
@@ -523,8 +683,8 @@ const LineupCheck = ({
                         league={league}
                         roster={{
                             ...league.userRoster,
-                            players: matchup_user?.players,
-                            starters: matchup_user?.starters,
+                            players: matchup_user?.players || [],
+                            starters: matchup_user?.starters || [],
                         }}
                         type={'secondary half'}
                         previous={true}
@@ -540,8 +700,8 @@ const LineupCheck = ({
                         league={league}
                         roster={{
                             ...oppRoster,
-                            players: matchup_opp?.players,
-                            starters: matchup_opp?.starters
+                            players: matchup_opp?.players || [],
+                            starters: matchup_opp?.starters || []
                         }}
                         type={'secondary half'}
                         previous={true}
@@ -549,7 +709,7 @@ const LineupCheck = ({
                         players_points={matchup_opp?.players_points}
                         total_points={
                             secondaryContent2 === 'Lineup'
-                                ? matchup_opp.points
+                                ? matchup_opp?.points
                                 : proj_score_opp_optimal
                         }
                     />
@@ -566,7 +726,9 @@ const LineupCheck = ({
                     >
                         Lineup
                     </button>
-                    <p className="username">{username}</p>
+                    <span>
+                        <p className="username">{username}</p>
+                    </span>
                     <button
                         className={(secondaryContent1 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
                         onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Optimal' }, 'LINEUPS'))}
@@ -606,7 +768,9 @@ const LineupCheck = ({
                                 >
                                     Lineup
                                 </button>
-                                <p className="username">{opp_username}</p>
+                                <span>
+                                    <p className="username">{opp_username}</p>
+                                </span>
                                 <button
                                     className={(secondaryContent2 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
                                     onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Optimal' }, 'LINEUPS'))}

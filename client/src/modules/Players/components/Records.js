@@ -45,7 +45,7 @@ const Records = ({ secondaryTable }) => {
 
                     </i>
                 </div>,
-                colSpan: 8
+                colSpan: 7
             },
             {
                 text: <div className="sort">
@@ -59,7 +59,7 @@ const Records = ({ secondaryTable }) => {
 
                     </i>
                 </div>,
-                colSpan: 8
+                colSpan: 7
             }
         ]
     ];
@@ -167,56 +167,56 @@ const Records = ({ secondaryTable }) => {
                         }
                     },
                     {
-                        text: leagues_owned?.length.toString(),
-                        colSpan: 2
+                        text: <>
+                            {leagues_owned?.length.toString()}
+                            &nbsp;
+                            < em >
+                                {((leagues_owned?.length / (leagues_owned.length + leagues_available.length + leagues_available.length)) * 100).toFixed(1) + '%'}
+                            </em >
+                        </>,
+                        colSpan: 5
                     },
                     {
-                        text: < em >
-                            {((leagues_owned?.length / (leagues_owned.length + leagues_available.length + leagues_available.length)) * 100).toFixed(1) + '%'}
-                        </em >,
-                        colSpan: 3
-                    },
-                    {
-                        text: <p
-                            className="stat"
-                            style={getTrendColor(winpct - .5, .0005)}
-                        >
-                            {record}
-                        </p>,
-                        colSpan: 4,
+                        text: <>
+                            <p
+                                className="stat"
+                                style={getTrendColor(winpct - .5, .0005)}
+                            >
+                                {record}
+                            </p>
+                            &nbsp;
+                            <em>
+                                <p
+                                    className="stat"
+                                    style={getTrendColor(winpct - .5, .0005)}
+                                >
+                                    {winpct}
+                                </p>
+                            </em>
+                        </>,
+                        colSpan: 7,
                         className: "stat"
                     },
                     {
-                        text: <p
-                            className="stat"
-                            style={getTrendColor(winpct - .5, .0005)}
-                        >
-                            {winpct}
-                        </p>,
-                        colSpan: 4,
+                        text: <>
+                            <p
+                                className="stat"
+                                style={getTrendColor(winpct_lm - .5, .0005)}
+                            >
+                                {record_lm}
+                            </p>
+                            &nbsp;
+                            <em>
+                                <p
+                                    className="stat"
+                                    style={getTrendColor(winpct_lm - .5, .0005)}
+                                >
+                                    {winpct_lm}
+                                </p>
+                            </em>
+                        </>,
+                        colSpan: 7,
                         className: "stat"
-
-                    },
-                    {
-                        text: <p
-                            className="stat"
-                            style={getTrendColor(winpct_lm - .5, .0005)}
-                        >
-                            {record_lm}
-                        </p>,
-                        colSpan: 4,
-                        className: "stat"
-                    },
-                    {
-                        text: <p
-                            className="stat"
-                            style={getTrendColor(winpct_lm - .5, .0005)}
-                        >
-                            {winpct_lm}
-                        </p>,
-                        colSpan: 4,
-                        className: "stat"
-
                     }
                 ],
                 secondary_table: (

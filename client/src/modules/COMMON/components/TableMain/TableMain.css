@@ -47,8 +47,9 @@ div.nav>button {
 div.nav>div {
     display: flex;
     justify-content: space-evenly;
-    width: 100%;
-    align-items:center ;
+    width: 45%;
+    align-items: center;
+    position: relative;
 }
 
 div.nav>button.active {
@@ -60,6 +61,27 @@ div.nav>button.active {
 div.secondary.nav p.username {
     font-family: var(--font2);
     color: var(--te);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;    
+    width: 100%;
+}
+
+div.secondary.nav p.username:hover {
+    overflow: visible;
+    position: absolute;
+    z-index: 2;
+    background-color: black;
+    width: fit-content;
+    
+}
+
+div.nav>div>span {
+    width: 40%;
+    position: relative;  
+    display: flex;
+    justify-content: center;
+    align-items: center; 
 }
 
 div.nav>div>button {
@@ -69,9 +91,10 @@ div.nav>div>button {
     background-color: transparent;
     color: grey;
     border: none;
+    width: 30%;
 }
 
-div.nav>div>button.active{
+div.nav>div>button.active {
     height: 100%;
     font-size: inherit;
     font-family: var(--font1);
@@ -80,6 +103,7 @@ div.nav>div>button.active{
     border: none;
     box-shadow: inset 0 0 1rem var(--color2);
 }
+
 div.timestamp {
     display: flex;
     flex-direction: column;
@@ -132,7 +156,7 @@ table.half {
 
 table.half,
 table.half table {
-    font-size: 2.5rem;
+    font-size: 2.75rem;
 }
 
 table.body>tbody:last-child {
@@ -144,9 +168,10 @@ thead {
     filter: drop-shadow(0 0 1rem silver);
 }
 
-tr.active table.trade_summary table.body>tbody>tr>td{
+tr.active table.trade_summary table.body>tbody>tr>td {
     box-shadow: inset 0 0 3rem var(--color2);
 }
+
 th,
 td {
     height: 7rem;
@@ -199,26 +224,48 @@ td {
     font-weight: 100;
 }
 
-td.red.check, td.green.check, p.stat.check {
+th>div.flex,
+td>div.flex {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+div.flex>p,
+div.flex>em {
+    width: 50%;
+}
+
+td.red.check,
+td.green.check,
+p.stat.check {
     font-size: 4rem;
 }
 
-td.red, td.green, td.greenb, td.redb {
+td.red,
+td.green,
+td.greenb,
+td.redb {
     font-weight: 900;
 }
 
-td.greenb, td.redb {
+td.greenb,
+td.redb {
     font-size: 5rem;
 }
+
 tr.active>td.redb,
 td.redb {
-    background-image: radial-gradient( black -50%, rgb(255, 0, 0) 100%) !important;
+    background-image: radial-gradient(black -50%, rgb(255, 0, 0) 100%) !important;
     position: relative;
 }
 
 tr.active>td.greenb,
 td.greenb {
-    background-image: radial-gradient( black -50%, rgb(0, 255, 0) 100%) !important; 
+    background-image: radial-gradient(black -50%, rgb(0, 255, 0) 100%) !important;
     position: relative;
 }
 
@@ -241,22 +288,23 @@ td.greenb {
 }
 
 div.nav>button.sync {
-   height: 100%;
-   display: flex;
-   flex-direction: column;
-   justify-content: center;
-   position: relative;
-   align-items: center;
-   opacity: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    align-items: center;
+    opacity: 1;
+    width: 10%;
 }
 
 i.fa-arrows-rotate {
     color: var(--color2);
-    filter: brightness(2) drop-shadow(0 0 .5rem var(--te)) ;
+    filter: brightness(2) drop-shadow(0 0 .5rem var(--te));
     border-radius: 50%;
     position: absolute;
     font-size: 7rem;
-    
+
 }
 
 table.body td {
@@ -373,6 +421,9 @@ th>p.select>select.hidden_behind {
     left: 0;
     right: 0;
     z-index: 1;
+    background-color: var(--color6);
+    font: inherit;
+    color: white;
 }
 
 

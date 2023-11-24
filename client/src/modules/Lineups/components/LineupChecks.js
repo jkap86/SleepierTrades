@@ -4,6 +4,7 @@ import { setStateLineups } from "../redux/actions";
 import { getColumnValue, getColumnValuePrev } from '../services/helpers/getColumns';
 import { filterLeagues } from '../../COMMON/services/helpers/filterLeagues';
 import FilterIcons from "../../COMMON/components/FilterIcons";
+import LoadingIcon from '../../COMMON/components/LoadingIcon';
 
 const LineupChecks = ({ secondaryTable }) => {
     const dispatch = useDispatch();
@@ -393,25 +394,28 @@ const LineupChecks = ({ secondaryTable }) => {
             }
         })
 
-    return <TableMain
-        type={'primary'}
-        headers={lineups_headers}
-        body={lineups_body}
-        page={page}
-        setPage={(value) => dispatch(setStateLineups({ page: value }))}
-        itemActive={itemActive}
-        setItemActive={(value) => dispatch(setStateLineups({ itemActive: value }))}
-        search={true}
-        searched={searched}
-        setSearched={(value) => dispatch(setStateLineups({ searched: value }))}
-        options1={[
-            <FilterIcons
-                type={'taxi'}
-                includeTaxi={includeTaxi}
-                setIncludeTaxi={(value) => dispatch(setStateLineups({ includeTaxi: value }))}
-            />
-        ]}
-    />
+    return (week < state.week && !lineupChecks?.[week])
+        || (week >= state.week && !lineupChecks?.[week]?.[hash])
+        ? <LoadingIcon />
+        : <TableMain
+            type={'primary'}
+            headers={lineups_headers}
+            body={lineups_body}
+            page={page}
+            setPage={(value) => dispatch(setStateLineups({ page: value }))}
+            itemActive={itemActive}
+            setItemActive={(value) => dispatch(setStateLineups({ itemActive: value }))}
+            search={true}
+            searched={searched}
+            setSearched={(value) => dispatch(setStateLineups({ searched: value }))}
+            options1={[
+                <FilterIcons
+                    type={'taxi'}
+                    includeTaxi={includeTaxi}
+                    setIncludeTaxi={(value) => dispatch(setStateLineups({ includeTaxi: value }))}
+                />
+            ]}
+        />
 }
 
 export default LineupChecks;

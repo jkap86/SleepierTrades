@@ -132,9 +132,7 @@ const PlayerLeagues = ({
                     },
                     {
                         text: <p
-                            className={(lo.userRoster?.rank / lo.rosters.length) < .5 ? 'green stat' :
-                                (lo.userRoster?.rank / lo.rosters.length) > .5 ? 'red stat' :
-                                    'stat'}
+                            className={'stat check'}
                             style={getTrendColor(- ((lo.userRoster.rank / lo.rosters.length) - .5), .0025)
                             }
                         >
@@ -162,9 +160,7 @@ const PlayerLeagues = ({
                     tabSecondary === 'Taken' ?
                         {
                             text: <p
-                                className={(lo.lmRoster?.rank / lo.rosters.length) < .5 ? 'green stat' :
-                                    (lo.lmRoster?.rank / lo.rosters.length) > .5 ? 'red stat' :
-                                        'stat'}
+                                className={'stat check'}
                                 style={getTrendColor(- ((lo.lmRoster.rank / lo.rosters.length) - .5), .0025)
                                 }
                             >
@@ -202,12 +198,14 @@ const PlayerLeagues = ({
                         }
                     },
                     {
-                        text: lm.count,
-                        colSpan: 1
-                    },
-                    {
-                        text: lm.percentage + '%',
-                        colSpan: 1
+                        text: <>
+                            {lm.count}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <em>
+                                {lm.percentage + '%'}
+                            </em>
+                        </>,
+                        colSpan: 2
                     }
                 ]
             }
@@ -230,14 +228,16 @@ const PlayerLeagues = ({
                             alt: 'avatar',
                             type: 'user'
                         }
-                    },
+                    }, 
                     {
-                        text: lm.count,
-                        colSpan: 1
-                    },
-                    {
-                        text: lm.percentage + '%',
-                        colSpan: 1
+                        text: <>
+                            {lm.count}
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <em>
+                                {lm.percentage + '%'}
+                            </em>
+                        </>,
+                        colSpan: 2
                     }
                 ]
             }

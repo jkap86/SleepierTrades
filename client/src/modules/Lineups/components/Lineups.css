@@ -44,3 +44,12 @@ h2>select {
     text-shadow: 0 0 .5rem black;
     padding: 1rem 0;
 }
+
+span.player_inj_status {
+    color: rgb(255, 0, 0);
+    font-family: var(--font3);
+    font-weight: 900;
+    position: absolute;
+    top: 0;
+    right: 0;
+}

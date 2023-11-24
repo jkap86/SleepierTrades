@@ -70,7 +70,7 @@ const Roster = ({
                 className: 'half'
             },
             {
-                text: previous ? total_points :<p className="username">{roster.username}</p>,
+                text: previous ? total_points : <p className="username">{roster.username}</p>,
                 colSpan: 15,
                 className: 'half'
             },
@@ -114,7 +114,7 @@ const Roster = ({
                     ? 'Actual'
                     : matchup_info
                         ? 'PPG'
-                        : 'Trend',
+                        : <em>Trend</em>,
                 colSpan: matchup_info ? 5 : 4,
                 className: 'half left end'
             }
@@ -175,7 +175,7 @@ const Roster = ({
                         games = player_scoring_dict[player_id]?.games_total;
                         points = player_scoring_dict[player_id]?.points_total;
                     }
-                    const trend =  (player_scoring_dict[player_id]?.current || 0) - (player_scoring_dict[player_id]?.trade || 0)
+                    const trend = (player_scoring_dict[player_id]?.current || 0) - (player_scoring_dict[player_id]?.trade || 0)
 
                     return {
                         id: player_id,
@@ -197,21 +197,31 @@ const Roster = ({
                             },
                             {
                                 text: previous
-                                    ? getPlayerScore([projections[week][player_id]], league.scoring_settings, true)?.toFixed(1) || '-'
+                                    ? <>
+                                        <span>
+                                            {getPlayerScore([projections[week][player_id]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                        </span>
+                                        &nbsp;
+                                        <span>
+                                            {players_points[player_id]?.toFixed(1) || '-'}
+                                        </span>
+                                    </>
                                     : matchup_info
-                                        ? games?.toString()
-                                        : player_scoring_dict[player_id].trade || '0',
-                                colSpan: matchup_info ? 3 : 4
-                            },
-                            {
-                                text: previous
-                                    ? players_points[player_id]?.toFixed(1) || '-'
-                                    : matchup_info
-                                        ? ((games > 0 && (points / games).toFixed(1)) || '-')
-                                        : <p className="stat" style={getTrendColor(trend, 1.5)}>
-                                            {trend.toString()}
-                                        </p>,
-                                colSpan: matchup_info ? 5 : 4
+                                        ? <>
+                                            <span>{games?.toString()}</span>
+                                            &nbsp;
+                                            <span>{((games > 0 && (points / games).toFixed(1)) || '-')}</span>
+                                        </>
+                                        : <>
+                                            <span>{player_scoring_dict[player_id].trade || '0'}</span>
+                                            &nbsp;
+                                            <em>
+                                                <p className="stat" style={getTrendColor(trend, 1.5)}>
+                                                    {trend.toString()}
+                                                </p>
+                                            </em>
+                                        </>,
+                                colSpan: 8
                             }
                         ]
                     }
