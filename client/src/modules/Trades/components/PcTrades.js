@@ -1,10 +1,12 @@
 import TableMain from "../../COMMON/components/TableMain";
+import { useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Trade from "./Trade";
 import { setStateTrades, fetchPriceCheckTrades } from "../redux/actions";
 import Search from "../../COMMON/components/Search";
 import useFetchPcTrades from "../services/hooks/useFetchPcTrades";
-
+import useFetchPlayerValues from "../../COMMON/services/hooks/useFetchPlayerValues";
+import LoadingIcon from "../../COMMON/components/LoadingIcon";
 
 const PcTrades = ({
     trades_headers,
@@ -19,10 +21,23 @@ const PcTrades = ({
         trade_date
     } = useSelector(state => state.trades);
 
-console.log({pricecheckTrades})
+
     useFetchPcTrades();
 
     const tradesDisplay = pricecheckTrades.searches.find(pcTrade => pcTrade.pricecheck_player === pricecheckTrades.pricecheck_player.id && pcTrade.pricecheck_player2 === pricecheckTrades.pricecheck_player2.id)?.trades || []
+
+    const player_ids = useMemo(() => {
+        return tradesDisplay
+            .sort((a, b) => parseInt(b.status_updated) - parseInt(a.status_updated))
+            .slice((pricecheckTrades.page - 1) * 25, ((pricecheckTrades.page - 1) * 25) + 25)
+            .flatMap(t => Object.keys(t.adds))
+
+    }, [tradesDisplay, pricecheckTrades.page])
+
+
+
+    useFetchPlayerValues({ player_ids })
+
 
     const loadMore = async () => {
         console.log('LOADING MORE')
@@ -51,14 +66,14 @@ console.log({pricecheckTrades})
 
             const current_value_date_raw = new Date().toISOString().split('T')[0];
             const current_value_date_formatted = `${current_value_date_raw.split('-')[1]}-${current_value_date_raw.split('-')[2]}-${current_value_date_raw.split('-')[0].slice(2, 4)}`
-            
-            
+
+
             return {
                 id: trade.transaction_id,
                 list: [
 
                     {
-                        text: <Trade trade={trade} trade_value_date={trade_value_date_raw}/>,
+                        text: <Trade trade={trade} trade_value_date={trade_value_date_raw} />,
                         colSpan: 10,
                         className: `small `
                     }
@@ -86,7 +101,7 @@ console.log({pricecheckTrades})
                 setSearched={(searched) => dispatch(setStateTrades({ pricecheckTrades: { ...pricecheckTrades, pricecheck_player: searched } }))}
             />
             {
-                pricecheckTrades.pricecheck_player === '' ? null :
+                !pricecheckTrades.pricecheck_player?.id  ? null :
                     <>
                         <Search
                             id={'By Player'}
@@ -98,20 +113,25 @@ console.log({pricecheckTrades})
                     </>
             }
         </div>
-        <TableMain
-            id={'trades'}
-            type={'primary'}
-            headers={trades_headers}
-            body={trades_body}
-            itemActive={pricecheckTrades.itemActive}
-            setItemActive={(item) => dispatch(setStateTrades({ pricecheckTrades: { ...pricecheckTrades, itemActive: item } }))}
-            page={pricecheckTrades.page}
-            setPage={(page) => dispatch(setStateTrades({ pricecheckTrades: { ...pricecheckTrades, page: page } }))}
-            partial={tradesDisplay?.length < tradeCount ? true : false}
-            loadMore={loadMore}
-            isLoading={isLoading}
+        {
+            isLoading
+                ? <LoadingIcon />
+                : <TableMain
+                    id={'trades'}
+                    type={'primary'}
+                    headers={trades_headers}
+                    body={trades_body}
+                    itemActive={pricecheckTrades.itemActive}
+                    setItemActive={(item) => dispatch(setStateTrades({ pricecheckTrades: { ...pricecheckTrades, itemActive: item } }))}
+                    page={pricecheckTrades.page}
+                    setPage={(page) => dispatch(setStateTrades({ pricecheckTrades: { ...pricecheckTrades, page: page } }))}
+                    partial={tradesDisplay?.length < tradeCount ? true : false}
+                    loadMore={loadMore}
+                    isLoading={isLoading}
 
-        /></>
+                />
+        }
+    </>
 }
 
 export default PcTrades;
