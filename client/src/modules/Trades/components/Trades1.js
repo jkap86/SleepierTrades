@@ -8,7 +8,7 @@ const Trades1 = ({ secondaryTable }) => {
     const dispatch = useDispatch();
     const { state, allplayers } = useSelector(state => state.common);
     const { type1, type2, leagues } = useSelector(state => state.user);
-    const { tabPrimary, trade_date, lmTrades } = useSelector(state => state.trades);
+    const { tabPrimary, trade_date, lmTrades, pricecheckTrades } = useSelector(state => state.trades);
 
     const hash = `${type1}-${type2}`;
 
@@ -25,7 +25,17 @@ const Trades1 = ({ secondaryTable }) => {
                     )
                     ?.count
             break;
+        case 'Price Check':
+            const trades = pricecheckTrades.searches
+                .find(
+                    pcTrade => pcTrade.pricecheck_player === pricecheckTrades.pricecheck_player.id
+                        && pcTrade.pricecheck_player2 === pricecheckTrades.pricecheck_player2.id
+                )
+                ?.trades
+                || []
 
+            tradeCount = (trades?.count || 0)
+            break;
         default:
             break;
     }
@@ -134,7 +144,7 @@ const Trades1 = ({ secondaryTable }) => {
         {
             tabPrimary === "Leaguemate Trades"
                 ? <LmTrades {...props} secondaryTable={secondaryTable} />
-                : <PcTrades />
+                : <PcTrades  {...props} secondaryTable={secondaryTable} />
         }
     </>
 }

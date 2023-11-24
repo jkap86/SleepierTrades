@@ -25,7 +25,14 @@ ol.page_numbers>li.active {
     border: 0.1rem ridge var(--color2);
 
 }
-
+div.trade_search_wrapper {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    width: 50%;
+    margin: auto;
+    flex-direction: column;
+}
 div.nav {
     display: flex;
     height: 7rem;

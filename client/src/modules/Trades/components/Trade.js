@@ -107,7 +107,7 @@ const Trade = ({
                                     {no_qb.toString()} QB {no_sf.toString()} SF
                                 </div>
                                 <div>
-                                    {no_te.toString()} TE {te_prem.toString()} Prem
+                                    {no_te.toString()} TE {te_prem.toLocaleString('en-US', { maximumFractionDigits: 2})} Prem
                                 </div>
                             </>,
                             colSpan: 3,

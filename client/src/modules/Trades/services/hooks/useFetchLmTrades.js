@@ -6,7 +6,7 @@ const useFetchLmTrades = () => {
     const dispatch = useDispatch();
     const { state } = useSelector(state => state.common);
     const { user_id, leagues, type1, type2 } = useSelector(state => state.user);
-    const { trade_date, tabPrimary, lmTrades } = useSelector(state => state.trades);
+    const { trade_date, lmTrades } = useSelector(state => state.trades);
 
     const hash = `${type1}-${type2}`;
 
@@ -25,7 +25,6 @@ const useFetchLmTrades = () => {
         state.league_season,
         hash,
         trade_date,
-        tabPrimary,
         lmTrades.searched_player.id,
         lmTrades.searched_manager.id,
         lmTrades.trades.trade_date,

@@ -122,15 +122,13 @@ div.search_wrapper li button img.thumbnail {
     position: static;
 }
 
-div.search_filter_wrapper>div:first-child,
-div.trade_search_wrapper>div:first-child {
+div.search_filter_wrapper>div:first-child{
     display: flex;
     justify-content: right;
     width: 25%;
 }
 
-div.search_filter_wrapper>div:last-child,
-div.trade_search_wrapper>div:last-child {
+div.search_filter_wrapper>div:last-child {
     display: flex;
     justify-content: left;
     width: 25%;

@@ -88,7 +88,7 @@ export const fetchPriceCheckTrades = (pricecheck_player, pricecheck_player2, off
 
     const state = getState();
 
-    const { user, main } = state;
+    const { user, common } = state;
 
     try {
         const player_trades = await axios.post('/trade/pricecheck', {
@@ -98,8 +98,9 @@ export const fetchPriceCheckTrades = (pricecheck_player, pricecheck_player2, off
             limit: limit
         })
 
-        const trades_tips = getTradeTips(player_trades.data.rows, user.leagues, main.state.league_season)
-
+        console.log({player_trades})
+        const trades_tips = getTradeTips(player_trades.data.rows, user.leagues, common.state.league_season)
+        console.log({trades_tips})
         dispatch({
             type: 'FETCH_PRICECHECKTRADES_SUCCESS',
             payload: {
