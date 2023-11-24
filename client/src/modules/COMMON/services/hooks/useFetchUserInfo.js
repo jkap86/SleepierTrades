@@ -8,7 +8,7 @@ import { fetchCommon } from "../../redux/actions";
 const useFetchUserInfo = (to_fetch_array) => {
     const dispatch = useDispatch();
     const params = useParams();
-    const { user_id, username, leagues } = useSelector(state => state.user);
+    const { user_id, isLoadingUser, username, leagues, isLoadingLeagues } = useSelector(state => state.user);
     const { allplayers } = useSelector(state => state.common);
 
     useEffect(() => {
@@ -19,16 +19,16 @@ const useFetchUserInfo = (to_fetch_array) => {
 
 
     useEffect(() => {
-        if (!user_id) {
+        if (!user_id && !isLoadingUser) {
             dispatch(fetchUser(params.username))
         }
-    }, [dispatch, user_id, params.username])
+    }, [dispatch, user_id, params.username, isLoadingUser])
 
     useEffect(() => {
-        if (user_id && !leagues) {
+        if (user_id && !leagues && !isLoadingLeagues) {
             dispatch(fetchLeagues(user_id));
         }
-    }, [dispatch, user_id, leagues]);
+    }, [dispatch, user_id, leagues, isLoadingLeagues]);
 
     useEffect(() => {
         if (leagues) {

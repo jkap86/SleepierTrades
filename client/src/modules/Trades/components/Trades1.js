@@ -8,7 +8,7 @@ const Trades1 = ({ secondaryTable }) => {
     const dispatch = useDispatch();
     const { state, allplayers } = useSelector(state => state.common);
     const { type1, type2, leagues } = useSelector(state => state.user);
-    const { tabPrimary, trade_date, lmTrades, pricecheckTrades } = useSelector(state => state.trades);
+    const { tabPrimary, trade_date, lmTrades, pricecheckTrades, isLoading } = useSelector(state => state.trades);
 
     const hash = `${type1}-${type2}`;
 
@@ -109,25 +109,22 @@ const Trades1 = ({ secondaryTable }) => {
     }
     return <>
         <h2>
-            {tradeCount?.toLocaleString("en-US")}
-            {` Trades`}
-
+            {
+                isLoading
+                    ? 'Loading Trades...'
+                    : tradeCount?.toLocaleString("en-US") + ' Trades'
+            }
         </h2>
-        <div className='navbar'>
-            <p className='select'>
-                {tabPrimary}&nbsp;<i class="fa-solid fa-caret-down"></i>
-            </p>
-
+        <h2>
             <select
-                className='trades'
-                onChange={(e) => dispatch(setStateTrades({ tabPrimary: e.target.value }))}
                 value={tabPrimary}
-
+                onChange={(e) => dispatch(setStateTrades({ tabPrimary: e.target.value }))}
+                className="active click"
             >
                 <option>Price Check</option>
                 <option>Leaguemate Trades</option>
             </select>
-        </div>
+        </h2>
         <div className='date'>
             <input
                 type='date'
