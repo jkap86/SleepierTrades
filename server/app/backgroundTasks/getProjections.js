@@ -44,7 +44,7 @@ module.exports = async (app) => {
             ? 19
             : week + 1
 
-        for (let i = week; i < limit; i++) {
+        for (let i = 1; i < 19; i++) {
             try {
                 for (const position of ['QB', 'RB', 'WR', 'TE']) {
                     const projections_week = await axios.get(`https://api.sleeper.com/projections/nfl/${season}/${i}?season_type=regular&position[]=${position}&order_by=ppr`)
@@ -73,7 +73,7 @@ module.exports = async (app) => {
                 }
                 console.log(`Projections updated for Week ${i}`)
             } catch (err) {
-                projections.push(projections_json.filter(p => p.week === i))
+                projections.push(projections_to_update)
                 console.log(err.message + ` week $${i}`)
             }
         }
@@ -85,7 +85,7 @@ module.exports = async (app) => {
         const minute = new Date().getMinutes()
         const delay = (14 - (minute % 14)) * 60 * 1000;
 
-        if (delay > 2 * 60 * 1000) {
+        if (delay > 222222 * 60 * 1000) {
             setTimeout(async () => {
                 const month = new Date().getMonth()
                 const state = app.get('state')

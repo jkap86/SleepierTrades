@@ -5,7 +5,7 @@ const fs = require('fs');
 const getStats = async (season, week) => {
   
 
-    for (let i = week; i <= week; i++) {
+    for (let i = 1; i <= week; i++) {
         const projections_json = fs.readFileSync('./projections.json', 'utf-8')
 
         try {
@@ -16,7 +16,7 @@ const getStats = async (season, week) => {
             console.log("Updating stats for week " + i)
 
             for (const position of ['QB', 'RB', 'WR', 'TE']) {
-                const stats_week = await axios.get(`https://api.sleeper.com/projections/nfl/${season}/${i}?season_type=regular&position[]=${position}&order_by=ppr`)
+                const stats_week = await axios.get(`https://api.sleeper.com/stats/nfl/${season}/${i}?season_type=regular&position[]=${position}&order_by=ppr`)
 
                 stats_week.data
                     .filter(p => p.stats.pts_ppr)
