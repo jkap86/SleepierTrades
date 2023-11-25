@@ -21,9 +21,6 @@ export const fetchCommon = (item) => {
         try {
             const main = await axios.get(`/main/${item}`);
 
-            if (item === 'projections') {
-                console.log(main.data[0].filter(d => d.week === 4 && d.player_id === '8135'))
-            }
             const data = item !== 'projections' ? main.data[0] : main.data[0].reduce((result, item) => {
                 const { week, player_id, injury_status, ...stats } = item;
 
@@ -37,7 +34,7 @@ export const fetchCommon = (item) => {
                 };
                 return result;
             }, {})
-
+            console.log({data})
             dispatch({
                 type: 'FETCH_COMMON_SUCCESS', payload: {
                     item: item,

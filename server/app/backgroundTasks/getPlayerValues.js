@@ -109,46 +109,34 @@ module.exports = async (app) => {
 
             console.log({ dates_updated })
 
-            fs.readFile('./playervalues.json', 'utf-8', (err, playervalues_json) => {
-                if (err) {
-                    console.error('Error reading the file:', err);
-                    return;
-                }
-                console.log('FILE READ')
+            const playervalues_json = fs.readFileSync('./playervalues.json', 'utf-8')
 
-                const existing_values = JSON.parse(playervalues_json)
+            const existing_values = JSON.parse(playervalues_json)
 
-                const data = Object.fromEntries(
-                    [...existing_values.filter(ev => !new_values.find(nv => nv.date === ev.date)), ...new_values]
-                        .map(value_obj => {
+            const data = Object.fromEntries(
+                [...existing_values.filter(ev => !new_values.find(nv => nv.date === ev.date)), ...new_values]
+                    .map(value_obj => {
 
-                            return [
-                                `${value_obj.date}__${value_obj.type}__${value_obj.player_id}`,
-                                value_obj.value
-                            ]
+                        return [
+                            `${value_obj.date}__${value_obj.type}__${value_obj.player_id}`,
+                            value_obj.value
+                        ]
 
-                        })
-                )
+                    })
+            )
 
-                const data_array = Object.keys(data).map(key => {
-                    const date = key.split('__')[0];
-                    const type = key.split('__')[1];
-                    const player_id = key.split('__')[2];
-                    const value = data[key]
+            const data_array = Object.keys(data).map(key => {
+                const date = key.split('__')[0];
+                const type = key.split('__')[1];
+                const player_id = key.split('__')[2];
+                const value = data[key]
 
-                    return { date, type, player_id, value }
-                })
+                return { date, type, player_id, value }
+            })
 
-                console.log(Object.values(data_array).length)
+            fs.writeFileSync('./playervalues.json', JSON.stringify(Object.values(data_array)));
 
-                fs.writeFile('./playervalues.json', JSON.stringify(Object.values(data_array)), (err) => {
-                    if (err) {
-                        console.error('Error writing to the file:', err);
-                        return;
-                    }
-                    console.log('Data has been written to the file.');
-                });
-            });
+            console.log('Player Values Update Complete...')
 
 
         } catch (err) {

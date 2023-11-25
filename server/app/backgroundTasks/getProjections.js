@@ -3,7 +3,7 @@
 module.exports = async (app) => {
     const axios = require('../api/axiosInstance');
     const fs = require('fs');
-    
+    const { getStats } = require('../helpers/getStats');
 
     const getProjections = async (season, week) => {
         console.log('Update Projections...')
@@ -34,64 +34,72 @@ module.exports = async (app) => {
                 : total_breakdown;
         }
 
-        const projections_json = fs.readFileSync('./projections.json', 'utf-8')
-
-        const projections = JSON.parse(projections_json).filter(p => p.week < week);
-
-        const projections_to_update = JSON.parse(projections_json).filter(p => p.week === week);
-
         const limit = new Date().getMinutes() < 15
             ? 19
             : week + 1
 
         for (let i = week; i < limit; i++) {
+            const projections_json = fs.readFileSync('./projections.json', 'utf-8')
+
+            const projections = JSON.parse(projections_json).filter(p => p.week !== i);
+
+            const projections_to_update = JSON.parse(projections_json).filter(p => p.week === i);
+            
             try {
                 for (const position of ['QB', 'RB', 'WR', 'TE']) {
                     const projections_week = await axios.get(`https://api.sleeper.com/projections/nfl/${season}/${i}?season_type=regular&position[]=${position}&order_by=ppr`)
 
-                   
 
-                     projections_week.data
-                        .filter(p => p.stats.pts_ppr || p.player.injury_status)
-                        .forEach(p => {
-                            const projection_object = projections_to_update.find(p => p.player_id === p.player_id)
+
+                    projections_week.data
+                        .filter(pw => pw.stats.pts_ppr || pw.player.injury_status)
+                        .forEach(pw => {
+                            const projection_object = projections_to_update.find(p => p.player_id === pw.player_id)
 
                             if (projection_object) {
-                                projection_object.projection = p.stats
+                                projection_object.projection = pw.stats
                             } else {
-                                projections.push( {
+                                projections_to_update.push({
                                     week: i,
-                                    player_id: p.player_id,
-                                    injury_status: p.player.injury_status,
-                                    projection: p.stats,
+                                    player_id: pw.player_id,
+                                    injury_status: pw.player.injury_status,
+                                    projection: pw.stats,
                                 })
                             }
                         })
-
-                   
-
                 }
+
+
                 console.log(`Projections updated for Week ${i}`)
             } catch (err) {
-                projections.push(projections_to_update)
+
                 console.log(err.message + ` week $${i}`)
             }
+            console.log({[i]: projections_to_update.length})
+
+            projections.push(...projections_to_update)
+
+            console.log('Projections Update Complete')
+            fs.writeFileSync('./projections.json', JSON.stringify(projections))
         }
-        console.log('Projections Update Complete')
-        fs.writeFileSync('./projections.json', JSON.stringify(projections))
     }
 
     if (process.env.HEROKU) {
         const minute = new Date().getMinutes()
         const delay = (14 - (minute % 14)) * 60 * 1000;
 
-        if (delay > 2 * 60 * 1000) {
+        if (delay > .5 * 60 * 1000) {
             setTimeout(async () => {
                 const month = new Date().getMonth()
                 const state = app.get('state')
                 if (month > 5 && state) {
                     try {
-                        await getProjections(state.league_season, state.display_week)
+                        await getProjections(state.season, state.week)
+
+                        setTimeout(async() => {
+                            await getStats(state.season, state.week)
+                        }, 3000)
+                        
                     } catch (error) {
                         console.log(error)
                     }

@@ -2,12 +2,12 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
 
     console.log({ week_to_fetch, state, leagues, allplayers, schedule, projections, includeTaxi, includeLocked, rankings, user_id })
 
-    const getPlayerScore = (stats_array, scoring_settings, total = false) => {
+    const getPlayerScore = (stats_array, scoring_settings, type, total = false) => {
 
         let total_breakdown = {};
 
         stats_array?.map(stats_game => {
-            Object.keys(stats_game?.stats || {})
+            Object.keys(stats_game?.[type] || {})
                 .filter(x => Object.keys(scoring_settings).includes(x))
                 .map(key => {
                     if (!total_breakdown[key]) {
@@ -17,8 +17,8 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
                         }
                     }
                     total_breakdown[key] = {
-                        stats: total_breakdown[key].stats + stats_game.stats[key],
-                        points: total_breakdown[key].points + (stats_game.stats[key] * scoring_settings[key])
+                        stats: total_breakdown[key].stats + stats_game[type][key],
+                        points: total_breakdown[key].points + (stats_game[type][key] * scoring_settings[key])
                     }
                 })
         })
@@ -96,12 +96,17 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
                                 : matchup.starters?.includes(player_id)
                                     ? 999
                                     : 1000
-                        : ((getPlayerScore([projections[player_id]], league.scoring_settings, true) || 0) * (parseInt(playing?.gameSecondsRemaining || 0) / 3600))
-                        + (matchup?.players_points[player_id] || 0)
-
+                        : (
+                            (
+                                (getPlayerScore([projections[player_id]], league.scoring_settings, 'projection', true) || 0)
+                                * (parseInt(playing?.gameSecondsRemaining || 0) / 3600)
+                            )
+                            + (getPlayerScore([projections[player_id]], league.scoring_settings, 'stats', true) || 0)
+                        )
                 })
             })
 
+        
         const getOptimalLineup = () => {
             let optimal_lineup = []
             let player_ranks_filtered = players

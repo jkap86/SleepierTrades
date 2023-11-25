@@ -3,7 +3,7 @@ const fs = require('fs');
 
 
 const getStats = async (season, week) => {
-  
+
 
     for (let i = week; i <= week; i++) {
         const projections_json = fs.readFileSync('./projections.json', 'utf-8')
@@ -23,8 +23,8 @@ const getStats = async (season, week) => {
                     .forEach(stat_object => {
                         const projection_object = projections_week.find(p => p.player_id === stat_object.player_id)
 
+                    
                         if (projection_object) {
-
                             projection_object.stats = stat_object.stats;
 
                         } else {
@@ -37,7 +37,7 @@ const getStats = async (season, week) => {
                             })
                         }
                     })
-               
+
             };
 
 
@@ -47,7 +47,8 @@ const getStats = async (season, week) => {
                     ...projections_week
                 ]
             ))
-
+            
+            console.log('stats update complete...')
         } catch (error) {
             console.log(error.message)
         }

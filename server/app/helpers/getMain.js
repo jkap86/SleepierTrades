@@ -111,10 +111,7 @@ const getSchedule = async (state, week = false) => {
             delay = (((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)
 
         } else {
-            await getStats(state.season, state.week)
-
-
-
+         
             const next_kickoff = Math.min(...Object.keys(schedule)
                 .filter(week => schedule[week])
                 .flatMap(week => {
