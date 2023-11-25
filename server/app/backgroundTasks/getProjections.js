@@ -3,7 +3,7 @@
 module.exports = async (app) => {
     const axios = require('../api/axiosInstance');
     const fs = require('fs');
-    const projections_json = require('../../projections.json');
+    
 
     const getProjections = async (season, week) => {
         console.log('Update Projections...')
@@ -34,44 +34,41 @@ module.exports = async (app) => {
                 : total_breakdown;
         }
 
-        const projections = projections_json.filter(p => p.week < week);
+        const projections_json = fs.readFileSync('./projections.json', 'utf-8')
 
-        for (let i = week; i < 19; i++) {
+        const projections = JSON.parse(projections_json).filter(p => p.week < week);
+
+        const projections_to_update = JSON.parse(projections_json).filter(p => p.week === week);
+
+        const limit = new Date().getMinutes() < 15
+            ? 19
+            : week + 1
+
+        for (let i = week; i < limit; i++) {
             try {
                 for (const position of ['QB', 'RB', 'WR', 'TE']) {
                     const projections_week = await axios.get(`https://api.sleeper.com/projections/nfl/${season}/${i}?season_type=regular&position[]=${position}&order_by=ppr`)
 
-                    const ppr_scoring_settings = {
-                        'pass_yd': 0.04,
-                        'pass_td': 4,
-                        'pass_2pt': 2,
-                        'pass_int': -1,
-                        'rush_yd': 0.1,
-                        'rush_2pt': 2,
-                        'rush_td': 6,
-                        'rec': 1,
-                        'rec_yd': 0.1,
-                        'rec_2pt': 2,
-                        'rec_td': 6,
-                        'fum_lost': -2
-                    }
+                   
 
-                    const projections_totals = projections_week.data
+                     projections_week.data
                         .filter(p => p.stats.pts_ppr || p.player.injury_status)
-                        .map(p => {
-                            const ppr_score = getPlayerScore([p], ppr_scoring_settings, true)
-                            return {
-                                week: i,
-                                player_id: p.player_id,
-                                injury_status: p.player.injury_status,
-                                stats: {
-                                    ...p.stats,
-                                    pts_ppr: ppr_score
-                                }
+                        .forEach(p => {
+                            const projection_object = projections_to_update.find(p => p.player_id === p.player_id)
+
+                            if (projection_object) {
+                                projection_object.projection = p.stats
+                            } else {
+                                projections.push( {
+                                    week: i,
+                                    player_id: p.player_id,
+                                    injury_status: p.player.injury_status,
+                                    projection: p.stats,
+                                })
                             }
                         })
 
-                    projections.push(...projections_totals)
+                   
 
                 }
                 console.log(`Projections updated for Week ${i}`)
@@ -88,7 +85,7 @@ module.exports = async (app) => {
         const minute = new Date().getMinutes()
         const delay = (14 - (minute % 14)) * 60 * 1000;
 
-        if (delay > 1) {
+        if (delay > 2 * 60 * 1000) {
             setTimeout(async () => {
                 const month = new Date().getMonth()
                 const state = app.get('state')

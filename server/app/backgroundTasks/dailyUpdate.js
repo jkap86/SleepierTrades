@@ -10,7 +10,7 @@ module.exports = async (app) => {
 
         if (process.env.HEROKU) {
             await getAllPlayers();
-            await getSchedule();
+            await getSchedule(app.get('state'));
         }
     }, 1000)
     const now = new Date();

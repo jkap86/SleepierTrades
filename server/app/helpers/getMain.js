@@ -2,6 +2,9 @@
 
 const fs = require('fs');
 const axios = require('axios');
+const { getStats } = require('../helpers/getStats');
+
+
 
 const getAllPlayers = async () => {
     //  get allplayers dict - from .json file in dev; filter for active and position
@@ -49,20 +52,38 @@ const getState = async (app) => {
     app.set('state', state.data, 0)
 }
 
-const getSchedule = async () => {
+const getSchedule = async (state, week = false) => {
     console.log('Updating Schedule on ' + new Date())
 
 
     let schedule;
 
-    let nflschedule
+    let nflschedule;
+
+    if (week) {
+        const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
+
+        nflschedule = Object.entries(nflschedule_json).map(([key, value]) => {
+            return {
+                week: key,
+                matchup: value
+            }
+        });
+
+    } else {
+        const nflschedule_update = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=ALL&JSON=1`)
+
+        nflschedule = nflschedule_update.data.fullNflSchedule.nflSchedule
+    }
+
+
     let nflSchedule_week
     try {
-        nflschedule = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=ALL&JSON=1`)
+
         nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=&JSON=1`)
 
         schedule = Object.fromEntries(
-            [...nflschedule.data.fullNflSchedule.nflSchedule, nflSchedule_week.data.nflSchedule]
+            [...nflschedule, nflSchedule_week.data.nflSchedule]
                 .map(matchups_week => {
                     return [matchups_week.week, matchups_week.matchup]
                 })
@@ -83,10 +104,16 @@ const getSchedule = async () => {
             )
 
         if (games_in_progress) {
+            await getStats(state.season, state.week)
+
             const min = new Date().getMinutes()
 
             delay = (((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)
+
         } else {
+            await getStats(state.season, state.week)
+
+
 
             const next_kickoff = Math.min(...Object.keys(schedule)
                 .filter(week => schedule[week])
@@ -113,12 +140,12 @@ const getSchedule = async () => {
         `
         )
         setTimeout(() => {
-            getSchedule()
+            getSchedule(state, games_in_progress)
         }, delay)
     } catch (err) {
 
         setTimeout(() => {
-            getSchedule()
+            getSchedule(state, week)
         }, 15 * 60 * 1000)
 
         console.log(err.message)
