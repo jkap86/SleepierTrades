@@ -87,7 +87,7 @@ exports.leaguemate = async (req, res) => {
     let lmTrades;
 
     try {
-        lmTrades = await Trade.findAndCountAll({
+        lmTrades = await Trade.findAll({
             order: [['status_updated', 'DESC']],
             offset: req.body.offset,
             limit: req.body.limit,
@@ -126,13 +126,51 @@ exports.leaguemate = async (req, res) => {
                     required: true
                 }
             ],
-            group: ['trade.transaction_id', 'league.league_id'],
+            raw: true
+        })
+
+        const count = await Trade.count({
+            where: { [Op.and]: filters },
+            attributes: [],
+            include: [
+                {
+                    model: League,
+                    attributes: [],
+                    where: { [Op.and]: league_filters }
+                },
+                {
+                    model: User,
+                    attributes: [],
+                    through: { attributes: [] },
+                    include: {
+                        model: League,
+                        attributes: [],
+                        through: { attributes: [] },
+                        include: {
+                            model: User,
+                            attributes: [],
+                            through: { attributes: [] },
+                            where: {
+                                user_id: req.body.user_id
+                            },
+                            duplicating: false,
+                            subQuery: false
+                        },
+                        duplicating: false,
+                        required: true,
+                        subQuery: false
+
+                    },
+                    duplicating: false,
+                    required: true
+                }
+            ],
             raw: true
         })
 
         const trades_to_send = {
-            rows: lmTrades.rows,
-            count: lmTrades?.count?.length
+            rows: lmTrades,
+            count: count
         }
 
         res.send(trades_to_send)
