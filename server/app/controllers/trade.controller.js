@@ -115,11 +115,11 @@ exports.leaguemate = async (req, res) => {
                                 user_id: req.body.user_id
                             },
                             duplicating: false,
-                            subQuery: false
+                            subQuery: true
                         },
                         duplicating: false,
                         required: true,
-                        subQuery: false
+                        subQuery: true
 
                     },
                     duplicating: false,

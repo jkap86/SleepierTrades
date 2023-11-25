@@ -338,7 +338,7 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
 
 
                 const matchup_opp = league[`matchups_${week}`]
-                    .find(m => m.matchup_id === matchup_user.matchup_id && m.roster_id !== roster_id)
+                    .find(m => m.matchup_id === matchup_user?.matchup_id && m.roster_id !== roster_id)
 
                 const lc_user = matchup_user && getLineupCheck(matchup_user, league, allplayers, rankings, projections[week], schedule[week], includeTaxi, includeLocked, true)
                 const lc_opp = matchup_opp && getLineupCheck(matchup_opp, league, allplayers, rankings, projections[week], schedule[week], includeTaxi, includeLocked, true)

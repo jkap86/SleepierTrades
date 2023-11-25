@@ -60,6 +60,52 @@ const useGetLineupChecks = () => {
                     }
                 }
 
+            }  else {
+                const player_lineup_dict = {};
+    
+                leagues
+                    .forEach(league => {
+                        const matchup_user = league[`matchups_${week}`]?.find(m => m.roster_id === league.userRoster.roster_id);
+                        const matchup_opp = league[`matchups_${week}`]?.find(m => m.matchup_id === matchup_user.matchup_id && m.roster_id !== matchup_user.roster_id);
+    
+                        matchup_user?.players
+                            ?.forEach(player_id => {
+                                if (!player_lineup_dict[player_id]) {
+                                    player_lineup_dict[player_id] = {
+                                        start: [],
+                                        bench: [],
+                                        start_opp: [],
+                                        bench_opp: []
+                                    }
+                                }
+    
+                                if (matchup_user.starters?.includes(player_id)) {
+                                    player_lineup_dict[player_id].start.push(league)
+                                } else {
+                                    player_lineup_dict[player_id].bench.push(league)
+                                }
+                            })
+    
+                        matchup_opp?.players
+                            ?.forEach(player_id => {
+                                if (!player_lineup_dict[player_id]) {
+                                    player_lineup_dict[player_id] = {
+                                        start: [],
+                                        bench: [],
+                                        start_opp: [],
+                                        bench_opp: []
+                                    }
+                                }
+    
+                                if (matchup_opp.starters?.includes(player_id)) {
+                                    player_lineup_dict[player_id].start_opp.push(league)
+                                } else {
+                                    player_lineup_dict[player_id].bench_opp.push(league)
+                                }
+                            })
+                    })
+    
+                dispatch(setStateLineups({ playerLineupDict: player_lineup_dict }));
             }
         }
     }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, lineupChecks, week, hash, dispatch])

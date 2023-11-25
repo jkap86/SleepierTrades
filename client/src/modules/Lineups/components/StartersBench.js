@@ -56,6 +56,8 @@ const StartersBench = ({ secondaryTable }) => {
         ]
     ]
 
+    console.log({playerLineupDict})
+
     const players_body = Object.keys(playerLineupDict)
         ?.filter(player_id => (
             (!searched.id || searched.id === player_id)
