@@ -34,66 +34,32 @@ const useGetLineupChecks = () => {
                 } else if (!matchups && !isLoadingMatchups) {
                     dispatch(fetchMatchups())
                 } else if (!projections) {
-                    dispatch(fetchCommon('projections'))
+                    dispatch(fetchCommon('projections'));
+
+                    const games_in_progress = schedule?.[state.week]
+                        ?.find(
+                            g => parseInt(g.gameSecondsRemaining) > 0
+                                && parseInt(g.gameSecondsRemaining) < 3600
+                        )
+
+                    if (games_in_progress) {
+                        const min = new Date().getMinutes();
+
+                        const delay = ((((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)) + 60000;
+                        let fetchProjectionInterval;
+
+                        setTimeout(() => {
+                            fetchProjectionInterval = setInterval(() => {
+                                dispatch(fetchCommon('projections'))
+                            }, 5 * 60 * 1000)
+                        }, delay)
+
+                        return () => {
+                            clearInterval(fetchProjectionInterval)
+                        }
+                    }
                 }
 
-            } else if (lineupChecks[week]?.[hash]) {
-                const player_lineup_dict = {};
-
-                leagues
-                    .forEach(league => {
-                        const matchup_user = league[`matchups_${week}`]?.find(m => m.roster_id === league.userRoster.roster_id);
-                        const matchup_opp = league[`matchups_${week}`]?.find(m => m.matchup_id === matchup_user.matchup_id && m.roster_id !== matchup_user.roster_id);
-
-                        const optimal_lineup = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user?.optimal_lineup
-                        const optimal_lineup_opp = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp?.optimal_lineup
-
-                        const user_starters = league.settings.best_ball === 1
-                            ? optimal_lineup?.map(ol => ol.player) || []
-                            : matchup_user?.starters || []
-
-                        matchup_user?.players
-                            ?.forEach(player_id => {
-                                if (!player_lineup_dict[player_id]) {
-                                    player_lineup_dict[player_id] = {
-                                        start: [],
-                                        bench: [],
-                                        start_opp: [],
-                                        bench_opp: []
-                                    }
-                                }
-
-                                if (user_starters?.includes(player_id)) {
-                                    player_lineup_dict[player_id].start.push(league)
-                                } else {
-                                    player_lineup_dict[player_id].bench.push(league)
-                                }
-                            })
-
-                        const opp_starters = league.settings.best_ball === 1
-                            ? optimal_lineup_opp?.map(ol => ol.player) || []
-                            : matchup_opp?.starters || []
-
-                        matchup_opp?.players
-                            ?.forEach(player_id => {
-                                if (!player_lineup_dict[player_id]) {
-                                    player_lineup_dict[player_id] = {
-                                        start: [],
-                                        bench: [],
-                                        start_opp: [],
-                                        bench_opp: []
-                                    }
-                                }
-
-                                if (opp_starters?.includes(player_id)) {
-                                    player_lineup_dict[player_id].start_opp.push(league)
-                                } else {
-                                    player_lineup_dict[player_id].bench_opp.push(league)
-                                }
-                            })
-                    })
-
-                dispatch(setStateLineups({ playerLineupDict: player_lineup_dict }, 'LINEUPS'));
             }
         }
     }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, lineupChecks, week, hash, dispatch])
