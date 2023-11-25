@@ -5,7 +5,7 @@ const fs = require('fs');
 const getStats = async (season, week) => {
   
 
-    for (let i = 1; i <= week; i++) {
+    for (let i = week; i <= week; i++) {
         const projections_json = fs.readFileSync('./projections.json', 'utf-8')
 
         try {
