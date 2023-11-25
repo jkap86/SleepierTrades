@@ -14,16 +14,18 @@ const useFetchPcTrades = () => {
         if (
             !isLoading
             && pricecheckTrades.pricecheck_player.id
-            && !pricecheckTrades.searches 
+            && !pricecheckTrades.searches
                 .find(
                     pc => pc.pricecheck_player === pricecheckTrades.pricecheck_player.id
-                        && (!pricecheckTrades.pricecheck_player2?.id
-                            || pc.pricecheck_player2 === pricecheckTrades.pricecheck_player2.id)
+                        && (
+                            !pricecheckTrades.pricecheck_player2?.id
+                            || pc.pricecheck_player2 === pricecheckTrades.pricecheck_player2.id
+                        )
                 )
         ) {
             dispatch(fetchPriceCheckTrades(pricecheckTrades.pricecheck_player.id, pricecheckTrades.pricecheck_player2.id, 0, 125))
         }
-    }, [pricecheckTrades.pricecheck_player, isLoading,  pricecheckTrades.pricecheck_player2, dispatch])
+    }, [pricecheckTrades.pricecheck_player, isLoading, pricecheckTrades.pricecheck_player2, pricecheckTrades.searches, dispatch])
 
 }
 
