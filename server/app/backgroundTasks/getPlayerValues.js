@@ -157,14 +157,17 @@ module.exports = async (app) => {
             const schedule_json = fs.readFileSync('./schedule.json', 'utf-8');
             const week = app.get('state')?.week
 
-            const games_in_progress = (schedule_json[week] || [])
-                ?.find(
-                    game => (
-                        parseInt(game.gameSecondsRemaining) > 0
-                        && parseInt(game.gameSecondsRemaining) < 3600
+            const weekData = schedule_json[week];
+            const games_in_progress = Array.isArray(weekData)
+                ? weekData
+                    ?.find(
+                        game => (
+                            parseInt(game.gameSecondsRemaining) > 0
+                            && parseInt(game.gameSecondsRemaining) < 3600
+                        )
                     )
-                )
-            if (games_in_progress && new Date().getUTCHours() < 23) {
+                : false
+            if (games_in_progress ) {
                 console.log('Skipping KTC values update - games in progress...')
             } else {
                 await getDailyValues()
