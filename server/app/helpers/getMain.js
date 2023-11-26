@@ -108,7 +108,7 @@ const getSchedule = async (state, week = false) => {
 
             const min = new Date().getMinutes()
 
-            delay = (((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)
+            delay = (1 * 60 * 1000)
 
         } else {
          

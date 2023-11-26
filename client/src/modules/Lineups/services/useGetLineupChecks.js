@@ -48,11 +48,11 @@ const useGetLineupChecks = () => {
                         const delay = ((((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)) + 60000;
                         let fetchProjectionInterval;
 
-                        setTimeout(() => {
+                       // setTimeout(() => {
                             fetchProjectionInterval = setInterval(() => {
                                 dispatch(fetchCommon('projections'))
-                            }, 5 * 60 * 1000)
-                        }, delay)
+                            }, 1 * 60 * 1000)
+                        //}, delay)
 
                         return () => {
                             clearInterval(fetchProjectionInterval)
@@ -60,14 +60,14 @@ const useGetLineupChecks = () => {
                     }
                 }
 
-            }  else {
+            } else {
                 const player_lineup_dict = {};
-    
+
                 leagues
                     .forEach(league => {
                         const matchup_user = league[`matchups_${week}`]?.find(m => m.roster_id === league.userRoster.roster_id);
                         const matchup_opp = league[`matchups_${week}`]?.find(m => m.matchup_id === matchup_user.matchup_id && m.roster_id !== matchup_user.roster_id);
-    
+
                         matchup_user?.players
                             ?.forEach(player_id => {
                                 if (!player_lineup_dict[player_id]) {
@@ -78,14 +78,14 @@ const useGetLineupChecks = () => {
                                         bench_opp: []
                                     }
                                 }
-    
+
                                 if (matchup_user.starters?.includes(player_id)) {
                                     player_lineup_dict[player_id].start.push(league)
                                 } else {
                                     player_lineup_dict[player_id].bench.push(league)
                                 }
                             })
-    
+
                         matchup_opp?.players
                             ?.forEach(player_id => {
                                 if (!player_lineup_dict[player_id]) {
@@ -96,7 +96,7 @@ const useGetLineupChecks = () => {
                                         bench_opp: []
                                     }
                                 }
-    
+
                                 if (matchup_opp.starters?.includes(player_id)) {
                                     player_lineup_dict[player_id].start_opp.push(league)
                                 } else {
@@ -104,7 +104,7 @@ const useGetLineupChecks = () => {
                                 }
                             })
                     })
-    
+
                 dispatch(setStateLineups({ playerLineupDict: player_lineup_dict }));
             }
         }
@@ -121,51 +121,71 @@ const useGetLineupChecks = () => {
             }
         })
 
-    useEffect(() => {
-        const getProjectedRecords = (week_to_fetch, includeTaxi, includeLocked, league_ids) => {
+
+    const getProjectedRecords = (week_to_fetch, includeTaxi, includeLocked, league_ids) => {
 
 
-            dispatch(setStateLineups({ isLoadingProjectionDict: true }, 'LINEUPS'));
+        dispatch(setStateLineups({ isLoadingProjectionDict: true }, 'LINEUPS'));
 
-            const worker = new Worker('/getRecordDictWeekWorker.js')
-
-
-
-            const result = getRecordDict({ week_to_fetch, state, leagues, allplayers, schedule, projections, includeTaxi, includeLocked, rankings, user_id, recordType, league_ids })
+        const worker = new Worker('/getRecordDictWeekWorker.js')
 
 
 
+        const result = getRecordDict({ week_to_fetch, state, leagues, allplayers, schedule, projections, includeTaxi, includeLocked, rankings, user_id, recordType, league_ids })
 
-            if (result.week < state.week) {
 
-                dispatch(setStateLineups({
-                    lineupChecks: {
-                        ...lineupChecks,
-                        [result.week]: {
-                            ...lineupChecks[result.week],
+
+
+        if (result.week < state.week) {
+
+            dispatch(setStateLineups({
+                lineupChecks: {
+                    ...lineupChecks,
+                    [result.week]: {
+                        ...lineupChecks[result.week],
+                        ...result.projectedRecordWeek
+                    }
+                }
+            }, 'LINEUPS'))
+
+
+
+        } else {
+            console.log({ result })
+            dispatch(setStateLineups({
+                lineupChecks: {
+                    ...lineupChecks,
+                    [result.week]: {
+                        ...lineupChecks[result.week],
+                        [`${includeTaxi}-${includeLocked}`]: {
+                            ...lineupChecks[result.week]?.[`${includeTaxi}-${includeLocked}`],
                             ...result.projectedRecordWeek
                         }
                     }
-                }, 'LINEUPS'))
-
-
-
-            } else {
-                console.log({ result })
-                dispatch(setStateLineups({
-                    lineupChecks: {
-                        ...lineupChecks,
-                        [result.week]: {
-                            ...lineupChecks[result.week],
-                            [`${includeTaxi}-${includeLocked}`]: {
-                                ...lineupChecks[result.week]?.[`${includeTaxi}-${includeLocked}`],
-                                ...result.projectedRecordWeek
-                            }
-                        }
-                    }
-                }, 'LINEUPS'));
-            }
+                }
+            }, 'LINEUPS'));
         }
+    }
+
+    useEffect(() => {
+        if (allplayers && schedule && projections && matchups) {
+
+            if (
+                week === state.week
+                && !(
+                    !lineupChecks[week]?.[`${includeTaxi}-${true}`]
+                    || Object.keys(lineupChecks[week]?.[`${includeTaxi}-${true}`])
+                        .find(key => lineupChecks[week]?.[`${includeTaxi}-${true}`]?.[key]?.edited === true)
+                )
+            ) {
+                getProjectedRecords(week, includeTaxi, true, false)
+            }
+
+        }
+    }, [schedule, allplayers, projections, matchups, week, state, includeTaxi, dispatch])
+
+    useEffect(() => {
+
 
 
         if (leagues && allplayers && schedule && projections && matchups) {
