@@ -63,7 +63,7 @@ const getSchedule = async (state, week = false) => {
     if (week) {
         const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
 
-        nflschedule = Object.entries(nflschedule_json).map(([key, value]) => {
+        nflschedule = Object.entries(JSON.parse(nflschedule_json)).map(([key, value]) => {
             return {
                 week: key,
                 matchup: value
