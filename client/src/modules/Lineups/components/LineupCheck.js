@@ -197,6 +197,21 @@ const LineupCheck = ({
                     : slot.earlyInFlex || slot.lateNotInFlex ? 'yellow'
                         : ''
             )
+            const opp = matchTeam(schedule[week]
+                ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[slot.current_player]?.team))
+                ?.team
+                ?.find(team => matchTeam(team.id) !== allplayers[slot.current_player]?.team)
+                ?.id) || 'FA';
+
+            const gameSeconds = schedule[state.week]
+                ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[slot.current_player]?.team))
+                ?.gameSecondsRemaining
+
+            const status = parseInt(gameSeconds) === 3600
+                ? 'pregame'
+                : parseInt(gameSeconds) > 0
+                    ? 'ingame'
+                    : 'postgame'
 
             return {
                 id: slot.slot_index,
@@ -226,17 +241,13 @@ const LineupCheck = ({
                         }
                     },
                     {
-                        text: matchTeam(schedule[week]
-                            ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[slot.current_player]?.team))
-                            ?.team
-                            ?.find(team => matchTeam(team.id) !== allplayers[slot.current_player]?.team)
-                            ?.id) || 'FA',
+                        text: opp,
                         colSpan: 3,
                         className: color
                     },
                     {
-                        text: <div className="flex">
-                            <p>
+                        text: <div className={"flex " + status}>
+                            <p className="score">
                                 {getPlayerScore([projections[week][slot.current_player]], league.scoring_settings, true)?.toFixed(1) || '-'}
                             </p>
                             {
@@ -247,7 +258,7 @@ const LineupCheck = ({
                                             || 999
                                         }
                                     </p>
-                                    : <em>
+                                    : <em className="score">
                                         {
                                             players_projections[slot.current_player]?.toFixed(1)
                                             || '-'
@@ -262,6 +273,23 @@ const LineupCheck = ({
             }
         })
         : optimal_lineup?.map((ol, index) => {
+            const opp = matchTeam(schedule[state.week]
+                ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[ol.player]?.team))
+                ?.team
+                ?.find(team => matchTeam(team.id) !== allplayers[ol.player]?.team)
+                ?.id) || 'FA';
+
+            const gameSeconds = schedule[state.week]
+                ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[ol.player]?.team))
+                ?.gameSecondsRemaining
+
+            const status = parseInt(gameSeconds) === 3600
+                ? 'pregame'
+                : parseInt(gameSeconds) > 0
+                    ? 'ingame'
+                    : 'postgame';
+
+
             return {
                 id: ol.slot + '__' + index,
                 list: [
@@ -288,16 +316,12 @@ const LineupCheck = ({
                         }
                     },
                     {
-                        text: matchTeam(schedule[state.week]
-                            ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[ol.player]?.team))
-                            ?.team
-                            ?.find(team => matchTeam(team.id) !== allplayers[ol.player]?.team)
-                            ?.id) || 'FA',
+                        text: opp,
                         colSpan: 3
                     },
                     {
-                        text: <div className="flex">
-                            <p>
+                        text: <div className={"flex " + status}>
+                            <p className="score">
                                 {getPlayerScore([projections[week][ol.player]], league.scoring_settings, true)?.toFixed(1) || '-'}
                             </p>
                             {
@@ -308,7 +332,7 @@ const LineupCheck = ({
                                             || 999
                                         }
                                     </p>
-                                    : <em>
+                                    : <em className="score">
                                         {
                                             (players_projections[ol.player] || 0).toFixed(1)
                                             || '-'
@@ -424,6 +448,23 @@ const LineupCheck = ({
             ? suboptimal_options
                 ?.sort((a, b) => (players_projections[b] || 0) - (players_projections[a] || 0))
                 ?.map((opt_starter, index) => {
+
+                    const opp = matchTeam(schedule[state.week]
+                        ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opt_starter]?.team))
+                        ?.team
+                        ?.find(team => matchTeam(team.id) !== allplayers[opt_starter]?.team)
+                        ?.id) || 'FA';
+
+                    const gameSeconds = schedule[state.week]
+                        ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opt_starter]?.team))
+                        ?.gameSecondsRemaining
+
+                    const status = parseInt(gameSeconds) === 3600
+                        ? 'pregame'
+                        : parseInt(gameSeconds) > 0
+                            ? 'ingame'
+                            : 'postgame'
+
                     return {
                         id: opt_starter,
                         list: [
@@ -451,17 +492,16 @@ const LineupCheck = ({
                                 }
                             },
                             {
-                                text: matchTeam(schedule[state.week]
-                                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opt_starter]?.team))
-                                    ?.team
-                                    ?.find(team => matchTeam(team.id) !== allplayers[opt_starter]?.team)
-                                    ?.id) || 'FA',
+                                text: opp,
                                 colSpan: 3,
                             },
                             {
-                                text: <div className="flex">
+                                text: <div className={"flex " + status}>
                                     <p>
-                                        {getPlayerScore([projections[week][opt_starter]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                        {
+                                            status === 'pregame'
+                                                ? '-'
+                                                : getPlayerScore([projections[week][opt_starter]], league.scoring_settings, true)?.toFixed(1) || '-'}
                                     </p>
                                     {
                                         rankings
@@ -511,6 +551,23 @@ const LineupCheck = ({
                     ?.map((so, index) => {
                         const color = optimal_lineup.find(x => x.player === so) ? 'green' :
                             allplayers[so]?.rank_ecr < allplayers[active_player]?.rank_ecr ? 'yellow' : ''
+
+                        const opp = matchTeam(schedule[state.week]
+                            ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[so]?.team))
+                            ?.team
+                            ?.find(team => matchTeam(team.id) !== allplayers[so]?.team)
+                            ?.id) || 'FA';
+
+                        const gameSeconds = schedule[state.week]
+                            ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[so]?.team))
+                            ?.gameSecondsRemaining
+
+                        const status = parseInt(gameSeconds) === 3600
+                            ? 'pregame'
+                            : parseInt(gameSeconds) > 0
+                                ? 'ingame'
+                                : 'postgame'
+
                         return {
                             id: so,
                             list: [
@@ -539,17 +596,13 @@ const LineupCheck = ({
                                     }
                                 },
                                 {
-                                    text: matchTeam(schedule[state.week]
-                                        ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[so]?.team))
-                                        ?.team
-                                        ?.find(team => matchTeam(team.id) !== allplayers[so]?.team)
-                                        ?.id) || 'FA',
+                                    text: opp,
                                     colSpan: 3,
                                     className: color
                                 },
                                 {
-                                    text: <div className="flex">
-                                        <p>
+                                    text: <div className={"flex " + status}>
+                                        <p className="score">
                                             {getPlayerScore([projections[week][so]], league.scoring_settings, true)?.toFixed(1) || '-'}
                                         </p>
                                         {
@@ -560,7 +613,7 @@ const LineupCheck = ({
                                                         || 999
                                                     }
                                                 </p>
-                                                : <em>
+                                                : <em className="score">
                                                     {
                                                         (players_projections[so] || 0).toFixed(1)
                                                     }
@@ -575,6 +628,22 @@ const LineupCheck = ({
             ]
         : secondaryContent2 === 'Optimal'
             ? optimal_lineup_opp?.map((opp_starter, index) => {
+                const opp = matchTeam(schedule[state.week]
+                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opp_starter.player]?.team))
+                    ?.team
+                    ?.find(team => matchTeam(team.id) !== allplayers[opp_starter.player]?.team)
+                    ?.id) || 'FA';
+
+                const gameSeconds = schedule[state.week]
+                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opp_starter.player || opp_starter]?.team))
+                    ?.gameSecondsRemaining
+
+                const status = parseInt(gameSeconds) === 3600
+                    ? 'pregame'
+                    : parseInt(gameSeconds) > 0
+                        ? 'ingame'
+                        : 'postgame'
+
                 return {
                     id: opp_starter.player || opp_starter,
                     list: [
@@ -602,16 +671,12 @@ const LineupCheck = ({
                             }
                         },
                         {
-                            text: matchTeam(schedule[state.week]
-                                ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opp_starter.player]?.team))
-                                ?.team
-                                ?.find(team => matchTeam(team.id) !== allplayers[opp_starter.player]?.team)
-                                ?.id) || 'FA',
+                            text: opp,
                             colSpan: 3,
                         },
                         {
-                            text: <div className="flex">
-                                <p>
+                            text: <div className={"flex " + status}>
+                                <p className="score">
                                     {getPlayerScore([projections[week][opp_starter.player]], league.scoring_settings, true)?.toFixed(1) || '-'}
                                 </p>
                                 {
@@ -622,7 +687,7 @@ const LineupCheck = ({
                                                 || 999
                                             }
                                         </p>
-                                        : <em>
+                                        : <em className="score">
                                             {
                                                 (players_projections[opp_starter.player] || 0).toFixed(1)
                                                 || '-'
@@ -636,11 +701,27 @@ const LineupCheck = ({
                 }
             })
             : matchup_opp?.starters?.map((opp_starter, index) => {
+                const opp = matchTeam(schedule[state.week]
+                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opp_starter]?.team))
+                    ?.team
+                    ?.find(team => matchTeam(team.id) !== allplayers[opp_starter]?.team)
+                    ?.id) || 'FA';
+
+                const gameSeconds = schedule[state.week]
+                    ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opp_starter]?.team))
+                    ?.gameSecondsRemaining
+
+                const status = parseInt(gameSeconds) === 3600
+                    ? 'pregame'
+                    : parseInt(gameSeconds) > 0
+                        ? 'ingame'
+                        : 'postgame'
+
                 return {
                     id: opp_starter,
                     list: [
                         {
-                            text: lineup_check_opp?.[index]?.slot,
+                            text: lineup_check_opp?.[index]?.slot || ' ',
                             colSpan: 3
                         },
                         {
@@ -663,17 +744,18 @@ const LineupCheck = ({
                             }
                         },
                         {
-                            text: matchTeam(schedule[state.week]
-                                ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opp_starter]?.team))
-                                ?.team
-                                ?.find(team => matchTeam(team.id) !== allplayers[opp_starter]?.team)
-                                ?.id) || 'FA',
+                            text: opp,
                             colSpan: 3,
                         },
                         {
-                            text: <div className="flex">
-                                <p>
-                                    {getPlayerScore([projections[week][opp_starter]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                            text: <div className={"flex " + status}>
+                                <p className={"score"} >
+                                    {
+                                        status === 'pregame'
+                                            ? '-'
+                                            : getPlayerScore([projections[week][opp_starter]], league.scoring_settings, true)?.toFixed(1) || '-'
+
+                                    }
                                 </p>
                                 {
                                     rankings
@@ -683,7 +765,7 @@ const LineupCheck = ({
                                                 || 999
                                             }
                                         </p>
-                                        : <em>
+                                        : <em className="score">
                                             {
                                                 (players_projections[opp_starter] || 0).toFixed(1)
                                                 || '-'

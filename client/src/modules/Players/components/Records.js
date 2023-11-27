@@ -169,7 +169,7 @@ const Records = ({ secondaryTable }) => {
                         }
                     },
                     {
-                        text: <div className="flex">
+                        text: <div className="flex small">
                             <span>
                                 {
                                     leagues_owned?.length.toString()
@@ -182,7 +182,7 @@ const Records = ({ secondaryTable }) => {
                         colSpan: 5
                     },
                     {
-                        text: <div className="flex">
+                        text: <div className="flex large">
                             <p
                                 className="stat"
                                 style={getTrendColor(winpct - .5, .0005)}
@@ -202,7 +202,7 @@ const Records = ({ secondaryTable }) => {
                         className: "stat"
                     },
                     {
-                        text: <div className="flex">
+                        text: <div className="flex large">
                             <p
                                 className="stat"
                                 style={getTrendColor(winpct_lm - .5, .0005)}

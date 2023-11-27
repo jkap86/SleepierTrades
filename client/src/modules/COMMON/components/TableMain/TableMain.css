@@ -249,6 +249,34 @@ div.flex>span,
 div.flex>p,
 div.flex>em {
     width: 50%;
+    
+}
+
+div.flex.small,
+div.flex.large {
+    text-align: justify;
+    padding-left: 1rem;
+}
+
+div.flex>p.score {
+    padding: 0;
+    text-align: center;
+}
+
+div.flex.small>span {
+    width: 40%;
+}
+
+div.flex.small>em {
+    width: 60%;
+}
+
+div.flex.large>p {
+    width: 60%;
+}
+
+div.flex.large>em {
+    width: 40%;
 }
 
 td.red.check,
