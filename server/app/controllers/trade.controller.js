@@ -53,37 +53,6 @@ exports.leaguemate = async (req, res) => {
         })
     }
 
-    let league_filters = [];
-
-
-    if (req.body.type1 === 'Dynasty') {
-        league_filters.push({
-            settings: {
-                type: 2
-            }
-        })
-    } else if (req.body.type1 === 'Redraft') {
-        league_filters.push({
-            settings: {
-                type: { [Op.not]: 2 }
-            }
-        })
-    }
-
-    if (req.body.type2 === 'Bestball') {
-        league_filters.push({
-            settings: {
-                best_ball: 1
-            }
-        })
-    } else if (req.body.type2 === 'Lineup') {
-        league_filters.push({
-            settings: {
-                best_ball: { [Op.not]: 1 }
-            }
-        })
-    }
-
     let lmTrades;
 
     try {
@@ -97,7 +66,6 @@ exports.leaguemate = async (req, res) => {
                 {
                     model: League,
                     attributes: ['league_id', 'name', 'avatar', 'roster_positions', 'scoring_settings', 'settings'],
-                    where: { [Op.and]: league_filters }
                 },
                 {
                     model: User,
