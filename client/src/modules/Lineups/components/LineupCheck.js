@@ -5,6 +5,7 @@ import TableMain from "../../COMMON/components/TableMain";
 import { setStateUser } from "../../Players/redux/actions";
 import { fetchMatchups, syncLeague } from "../redux/actions";
 import { matchTeam } from "../../COMMON/services/helpers/matchTeam";
+import { getTrendColor } from "../../COMMON/services/helpers/getTrendColor";
 import { useEffect } from "react";
 
 const LineupCheck = ({
@@ -34,7 +35,7 @@ const LineupCheck = ({
     } = useSelector(state => state.lineups);
 
     useEffect(() => {
-        dispatch(setStateLineups({ itemActive2: ''}))
+        dispatch(setStateLineups({ itemActive2: '' }))
     }, [])
 
     const oppRoster = league?.rosters.find(r => r.roster_id === matchup_opp?.roster_id);
@@ -124,38 +125,68 @@ const LineupCheck = ({
     const lineup_headers = [
         [
             {
+                text: <p
+                    className="stat check"
+                    style={getTrendColor(-((league.userRoster.rank / league.rosters.length) - .5), .0025)}
+                >
+                    {league.userRoster.rank}
+                    <span className="small">
+                        {
+                            league.userRoster.rank === 1
+                                ? 'st'
+                                : league.userRoster.rank === 2
+                                    ? 'nd'
+                                    : league.userRoster.rank === 3
+                                        ? 'rd'
+                                        : 'th'
+                        }
+                    </span>
+                </p>,
+                colSpan: 6,
+                className: 'half'
+            },
+            {
                 text: (
                     (secondaryContent1 === 'Lineup' && league.settings.best_ball !== 1)
-                        ? <>
-                            {
-                                (matchup_user?.starters || [])
-                                    .reduce(
-                                        (acc, cur) => acc + getPlayerScore([projections[week][cur]], league.scoring_settings, true),
-                                        0
-                                    )
-                                    ?.toFixed(2)
-                            }
-                            <em>
-                                ({proj_score_user_actual?.toFixed(2)})
-                            </em>
-                        </>
-                        : (secondaryContent1 === 'Optimal' || league.settings.best_ball === 1)
-                            ? <>
+                        ? <div className="flex">
+                            <p className="score">
                                 {
-                                    (optimal_lineup || [])
+                                    (matchup_user?.starters || [])
                                         .reduce(
-                                            (acc, cur) => acc + getPlayerScore([projections[week][cur.player]], league.scoring_settings, true),
+                                            (acc, cur) => acc + getPlayerScore([projections[week][cur]], league.scoring_settings, true),
                                             0
                                         )
                                         ?.toFixed(2)
                                 }
-                                <em>
-                                    ({proj_score_user_optimal?.toFixed(2)})
-                                </em></>
-
+                            </p>
+                            <em className="score">
+                                {proj_score_user_actual?.toFixed(2)}
+                            </em>
+                        </div>
+                        : (secondaryContent1 === 'Optimal' || league.settings.best_ball === 1)
+                            ? <div className="flex">
+                                <p className="score">
+                                    {
+                                        (optimal_lineup || [])
+                                            .reduce(
+                                                (acc, cur) => acc + getPlayerScore([projections[week][cur.player]], league.scoring_settings, true),
+                                                0
+                                            )
+                                            ?.toFixed(2)
+                                    }
+                                </p>
+                                <em className="score">
+                                    {proj_score_user_optimal?.toFixed(2)}
+                                </em>
+                            </div>
                             : ''
                 ),
-                colSpan: 23,
+                colSpan: 11,
+                className: 'half'
+            },
+            {
+                text: '',
+                colSpan: 6,
                 className: 'half'
             }
         ],
@@ -253,7 +284,11 @@ const LineupCheck = ({
                     {
                         text: <div className={"flex " + status}>
                             <p className="score">
-                                {getPlayerScore([projections[week][slot.current_player]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                {
+                                    status === 'pregame'
+                                        ? '-'
+                                        : getPlayerScore([projections[week][slot.current_player]], league.scoring_settings, true)?.toFixed(1)
+                                }
                             </p>
                             {
                                 rankings
@@ -327,7 +362,11 @@ const LineupCheck = ({
                     {
                         text: <div className={"flex " + status}>
                             <p className="score">
-                                {getPlayerScore([projections[week][ol.player]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                {
+                                    status === 'pregame'
+                                        ? '-'
+                                        : getPlayerScore([projections[week][ol.player]], league.scoring_settings, true)?.toFixed(1)
+                                }
                             </p>
                             {
                                 rankings
@@ -370,46 +409,73 @@ const LineupCheck = ({
     const subs_headers = [
         [
             {
+                text: parseFloat(proj_median)
+                    ? <p className="median score">{proj_median.toFixed(2)}</p>
+                    : null,
+                colSpan: 6,
+                className: 'half'
+            },
+            {
                 text: (
                     <>
                         {(secondaryContent2 === 'Lineup' && league.settings.best_ball !== 1)
-                            ? <>
-                                {
-                                    (matchup_opp?.starters || [])
-                                        .reduce(
-                                            (acc, cur) => acc + getPlayerScore([projections[week][cur]], league.scoring_settings, true),
-                                            0
-                                        )
-                                        ?.toFixed(2)
-                                }
-                                <em>
-                                    ({proj_score_opp_actual?.toFixed(2)})
-                                </em>
-                            </>
-                            : (secondaryContent2 === 'Optimal' || league.settings.best_ball === 1)
-                                ? <>
+                            ? <div className="flex">
+                                <p className="score">
                                     {
-                                        (optimal_lineup_opp || [])
+                                        (matchup_opp?.starters || [])
                                             .reduce(
-                                                (acc, cur) => acc + getPlayerScore([projections[week][cur.player]], league.scoring_settings, true),
+                                                (acc, cur) => acc + getPlayerScore([projections[week][cur]], league.scoring_settings, true),
                                                 0
                                             )
                                             ?.toFixed(2)
                                     }
-                                    <em>
-                                        ({proj_score_opp_optimal?.toFixed(2)})
+                                </p>
+                                <em className="score">
+                                    {proj_score_opp_actual?.toFixed(2)}
+                                </em>
+                            </div>
+                            : (secondaryContent2 === 'Optimal' || league.settings.best_ball === 1)
+                                ? <div className="flex">
+                                    <p className="score">
+                                        {
+                                            (optimal_lineup_opp || [])
+                                                .reduce(
+                                                    (acc, cur) => acc + getPlayerScore([projections[week][cur.player]], league.scoring_settings, true),
+                                                    0
+                                                )
+                                                ?.toFixed(2)
+                                        }
+                                    </p>
+                                    <em className="score">
+                                        {proj_score_opp_optimal?.toFixed(2)}
                                     </em>
-                                </>
+                                </div>
                                 : ''
-                        }
-                        {
-                            parseFloat(proj_median)
-                                ? <em> Median: ({proj_median.toFixed(2)})</em>
-                                : null
                         }
                     </>
                 ),
-                colSpan: 23,
+                colSpan: 11,
+                className: 'half'
+            },
+            {
+                text: <p
+                    className="stat check"
+                    style={getTrendColor(-((oppRoster.rank / league.rosters.length) - .5), .0025)}
+                >
+                    {oppRoster.rank}
+                    <span className="small">
+                        {
+                            oppRoster.rank === 1
+                                ? 'st'
+                                : oppRoster.rank === 2
+                                    ? 'nd'
+                                    : oppRoster.rank === 3
+                                        ? 'rd'
+                                        : 'th'
+                        }
+                    </span>
+                </p>,
+                colSpan: 6,
                 className: 'half'
             }
         ],
@@ -502,7 +568,7 @@ const LineupCheck = ({
                             },
                             {
                                 text: <div className={"flex " + status}>
-                                    <p>
+                                    <p className="score">
                                         {
                                             status === 'pregame'
                                                 ? '-'
@@ -516,7 +582,7 @@ const LineupCheck = ({
                                                     || 999
                                                 }
                                             </p>
-                                            : <em>
+                                            : <em className="score">
                                                 {
                                                     (players_projections[opt_starter] || 0).toFixed(1)
                                                     || '-'
@@ -608,7 +674,11 @@ const LineupCheck = ({
                                 {
                                     text: <div className={"flex " + status}>
                                         <p className="score">
-                                            {getPlayerScore([projections[week][so]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                            {
+                                                status === 'pregame'
+                                                    ? '-'
+                                                    : getPlayerScore([projections[week][so]], league.scoring_settings, true)?.toFixed(1)
+                                            }
                                         </p>
                                         {
                                             rankings
@@ -682,7 +752,11 @@ const LineupCheck = ({
                         {
                             text: <div className={"flex " + status}>
                                 <p className="score">
-                                    {getPlayerScore([projections[week][opp_starter.player]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                    {
+                                        status === 'pregame'
+                                            ? '-'
+                                            : getPlayerScore([projections[week][opp_starter.player]], league.scoring_settings, true)?.toFixed(1)
+                                    }
                                 </p>
                                 {
                                     rankings

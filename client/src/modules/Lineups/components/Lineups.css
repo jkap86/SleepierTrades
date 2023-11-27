@@ -50,19 +50,57 @@ span.player_inj_status {
     right: 0;
 }
 
-p.score, em.score {
+p.score,
+em.score {
     font-family: var(--font4);
+    font-weight: 100;
+    text-shadow: 0 0 1rem black;
+}
+
+th p.score {
+    letter-spacing: .5rem;
+}
+
+th em.score {
+    font-weight: 900;
+}
+
+ em.score {
+    font-family: var(--font2);
+
+    letter-spacing: .5rem;
+    color: darkgrey;
+}
+
+th.half:nth-child(2) div.flex {
+    box-shadow: inset 0 0 2rem gold;
+}
+
+th.half p.score,
+th.half p.median,
+th.half em.score {
+    font-size: 2.5rem;
     font-weight: 100;
 }
 
-em.score {
-   
+p.median {
+    color: gold;
+    background-color: black;
+    display: block;
+    width: fit-content;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateX(-50%);
+    padding: .5rem 1rem;
+    box-shadow: 0 0 1rem gold;
 }
 
 div.flex>p,
 div.flex>em {
     box-shadow: 0 0 1rem black;
 }
+
 div.flex.pregame>p.score {
     box-shadow: inset 0 0 3rem grey;
 }

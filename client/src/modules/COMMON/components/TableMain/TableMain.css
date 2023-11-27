@@ -285,6 +285,14 @@ p.stat.check {
     font-size: 4rem;
 }
 
+th p.stat.check {
+    font-size: 2.5rem;
+}
+
+p.stat.check>span.small {
+    font-size: 75%;
+}
+
 td.red,
 td.green,
 td.greenb,
