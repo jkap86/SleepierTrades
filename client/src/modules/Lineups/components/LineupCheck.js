@@ -73,6 +73,32 @@ const LineupCheck = ({
             : total_breakdown;
     }
 
+    const getPlayerProjection = (stats_array, scoring_settings, total = false) => {
+
+        let total_breakdown = {};
+
+        stats_array?.map(stats_game => {
+            Object.keys(stats_game?.projection || {})
+                .filter(x => Object.keys(scoring_settings).includes(x))
+                .map(key => {
+                    if (!total_breakdown[key]) {
+                        total_breakdown[key] = {
+                            stats: 0,
+                            points: 0
+                        }
+                    }
+                    total_breakdown[key] = {
+                        stats: total_breakdown[key].stats + stats_game.projection[key],
+                        points: total_breakdown[key].points + (stats_game.projection[key] * scoring_settings[key])
+                    }
+                })
+        })
+
+        return total
+            ? Object.keys(total_breakdown).reduce((acc, cur) => acc + total_breakdown[cur].points, 0)
+            : total_breakdown;
+    }
+
     const getInjuryAbbrev = (injury_status) => {
         switch (injury_status) {
             case 'Questionable':
@@ -95,9 +121,32 @@ const LineupCheck = ({
             {
                 text: (
                     (secondaryContent1 === 'Lineup' && league.settings.best_ball !== 1)
-                        ? <>{matchup_user?.points} <em>({proj_score_user_actual?.toFixed(2)})</em></>
+                        ? <>
+                            {
+                                (matchup_user?.starters || [])
+                                    .reduce(
+                                        (acc, cur) => acc + getPlayerScore([projections[week][cur]], league.scoring_settings, true),
+                                        0
+                                    )
+                                    ?.toFixed(2)
+                            }
+                            <em>
+                                ({proj_score_user_actual?.toFixed(2)})
+                            </em>
+                        </>
                         : (secondaryContent1 === 'Optimal' || league.settings.best_ball === 1)
-                            ? <>{opt_points?.toFixed(2)} <em>({proj_score_user_optimal?.toFixed(2)})</em></>
+                            ? <>
+                                {
+                                    (optimal_lineup || [])
+                                        .reduce(
+                                            (acc, cur) => acc + getPlayerScore([projections[week][cur.player]], league.scoring_settings, true),
+                                            0
+                                        )
+                                        ?.toFixed(2)
+                                }
+                                <em>
+                                    ({proj_score_user_optimal?.toFixed(2)})
+                                </em></>
 
                             : ''
                 ),
@@ -249,7 +298,7 @@ const LineupCheck = ({
                     {
                         text: <div className="flex">
                             <p>
-                            {getPlayerScore([projections[week][ol.player]], league.scoring_settings, true)?.toFixed(1) || '-'}
+                                {getPlayerScore([projections[week][ol.player]], league.scoring_settings, true)?.toFixed(1) || '-'}
                             </p>
                             {
                                 rankings
@@ -295,9 +344,33 @@ const LineupCheck = ({
                 text: (
                     <>
                         {(secondaryContent2 === 'Lineup' && league.settings.best_ball !== 1)
-                            ? <>{matchup_opp?.points} <em>({proj_score_opp_actual?.toFixed(2)})</em></>
+                            ? <>
+                                {
+                                    (matchup_opp?.starters || [])
+                                        .reduce(
+                                            (acc, cur) => acc + getPlayerScore([projections[week][cur]], league.scoring_settings, true),
+                                            0
+                                        )
+                                        ?.toFixed(2)
+                                }
+                                <em>
+                                    ({proj_score_opp_actual?.toFixed(2)})
+                                </em>
+                            </>
                             : (secondaryContent2 === 'Optimal' || league.settings.best_ball === 1)
-                                ? <>{opp_opt_points?.toFixed(2)} <em>({proj_score_opp_optimal?.toFixed(2)})</em></>
+                                ? <>
+                                    {
+                                        (optimal_lineup_opp || [])
+                                            .reduce(
+                                                (acc, cur) => acc + getPlayerScore([projections[week][cur.player]], league.scoring_settings, true),
+                                                0
+                                            )
+                                            ?.toFixed(2)
+                                    }
+                                    <em>
+                                        ({proj_score_opp_optimal?.toFixed(2)})
+                                    </em>
+                                </>
                                 : ''
                         }
                         {
@@ -388,10 +461,7 @@ const LineupCheck = ({
                             {
                                 text: <div className="flex">
                                     <p>
-                                        {
-                                            (matchup_opp?.players_points[opt_starter] || 0)?.toFixed(1)
-
-                                        }
+                                        {getPlayerScore([projections[week][opt_starter]], league.scoring_settings, true)?.toFixed(1) || '-'}
                                     </p>
                                     {
                                         rankings
@@ -480,11 +550,7 @@ const LineupCheck = ({
                                 {
                                     text: <div className="flex">
                                         <p>
-                                            {
-                                                matchup_user?.players_points[so].toFixed(1)
-                                                || '-'
-
-                                            }
+                                            {getPlayerScore([projections[week][so]], league.scoring_settings, true)?.toFixed(1) || '-'}
                                         </p>
                                         {
                                             rankings
@@ -546,10 +612,7 @@ const LineupCheck = ({
                         {
                             text: <div className="flex">
                                 <p>
-                                    {
-                                        matchup_opp?.players_points[opp_starter.player || opp_starter]?.toFixed(1)
-                                        || '-'
-                                    }
+                                    {getPlayerScore([projections[week][opp_starter.player]], league.scoring_settings, true)?.toFixed(1) || '-'}
                                 </p>
                                 {
                                     rankings
@@ -610,10 +673,7 @@ const LineupCheck = ({
                         {
                             text: <div className="flex">
                                 <p>
-                                    {
-                                        matchup_opp?.players_points[opp_starter]?.toFixed(1)
-                                        || '-'
-                                    }
+                                    {getPlayerScore([projections[week][opp_starter]], league.scoring_settings, true)?.toFixed(1) || '-'}
                                 </p>
                                 {
                                     rankings
