@@ -46,7 +46,9 @@ const Heading = () => {
             </h1>
 
             {
-                <div className="switch_wrapper">
+                tab === 'trades'
+                ? null
+                : <div className="switch_wrapper">
                     <div className="switch">
                         <button className={type1 === 'Redraft' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'Redraft' }))}>Redraft</button>
                         <button className={type1 === 'All' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'All' }))}>All</button>
