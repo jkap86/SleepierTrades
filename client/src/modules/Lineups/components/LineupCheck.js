@@ -5,6 +5,7 @@ import TableMain from "../../COMMON/components/TableMain";
 import { setStateUser } from "../../Players/redux/actions";
 import { fetchMatchups, syncLeague } from "../redux/actions";
 import { matchTeam } from "../../COMMON/services/helpers/matchTeam";
+import { useEffect } from "react";
 
 const LineupCheck = ({
     league,
@@ -31,6 +32,10 @@ const LineupCheck = ({
         secondaryContent2,
         itemActive2
     } = useSelector(state => state.lineups);
+
+    useEffect(() => {
+        dispatch(setStateLineups({ itemActive2: ''}))
+    }, [])
 
     const oppRoster = league?.rosters.find(r => r.roster_id === matchup_opp?.roster_id);
 
@@ -626,7 +631,7 @@ const LineupCheck = ({
                         }
                     })
             ]
-        : secondaryContent2 === 'Optimal'
+        : (secondaryContent2 === 'Optimal' || league.settings.best_ball === 1)
             ? optimal_lineup_opp?.map((opp_starter, index) => {
                 const opp = matchTeam(schedule[state.week]
                     ?.find(matchup => matchup.team.find(t => matchTeam(t.id) === allplayers[opp_starter.player]?.team))
