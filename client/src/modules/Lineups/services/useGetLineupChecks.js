@@ -48,10 +48,10 @@ const useGetLineupChecks = () => {
                         const delay = ((((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)) + 60000;
                         let fetchProjectionInterval;
 
-                       // setTimeout(() => {
-                            fetchProjectionInterval = setInterval(() => {
-                                dispatch(fetchCommon('projections'))
-                            }, 1 * 60 * 1000)
+                        // setTimeout(() => {
+                        fetchProjectionInterval = setInterval(() => {
+                            dispatch(fetchCommon('projections'))
+                        }, 1 * 60 * 1000)
                         //}, delay)
 
                         return () => {
@@ -79,10 +79,20 @@ const useGetLineupChecks = () => {
                                     }
                                 }
 
-                                if (matchup_user.starters?.includes(player_id)) {
-                                    player_lineup_dict[player_id].start.push(league)
+                                if (league.settings.best_ball === 1) {
+                                    const optimal_lineup = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user?.optimal_lineup
+
+                                    if (optimal_lineup?.map(ol => ol.player)?.includes(player_id)) {
+                                        player_lineup_dict[player_id].start.push(league)
+                                    } else {
+                                        player_lineup_dict[player_id].bench.push(league)
+                                    }
                                 } else {
-                                    player_lineup_dict[player_id].bench.push(league)
+                                    if (matchup_user.starters?.includes(player_id)) {
+                                        player_lineup_dict[player_id].start.push(league)
+                                    } else {
+                                        player_lineup_dict[player_id].bench.push(league)
+                                    }
                                 }
                             })
 
@@ -97,10 +107,21 @@ const useGetLineupChecks = () => {
                                     }
                                 }
 
-                                if (matchup_opp.starters?.includes(player_id)) {
-                                    player_lineup_dict[player_id].start_opp.push(league)
+                                if (league.settings.best_ball === 1) {
+                                    const optimal_lineup_opp = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp?.optimal_lineup
+
+                                    if (optimal_lineup_opp?.map(ol => ol.player)?.includes(player_id)) {
+                                        player_lineup_dict[player_id].start.push(league)
+                                    } else {
+                                        player_lineup_dict[player_id].bench.push(league)
+                                    }
+
                                 } else {
-                                    player_lineup_dict[player_id].bench_opp.push(league)
+                                    if (matchup_opp.starters?.includes(player_id)) {
+                                        player_lineup_dict[player_id].start_opp.push(league)
+                                    } else {
+                                        player_lineup_dict[player_id].bench_opp.push(league)
+                                    }
                                 }
                             })
                     })
