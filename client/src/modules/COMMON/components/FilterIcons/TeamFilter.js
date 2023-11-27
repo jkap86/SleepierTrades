@@ -1,4 +1,4 @@
-const TeamFilter = (filterTeam, setFilterTeam) => {
+const TeamFilter = ({filterTeam, setFilterTeam}) => {
     const nfl_teams = [
         'ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE', 'DAL', 'DEN',
         'DET', 'GB', 'HOU', 'IND', 'JAX', 'KC', 'LV', 'LAC', 'LAR', 'MIA', 'MIN',

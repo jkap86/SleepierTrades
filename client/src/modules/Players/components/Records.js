@@ -4,6 +4,7 @@ import { getTrendColor } from "../../COMMON/services/helpers/getTrendColor";
 import headshot from '../../../images/headshot.png';
 import { filterLeagues } from '../../COMMON/services/helpers/filterLeagues';
 import { setStatePlayers } from "../redux/actions";
+import FilterIcons from "../../COMMON/components/FilterIcons";
 
 const Records = ({ secondaryTable }) => {
     const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const Records = ({ secondaryTable }) => {
     const { state, allplayers } = useSelector(state => state.common);
     const { page, itemActive, searched, filters, sortBy } = useSelector(state => state.players);
 
+    console.log({userPlayerShares})
 
     const playerShares_headers = [
         [
@@ -69,14 +71,14 @@ const Records = ({ secondaryTable }) => {
         ?.filter(x => x
             &&
             (
-                x.id.includes(' ') || allplayers?.[x.id]
+                x.id.includes('_') || allplayers?.[x.id]
             ) && (
                 !searched?.id || searched?.id === x.id
             ) && (
                 filters.position === allplayers?.[x.id]?.position
                 || filters.position.split('/').includes(allplayers?.[x.id]?.position?.slice(0, 1))
                 || (
-                    filters.position === 'Picks' && x.id?.includes(' ')
+                    filters.position === 'Picks' && x.id?.includes('_')
                 )
             ) && (
                 filters.team === 'All' || allplayers?.[x.id]?.team === filters.team
@@ -170,7 +172,7 @@ const Records = ({ secondaryTable }) => {
                         text: <div className="flex">
                             <span>
                                 {
-                                leagues_owned?.length.toString()
+                                    leagues_owned?.length.toString()
                                 }
                             </span>
                             < em >
@@ -232,6 +234,28 @@ const Records = ({ secondaryTable }) => {
             || (sortBy === 'winpct_lm' && b.winpct_lm - a.winpct_lm)
         )
 
+    const player_ids = (userPlayerShares || [])
+        ?.filter(
+            p => parseInt(allplayers[p.id]?.years_exp) >= 0
+                && (
+                    filters.draftClass === 'All' || parseInt(filters.draftClass) === (state.league_season - allplayers?.[parseInt(p.id)]?.years_exp)
+                ) && (
+                    filters.position === allplayers?.[p.id]?.position
+                    || filters.position.split('/').includes(allplayers?.[p.id]?.position?.slice(0, 1))
+                ) && (
+                    filters.team === 'All' || allplayers?.[p.id]?.team === filters.team
+                )
+        )
+        ?.map(
+            p => parseInt(p.id)
+        )
+
+    const draftClassYears = Array.from(
+        new Set(
+            player_ids
+                ?.map(player_id => state.league_season - allplayers[player_id]?.years_exp)
+        )
+    )?.sort((a, b) => b - a)
 
     return <>
         <TableMain
@@ -245,6 +269,27 @@ const Records = ({ secondaryTable }) => {
             setItemActive={(value) => dispatch(setStatePlayers({ itemActive: value }))}
             searched={searched}
             setSearched={(value) => dispatch(setStatePlayers({ searched: value }))}
+            options1={[
+                <FilterIcons
+                    type={'team'}
+                    filterTeam={filters.team}
+                    setFilterTeam={(value) => dispatch(setStatePlayers({ filters: { ...filters, team: value } }))}
+                />
+            ]}
+            options2={[
+                <FilterIcons
+                    type={'position'}
+                    filterPosition={filters.position}
+                    setFilterPosition={(value) => dispatch(setStatePlayers({ filters: { ...filters, position: value } }))}
+                    picks={false}
+                />,
+                <FilterIcons
+                    type={'draft'}
+                    filterDraftClass={filters.draftClass}
+                    setFilterDraftClass={(value) => dispatch(setStatePlayers({ filters: { ...filters, draftClass: value } }))}
+                    draftClassYears={draftClassYears}
+                />
+            ]}
         />
     </>
 }

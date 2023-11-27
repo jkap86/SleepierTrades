@@ -2,6 +2,7 @@ import TableMain from "../../COMMON/components/TableMain";
 import { useSelector, useDispatch } from "react-redux";
 import { setStateLineups } from "../redux/actions";
 import { filterLeagues } from "../../COMMON/services/helpers/filterLeagues";
+import FilterIcons from "../../COMMON/components/FilterIcons";
 
 const StartersBench = ({ secondaryTable }) => {
     const dispatch = useDispatch();
@@ -135,7 +136,21 @@ const StartersBench = ({ secondaryTable }) => {
         search={true}
         searched={searched}
         setSearched={(value) => dispatch(setStateLineups({ searched: value }))}
-
+        options1={[
+            <FilterIcons
+                type={'team'}
+                filterTeam={filters.team}
+                setFilterTeam={(value) => dispatch(setStateLineups({ filters: {...filters, team: value} }))}
+            />
+        ]}
+        options2={[
+            <FilterIcons
+                type={'position'}
+                filterPosition={filters.position}
+                setFilterPosition={(value) => dispatch(setStateLineups({ filters: { ...filters, position: value } }))}
+                picks={false}
+            />
+        ]}
     />
 }
 
