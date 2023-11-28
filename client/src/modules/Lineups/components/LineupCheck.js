@@ -460,18 +460,20 @@ const LineupCheck = ({
             {
                 text: <p
                     className="stat check"
-                    style={getTrendColor(-((oppRoster.rank / league.rosters.length) - .5), .0025)}
+                    style={getTrendColor(-((oppRoster?.rank / league.rosters.length) - .5), .0025)}
                 >
-                    {oppRoster.rank}
+                    {oppRoster?.rank}
                     <span className="small">
                         {
-                            oppRoster.rank === 1
-                                ? 'st'
-                                : oppRoster.rank === 2
-                                    ? 'nd'
-                                    : oppRoster.rank === 3
-                                        ? 'rd'
-                                        : 'th'
+                            oppRoster
+                                ? oppRoster.rank === 1
+                                    ? 'st'
+                                    : oppRoster.rank === 2
+                                        ? 'nd'
+                                        : oppRoster.rank === 3
+                                            ? 'rd'
+                                            : 'th'
+                                : null
                         }
                     </span>
                 </p>,
