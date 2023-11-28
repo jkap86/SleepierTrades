@@ -52,7 +52,7 @@ const getState = async (app) => {
     app.set('state', state.data, 0)
 }
 
-const getSchedule = async (state, week = false) => {
+const getSchedule = async (state, week = true) => {
     console.log('Updating Schedule on ' + new Date())
 
 
