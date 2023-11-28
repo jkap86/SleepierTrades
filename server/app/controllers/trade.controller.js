@@ -52,10 +52,12 @@ exports.leaguemate = async (req, res) => {
             }
         })
     }
+    
 
     let lmTrades;
 
     try {
+        
         lmTrades = await Trade.findAndCountAll({
             order: [['status_updated', 'DESC']],
             offset: req.body.offset,
@@ -94,23 +96,22 @@ exports.leaguemate = async (req, res) => {
                     required: true
                 }
             ],
-            group: ['trade.transaction_id', 'league.league_id'],
             raw: true
         })
 
         const trades_to_send = {
             rows: lmTrades.rows,
-            count: lmTrades?.count?.length
+            count: lmTrades?.count
         }
 
         res.send(trades_to_send)
-
+        
     } catch (error) {
         res.send(error)
         console.log(error)
     }
 
-    
+
 
 }
 
