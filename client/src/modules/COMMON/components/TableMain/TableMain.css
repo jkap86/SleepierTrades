@@ -279,6 +279,8 @@ div.flex.large>em {
     width: 40%;
 }
 
+
+
 td.red.check,
 td.green.check,
 p.stat.check {
@@ -299,7 +301,9 @@ td.greenb,
 td.redb {
     font-weight: 900;
 }
-
+td.check {
+    font-size: 4rem;
+}
 td.greenb,
 td.redb {
     font-size: 5rem;

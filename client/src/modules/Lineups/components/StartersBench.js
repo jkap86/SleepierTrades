@@ -101,19 +101,23 @@ const StartersBench = ({ secondaryTable }) => {
                     },
                     {
                         text: start.length.toString(),
-                        colSpan: 1
+                        colSpan: 1,
+                        className: 'check'
                     },
                     {
                         text: bench.length.toString(),
-                        colSpan: 1
+                        colSpan: 1,
+                        className: 'check'
                     },
                     {
                         text: start_opp.length.toString(),
-                        colSpan: 1
+                        colSpan: 1,
+                        className: 'check'
                     },
                     {
                         text: bench_opp.length.toString(),
-                        colSpan: 1
+                        colSpan: 1,
+                        className: 'check'
                     }
                 ],
                 secondary_table: secondaryTable({

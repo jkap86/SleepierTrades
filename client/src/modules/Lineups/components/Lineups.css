@@ -69,7 +69,7 @@ th em.score {
     font-family: var(--font2);
 
     letter-spacing: .5rem;
-    color: darkgrey;
+    color: white;
 }
 
 th.half:nth-child(2) div.flex {
@@ -104,8 +104,9 @@ div.flex>em {
 div.flex.pregame>p.score {
     box-shadow: inset 0 0 3rem grey;
 }
-
-div.flex.ingame>p.score {
+div.flex.ingame,
+div.flex.ingame>p.score,
+div.flex.ingame>em.score {
     box-shadow: inset 0 0 3rem goldenrod;
 }
 
