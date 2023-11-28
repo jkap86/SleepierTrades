@@ -52,7 +52,6 @@ exports.leaguemate = async (req, res) => {
             }
         })
     }
-    
 
     let lmTrades;
 
@@ -96,12 +95,13 @@ exports.leaguemate = async (req, res) => {
                     required: true
                 }
             ],
+            group: ['trade.transaction_id', 'league.league_id'],
             raw: true
         })
 
         const trades_to_send = {
             rows: lmTrades.rows,
-            count: lmTrades?.count
+            count: lmTrades?.count?.length
         }
 
         res.send(trades_to_send)
