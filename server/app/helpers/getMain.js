@@ -83,7 +83,7 @@ const getSchedule = async (state, week = true) => {
         nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=&JSON=1`)
 
         schedule = Object.fromEntries(
-            [...nflschedule, nflSchedule_week.data.nflSchedule]
+            [...nflschedule.filter(s => s.week !== nflSchedule_week.data.nflSchedule.week), nflSchedule_week.data.nflSchedule]
                 .map(matchups_week => {
                     return [matchups_week.week, matchups_week.matchup]
                 })
@@ -111,7 +111,7 @@ const getSchedule = async (state, week = true) => {
             delay = (1 * 60 * 1000)
 
         } else {
-         
+
             const next_kickoff = Math.min(...Object.keys(schedule)
                 .filter(week => schedule[week])
                 .flatMap(week => {
