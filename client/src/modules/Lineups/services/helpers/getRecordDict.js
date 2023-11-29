@@ -106,44 +106,46 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
                 })
             })
 
-        
+
         const getOptimalLineup = () => {
             let optimal_lineup = []
             let player_ranks_filtered = players
-            starting_slots.map((slot, index) => {
+            starting_slots
+                .sort((a, b) => (position_map[a]?.length || 0) - (position_map[b].length || 0))
+                .map((slot, index) => {
 
-                const kickoff = players.find(p => p.id === matchup.starters?.[index])?.kickoff
+                    const kickoff = players.find(p => p.id === matchup.starters?.[index])?.kickoff
 
-                const slot_options = player_ranks_filtered
-                    .filter(x =>
-                        (
-                            position_map[slot].includes(stateAllPlayers[x.id]?.position)
-                            || position_map[slot].some(p => stateAllPlayers[x.id]?.fantasy_positions?.includes(p))
+                    const slot_options = player_ranks_filtered
+                        .filter(x =>
+                            (
+                                position_map[slot].includes(stateAllPlayers[x.id]?.position)
+                                || position_map[slot].some(p => stateAllPlayers[x.id]?.fantasy_positions?.includes(p))
+                            )
+                            && (
+                                !includeLocked || x.kickoff > new Date().getTime() || league.settings.best_ball === 1
+                            )
                         )
-                        && (
-                            !includeLocked || x.kickoff > new Date().getTime() || league.settings.best_ball === 1
+                        .sort(
+                            (a, b) => weeklyRankings ? a.rank - b.rank : b.rank - a.rank
                         )
-                    )
-                    .sort(
-                        (a, b) => weeklyRankings ? a.rank - b.rank : b.rank - a.rank
-                    )
 
-                let optimal_player;
+                    let optimal_player;
 
-                if ((includeLocked && league.settings.best_ball !== 1 && kickoff < new Date().getTime())) {
+                    if ((includeLocked && league.settings.best_ball !== 1 && kickoff < new Date().getTime())) {
 
-                    optimal_player = matchup.starters?.[index]
-                } else {
-                    optimal_player = slot_options[0]?.id
-                }
+                        optimal_player = matchup.starters?.[index]
+                    } else {
+                        optimal_player = slot_options[0]?.id
+                    }
 
-                player_ranks_filtered = player_ranks_filtered.filter(x => x.id !== optimal_player)
+                    player_ranks_filtered = player_ranks_filtered.filter(x => x.id !== optimal_player)
 
-                optimal_lineup.push({
-                    slot: position_abbrev[slot],
-                    player: optimal_player
+                    optimal_lineup.push({
+                        slot: position_abbrev[slot],
+                        player: optimal_player
+                    })
                 })
-            })
 
             return optimal_lineup
         }
