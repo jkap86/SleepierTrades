@@ -111,10 +111,73 @@ const Records = ({
         })
 
 
-    console.log({ body })
+    const projectedRecord = filterLeagues((leagues || []), type1, type2)
+        .reduce((acc, cur) => {
+            const fp = parseFloat(cur.userRoster.settings.fpts + '.' + cur.userRoster.settings.fpts_decimal);
+            const fpa = parseFloat(cur.userRoster.settings.fpts_against || 0 + '.' + cur.userRoster.settings.fpts_decimal || 0)
+
+            return {
+                wins: acc.wins + cur.userRoster.settings.wins,
+                losses: acc.losses + cur.userRoster.settings.losses,
+                ties: acc.ties + cur.userRoster.settings.ties,
+                fpts: acc.fpts + fp,
+                fpts_against: acc.fpts_against + fpa,
+            }
+        }, {
+            wins: 0,
+            losses: 0,
+            ties: 0,
+            fpts: 0,
+            fpts_against: 0
+        })
 
     return <>
+        <h2>
+            <table className="summary">
+                <tbody>
+                    <tr>
+                        <th colSpan={2} >
+                            <span className="font2 wr">
+                                {
+                                    'OVERALL RECORD'
+                                }
+                            </span>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Record</th>
+                        <td>{projectedRecord?.wins.toLocaleString("en-US")}-{projectedRecord?.losses.toLocaleString("en-US")}{projectedRecord?.ties > 0 && `-${projectedRecord.ties.toLocaleString("en-US")}`}</td>
+                    </tr>
+                    <tr>
+                        <th>Win Pct</th>
+                        <td>
+                            {
+                                projectedRecord?.wins + projectedRecord?.losses + projectedRecord?.ties > 0 
+                                    ? (
+                                        (projectedRecord?.wins || 0)
+                                        / (
+                                            (projectedRecord?.wins || 0)
+                                            + (projectedRecord?.losses || 0)
+                                            + (projectedRecord?.ties || 0)
+                                        )
+                                    ).toFixed(4)
+                                    : '-'
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Points For</th>
+                        <td>{projectedRecord?.fpts?.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                    </tr>
+                    <tr>
+                        <th>Points Against</th>
+                        <td>{projectedRecord?.fpts_against?.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                    </tr>
+                </tbody>
+            </table>
 
+
+        </h2>
         <TableMain
             id={'Leagues'}
             type={'primary'}

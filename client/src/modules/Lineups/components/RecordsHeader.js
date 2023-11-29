@@ -108,7 +108,24 @@ const RecordsHeader = () => {
                     </tr>
                     <tr>
                         <th>Record</th>
-                        <td>{projectedRecord?.wins}-{projectedRecord?.losses}{projectedRecord?.ties > 0 && `-${projectedRecord.ties}`}</td>
+                        <td>{projectedRecord?.wins.toLocaleString("en-US")}-{projectedRecord?.losses.toLocaleString("en-US")}{projectedRecord?.ties > 0 && `-${projectedRecord.ties.toLocaleString("en-US")}`}</td>
+                    </tr>
+                    <tr>
+                        <th>Win Pct</th>
+                        <td>
+                            {
+                                projectedRecord?.wins + projectedRecord?.losses + projectedRecord?.ties > 0 
+                                    ? (
+                                        (projectedRecord?.wins || 0)
+                                        / (
+                                            (projectedRecord?.wins || 0)
+                                            + (projectedRecord?.losses || 0)
+                                            + (projectedRecord?.ties || 0)
+                                        )
+                                    ).toFixed(4)
+                                    : '-'
+                            }
+                        </td>
                     </tr>
                     <tr>
                         <th>Points For</th>

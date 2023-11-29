@@ -1,33 +1,4 @@
-table.summary {
-    width: 50rem;
-    box-shadow: 0 0 3rem white;
-    filter: brightness(2) contrast(2);
-    font-size: 3rem;
-}
 
-table.summary tr {
-    filter: drop-shadow(0 0 2rem black);
-    filter: contrast(2);
-}
-
-table.summary tr:first-child th {
-    letter-spacing: 1rem;
-    color: var(--color2);
-
-}
-
-table.summary th,
-table.summary td {
-    background-image: radial-gradient(var(--color3) 0%, var(--color6) 250%);
-    text-shadow: 0 0 1rem black;
-}
-
-table.summary th {}
-
-table.summary td {
-    font-family: var(--font4);
-    letter-spacing: .5rem;
-}
 
 h1>select,
 h2>select {
