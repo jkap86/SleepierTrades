@@ -10,10 +10,10 @@ const sequelize = new Sequelize(dbConfig.DATABASE_URL, {
     dialectOptions: { ssl: ssl, useUTC: false },
     logging: false,
     pool: {
-        max: 100,
+        max: 44,
         min: 2,
-        acquire: 20000,
-        idle: 5000
+        acquire: 30000,
+        idle: 20000
     }
 });
 
