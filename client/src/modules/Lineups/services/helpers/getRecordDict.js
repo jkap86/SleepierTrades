@@ -67,7 +67,17 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
             'WRRB_WRT': 'W R',
             'REC_FLEX': 'W T'
         }
-        const starting_slots = league.roster_positions.filter(x => Object.keys(position_map).includes(x))
+        const starting_slots = league.roster_positions
+            .filter(x => Object.keys(position_map).includes(x))
+
+
+        const starting_slots_2 = starting_slots
+            .map((slot, index) => {
+                return {
+                    slot: slot,
+                    index: index
+                }
+            })
 
         const roster = league.rosters.find(r => r.roster_id === matchup.roster_id)
 
@@ -106,19 +116,21 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
                 })
             })
 
-        
+
         const getOptimalLineup = () => {
             let optimal_lineup = []
             let player_ranks_filtered = players
-            starting_slots.map((slot, index) => {
+            starting_slots_2
+                .sort((a, b) => (position_map[a.slot]?.length || 999) - (position_map[b.slot]?.length || 999))
+                .map((s) => {
 
-                const kickoff = players.find(p => p.id === matchup.starters?.[index])?.kickoff
+                const kickoff = players.find(p => p.id === matchup.starters?.[s.index])?.kickoff
 
                 const slot_options = player_ranks_filtered
                     .filter(x =>
                         (
-                            position_map[slot].includes(stateAllPlayers[x.id]?.position)
-                            || position_map[slot].some(p => stateAllPlayers[x.id]?.fantasy_positions?.includes(p))
+                            position_map[s.slot].includes(stateAllPlayers[x.id]?.position)
+                            || position_map[s.slot].some(p => stateAllPlayers[x.id]?.fantasy_positions?.includes(p))
                         )
                         && (
                             !includeLocked || x.kickoff > new Date().getTime() || league.settings.best_ball === 1
@@ -132,7 +144,7 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
 
                 if ((includeLocked && league.settings.best_ball !== 1 && kickoff < new Date().getTime())) {
 
-                    optimal_player = matchup.starters?.[index]
+                    optimal_player = matchup.starters?.[s.index]
                 } else {
                     optimal_player = slot_options[0]?.id
                 }
@@ -140,7 +152,7 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
                 player_ranks_filtered = player_ranks_filtered.filter(x => x.id !== optimal_player)
 
                 optimal_lineup.push({
-                    slot: position_abbrev[slot],
+                    slot: position_abbrev[s.slot],
                     player: optimal_player
                 })
             })
