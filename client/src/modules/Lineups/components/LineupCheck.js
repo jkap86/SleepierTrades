@@ -38,6 +38,7 @@ const LineupCheck = ({
         dispatch(setStateLineups({ itemActive2: '' }))
     }, [])
 
+    console.log({ lineup_check })
     const oppRoster = league?.rosters.find(r => r.roster_id === matchup_opp?.roster_id);
 
     const active_player = lineup_check?.find(x => `${x.slot}_${x.index}` === itemActive2)?.current_player
@@ -1041,7 +1042,7 @@ const LineupCheck = ({
                     </>
                     :
                     <div>
-                        <h1>No Matchups</h1>
+                        <h3>No Matchup</h3>
                     </div>
             }
         </>

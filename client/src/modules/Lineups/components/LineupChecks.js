@@ -230,7 +230,7 @@ const LineupChecks = ({ secondaryTable }) => {
                             }
                         },
                         {
-                            text: <>
+                            text: !matchup_user?.matchup_id ? '-' : <>
                                 {
                                     (lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user && lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp)
                                         ? league.settings.best_ball === 1
@@ -247,16 +247,20 @@ const LineupChecks = ({ secondaryTable }) => {
                                         : '-'
 
                                 }
-                                {
+                                {matchup_user.matchup_id && (
                                     lineupChecks[week]?.[hash]?.[league.league_id]?.median_win > 0
                                         ? <i className="fa-solid fa-trophy"></i>
                                         : lineupChecks[week]?.[hash]?.[league.league_id]?.median_loss > 0
                                             ? <i className="fa-solid fa-poop"></i>
-                                            : ''
+                                            : '')
                                 }
                             </>,
                             colSpan: 1,
-                            className: (lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user && lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp)
+                            className: (
+                                matchup_user?.matchup_id
+                                && lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user
+                                && lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp
+                            )
                                 ? league.settings.best_ball !== 1
                                     ? proj_score_user_actual > proj_score_opp_actual
                                         ? 'greenb'
@@ -283,23 +287,27 @@ const LineupChecks = ({ secondaryTable }) => {
                             ...getColumnValue(column4, matchup_user, lineup_check_user, league, proj_score_user_optimal, proj_score_user_actual, proj_score_opp_optimal, proj_score_opp_actual, proj_median, projections, week, opp_roster)
                         }
                     ],
-                    secondary_table: secondaryTable({
-                        league,
-                        matchup_user,
-                        matchup_opp,
-                        lineup_check: lineup_check_user,
-                        lineup_check_opp,
-                        optimal_lineup,
-                        optimal_lineup_opp,
-                        players_projections,
-                        proj_score_user_actual,
-                        proj_score_user_optimal,
-                        proj_score_opp_actual,
-                        proj_score_opp_optimal,
-                        opp_username: opp_roster?.username || 'Orphan',
-                        opp_avatar: opp_roster?.avatar,
-                        proj_median
-                    })
+                    secondary_table: matchup_user?.matchup_id
+                        ? secondaryTable({
+                            league,
+                            matchup_user,
+                            matchup_opp,
+                            lineup_check: lineup_check_user,
+                            lineup_check_opp,
+                            optimal_lineup,
+                            optimal_lineup_opp,
+                            players_projections,
+                            proj_score_user_actual,
+                            proj_score_user_optimal,
+                            proj_score_opp_actual,
+                            proj_score_opp_optimal,
+                            opp_username: opp_roster?.username || 'Orphan',
+                            opp_avatar: opp_roster?.avatar,
+                            proj_median
+                        })
+                        : <h3>
+                            No Matchup
+                        </h3>
                 }
             } else {
                 console.log('BEFORE')

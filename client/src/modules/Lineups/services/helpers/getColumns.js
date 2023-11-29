@@ -2,7 +2,7 @@ import { getTrendColor } from "../../../COMMON/services/helpers/getTrendColor"
 
 
 export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, act_proj, opp_opt_proj, opp_act_proj, proj_median, projections, week, opp_roster) => {
-    console.log({league})
+ 
     if (['in_season', 'post_season'].includes(league.settings.status)) {
         switch (header) {
             case 'Rank':
@@ -56,7 +56,7 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                 }
             case 'Suboptimal':
                 return {
-                    text: !matchup?.matchup_id || !lineup_check ? '-' : lineup_check.filter(x => x.notInOptimal).length > 0 ?
+                    text: !matchup?.matchup_id  ? '-' : lineup_check.filter(x => x.notInOptimal).length > 0 ?
                         lineup_check.filter(x => x.notInOptimal).length :
                         '√',
                     colSpan: 2,
