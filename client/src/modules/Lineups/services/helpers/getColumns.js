@@ -2,7 +2,8 @@ import { getTrendColor } from "../../../COMMON/services/helpers/getTrendColor"
 
 
 export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, act_proj, opp_opt_proj, opp_act_proj, proj_median, projections, week, opp_roster) => {
-    if (league.settings.status === 'in_season') {
+    console.log({league})
+    if (['in_season', 'post_season'].includes(league.settings.status)) {
         switch (header) {
             case 'Rank':
                 return {
