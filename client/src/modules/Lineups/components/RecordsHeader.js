@@ -1,14 +1,29 @@
 import { useSelector, useDispatch } from "react-redux";
 import { filterLeagues } from "../../COMMON/services/helpers/filterLeagues";
 import { setStateLineups } from "../redux/actions";
+import { matchTeam } from "../../COMMON/services/helpers/matchTeam";
+import { useEffect } from "react";
 
 const RecordsHeader = () => {
     const dispatch = useDispatch();
-    const { state } = useSelector(state => state.common);
-    const { leagues, type1, type2} = useSelector(state => state.user);
-    const { includeTaxi, lineupChecks, week, primaryContent} = useSelector(state => state.lineups);
+    const { state, schedule } = useSelector(state => state.common);
+    const { leagues, type1, type2 } = useSelector(state => state.user);
+    const { includeTaxi, lineupChecks, week, primaryContent } = useSelector(state => state.lineups);
 
     const hash = `${includeTaxi}-${true}`
+
+    const gamesInProgress = schedule[state.week]
+        ?.find(
+            matchup => parseInt(matchup?.gameSecondsRemaining) > 0
+                && parseInt(matchup?.gameSecondsRemaining) < 3600
+        )
+
+    useEffect(() => {
+        if (gamesInProgress) {
+            dispatch(setStateLineups({ primaryContent: 'Live Projections' }))
+        }
+    }, [gamesInProgress, dispatch])
+
 
     const projectedRecord = week >= state.week
         ? filterLeagues((leagues || []), type1, type2)
@@ -92,8 +107,13 @@ const RecordsHeader = () => {
             >
                 <option>Lineup Check</option>
                 <option>Starters/Bench</option>
+                <option
+                    disabled={!gamesInProgress}
+                >
+                    Live Projections
+                </option>
             </select>
-        </h2>
+        </h2 >
         <h2>
             <table className="summary">
                 <tbody>
@@ -114,7 +134,7 @@ const RecordsHeader = () => {
                         <th>Win Pct</th>
                         <td>
                             {
-                                projectedRecord?.wins + projectedRecord?.losses + projectedRecord?.ties > 0 
+                                projectedRecord?.wins + projectedRecord?.losses + projectedRecord?.ties > 0
                                     ? (
                                         (projectedRecord?.wins || 0)
                                         / (

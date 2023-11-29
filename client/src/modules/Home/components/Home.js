@@ -69,7 +69,7 @@ const Home = () => {
 
                     <i className="fa-solid fa-ranking-star" onClick={() => dispatch(setState({ dropdownVisible: true }))}></i>
                 </div>
-                <Link className='link click' to={(username_searched === '') ? '/' : `/${username_searched}/players`}>
+                <Link className='link click' to={(username_searched === '') ? '/' : `/${username_searched}/${localStorage.getItem('navTab') || 'lineups'}`}>
                     Submit
                 </Link>
             </div>

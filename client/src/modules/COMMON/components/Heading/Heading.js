@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { filterLeagues } from '../../services/helpers/filterLeagues';
 import { setStateUser, setStateCommon } from '../../redux/actions';
 import './Heading.css';
+import { useEffect } from 'react';
 
 const Heading = () => {
     const dispatch = useDispatch();
@@ -13,9 +14,11 @@ const Heading = () => {
     const { isLoadingLeagues, leagues, user_id, avatar, username, type1, type2 } = useSelector(state => state.user);
     const { state } = useSelector(state => state.common);
 
-    const tab = location.pathname.split('/')[2]
+    const navTab = location.pathname.split('/')[2]
 
-    console.log({ tab })
+    useEffect(() => {
+        localStorage.setItem('navTab', navTab)
+    }, [navTab]);
 
     const filteredLeagueCount = isLoadingLeagues
         ? progress
@@ -46,31 +49,31 @@ const Heading = () => {
             </h1>
 
             {
-                tab === 'trades'
-                ? null
-                : <div className="switch_wrapper">
-                    <div className="switch">
-                        <button className={type1 === 'Redraft' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'Redraft' }))}>Redraft</button>
-                        <button className={type1 === 'All' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'All' }))}>All</button>
-                        <button className={type1 === 'Dynasty' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'Dynasty' }))}>Dynasty</button>
+                navTab === 'trades'
+                    ? null
+                    : <div className="switch_wrapper">
+                        <div className="switch">
+                            <button className={type1 === 'Redraft' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'Redraft' }))}>Redraft</button>
+                            <button className={type1 === 'All' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'All' }))}>All</button>
+                            <button className={type1 === 'Dynasty' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type1: 'Dynasty' }))}>Dynasty</button>
+                        </div>
+                        <div className="switch">
+                            <button className={type2 === 'Bestball' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'Bestball' }))}>Bestball</button>
+                            <button className={type2 === 'All' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'All' }))}>All</button>
+                            <button className={type2 === 'Lineup' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'Lineup' }))}>Lineup</button>
+                        </div>
                     </div>
-                    <div className="switch">
-                        <button className={type2 === 'Bestball' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'Bestball' }))}>Bestball</button>
-                        <button className={type2 === 'All' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'All' }))}>All</button>
-                        <button className={type2 === 'Lineup' ? 'sw active click' : 'sw click'} onClick={() => dispatch(setStateUser({ type2: 'Lineup' }))}>Lineup</button>
-                    </div>
-                </div>
             }
             <h2>
                 {`${filteredLeagueCount} Leagues`}
             </h2>
             <div className="navbar">
                 <p className='select'>
-                    {tab}&nbsp;<i className="fa-solid fa-caret-down"></i>
+                    {navTab}&nbsp;<i className="fa-solid fa-caret-down"></i>
                 </p>
                 <select
                     className="nav active click"
-                    value={tab}
+                    value={navTab}
                     onChange={(e) => navigate(`/${username}/${e.target.value}`)}
                 >
                     <option>players</option>
