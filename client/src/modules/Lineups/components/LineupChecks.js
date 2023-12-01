@@ -81,7 +81,7 @@ const LineupChecks = ({ secondaryTable }) => {
             },
             {
                 text: 'Rank',
-                colSpan: 1
+                colSpan: 2
             },
             {
                 text: 'W/L',
@@ -89,11 +89,11 @@ const LineupChecks = ({ secondaryTable }) => {
             },
             {
                 text: 'PF',
-                colSpan: 2
+                colSpan: 3
             },
             {
                 text: <>PA <em>Median</em></>,
-                colSpan: 5
+                colSpan: 6
             }
         ]
     ]
@@ -290,7 +290,8 @@ const LineupChecks = ({ secondaryTable }) => {
                                         }
                                     </span>
                                 </p>,
-                                colSpan: 1
+                                colSpan: 2,
+                                className: 'relative'
                             },
                             {
                                 text: !matchup_user?.matchup_id ? '-' : <>
@@ -344,7 +345,8 @@ const LineupChecks = ({ secondaryTable }) => {
                                 >
                                     {proj_fp?.toFixed(1)}
                                 </p>,
-                                colSpan: 2
+                                colSpan: 3,
+                                className: 'relative'
                             },
                             {
                                 text: <div className="flex">
@@ -365,7 +367,8 @@ const LineupChecks = ({ secondaryTable }) => {
                                             : null
                                     }
                                 </div>,
-                                colSpan: 5
+                                colSpan: 6,
+                                className: 'relative'
                             }
                         ],
                         secondary_table: secondaryTable({
