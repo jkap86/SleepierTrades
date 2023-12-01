@@ -70,7 +70,9 @@ const getSchedule = async (state, interval = false) => {
             )
         )
 
-    if (games_in_progress) {
+    console.log({ games_in_progress })
+
+    if (games_in_progress?.kickoff) {
         const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
 
         nflschedule = Object.entries(JSON.parse(nflschedule_json)).map(([key, value]) => {
