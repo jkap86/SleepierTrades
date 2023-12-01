@@ -31,7 +31,7 @@ const PlayerStartBench = ({
             [
                 {
                     text: 'League',
-                    colSpan: 9
+                    colSpan: 6
                 },
                 {
                     text: 'Rank',
@@ -39,7 +39,7 @@ const PlayerStartBench = ({
                 },
                 {
                     text: 'W/L',
-                    colSpan: 2
+                    colSpan: 1
                 },
                 {
                     text: 'PF',
@@ -135,7 +135,7 @@ const PlayerStartBench = ({
                     list: [
                         {
                             text: league.name,
-                            colSpan: 9,
+                            colSpan: 6,
                             className: 'left',
                             image: {
                                 src: league.avatar,
@@ -161,7 +161,8 @@ const PlayerStartBench = ({
                                     }
                                 </span>
                             </p>,
-                            colSpan: 2
+                            colSpan: 2,
+                            className: 'relative'
                         },
                         {
                             text: <>
@@ -189,7 +190,7 @@ const PlayerStartBench = ({
                                             : '')
                                 }
                             </>,
-                            colSpan: 2,
+                            colSpan: 1,
                             className: (proj_fp && proj_fp_opp)
                                 ? league.settings.best_ball !== 1
                                     ? proj_score_user_actual > proj_score_opp_actual
@@ -211,10 +212,11 @@ const PlayerStartBench = ({
                             >
                                 {proj_fp?.toFixed(1)}
                             </p>,
-                            colSpan: 3
+                            colSpan: 3,
+                            className: 'relative'
                         },
                         {
-                            text: <div className="flex">
+                            text: <div className="flex relative">
                                 <p
                                     className="stat check"
                                     style={getTrendColor(((proj_fp - proj_fp_opp) / Math.max(proj_fp, proj_fp_opp)), .001)}
@@ -232,7 +234,8 @@ const PlayerStartBench = ({
                                         : null
                                 }
                             </div>,
-                            colSpan: 6
+                            colSpan: 6,
+                            className: 'relative'
                         }
                     ],
                     secondary_table: secondaryTable({
