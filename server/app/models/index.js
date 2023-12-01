@@ -13,7 +13,7 @@ const sequelize = new Sequelize(dbConfig.DATABASE_URL, {
         max: 30,
         min: 0,
         acquire: 20000,
-        idle: 1000
+        idle: 10000
     }
 });
 
