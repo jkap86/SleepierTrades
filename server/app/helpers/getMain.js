@@ -57,10 +57,20 @@ const getSchedule = async (state, interval = false) => {
 
 
     let schedule;
-
+    let nflSchedule_week;
     let nflschedule;
 
-    if (!interval) {
+    nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=&JSON=1`)
+
+    const games_in_progress = nflSchedule_week.data.nflSchedule.matchup
+        .find(
+            game => (
+                parseInt(game.gameSecondsRemaining) > 0
+                && parseInt(game.gameSecondsRemaining) < 3600
+            )
+        )
+
+    if (games_in_progress) {
         const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
 
         nflschedule = Object.entries(JSON.parse(nflschedule_json)).map(([key, value]) => {
@@ -77,10 +87,10 @@ const getSchedule = async (state, interval = false) => {
     }
 
 
-    let nflSchedule_week
+
     try {
 
-        nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=&JSON=1`)
+
 
         schedule = Object.fromEntries(
             [...nflschedule.filter(s => s.week !== nflSchedule_week.data.nflSchedule.week), nflSchedule_week.data.nflSchedule]
@@ -95,53 +105,47 @@ const getSchedule = async (state, interval = false) => {
 
         let delay;
 
-        const games_in_progress = nflSchedule_week.data.nflSchedule.matchup
-            .find(
-                game => (
-                    parseInt(game.gameSecondsRemaining) > 0
-                    && parseInt(game.gameSecondsRemaining) < 3600
-                )
-            )
 
 
-        if (interval === true) {
-            if (games_in_progress) {
-                await getStats(state.season, state.week)
-
-                const min = new Date().getMinutes()
-
-                delay = (1 * 60 * 1000)
-
-            } else {
-
-                const next_kickoff = Math.min(...Object.keys(schedule)
-                    .filter(week => schedule[week])
-                    .flatMap(week => {
-                        return schedule[week]
-                            ?.filter(g => parseInt(g.kickoff * 1000) > new Date().getTime())
-                            ?.map(g => parseInt(g.kickoff * 1000))
-                    }))
-
-                console.log({ next_kickoff: new Date(next_kickoff) })
-
-                delay = next_kickoff - new Date().getTime()
-
-            }
-            const days_remainder = delay % (24 * 60 * 60 * 1000);
-            const hours_remainder = days_remainder % (60 * 60 * 1000);
 
 
-            console.log(
-                `next update in
+        if (games_in_progress) {
+            await getStats(state.season, state.week)
+
+            const min = new Date().getMinutes()
+
+            delay = (1 * 60 * 1000)
+
+        } else {
+
+            const next_kickoff = Math.min(...Object.keys(schedule)
+                .filter(week => schedule[week])
+                .flatMap(week => {
+                    return schedule[week]
+                        ?.filter(g => parseInt(g.kickoff * 1000) > new Date().getTime())
+                        ?.map(g => parseInt(g.kickoff * 1000))
+                }))
+
+            console.log({ next_kickoff: new Date(next_kickoff) })
+
+            delay = next_kickoff - new Date().getTime()
+
+        }
+        const days_remainder = delay % (24 * 60 * 60 * 1000);
+        const hours_remainder = days_remainder % (60 * 60 * 1000);
+
+
+        console.log(
+            `next update in
                     ${Math.floor(delay / (24 * 60 * 60 * 1000))} Days, 
                     ${Math.floor((days_remainder) / (60 * 60 * 1000))} Hours, 
                     ${Math.floor(hours_remainder / (60 * 1000))} Min,
                 `
-            )
-            setTimeout(() => {
-                getSchedule(state, games_in_progress)
-            }, delay)
-        }
+        )
+        setTimeout(() => {
+            getSchedule(state, games_in_progress)
+        }, delay)
+
 
     } catch (err) {
 
