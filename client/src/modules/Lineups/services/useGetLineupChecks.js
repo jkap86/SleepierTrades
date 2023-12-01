@@ -120,7 +120,7 @@ const useGetLineupChecks = () => {
 
 
     useEffect(() => {
-        if (games_in_progress) {
+        if (games_in_progress?.kickoff) {
             const min = new Date().getMinutes();
     
             const delay = ((((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)) + 60000;

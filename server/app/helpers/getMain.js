@@ -103,7 +103,7 @@ const getSchedule = async (state, interval = false) => {
 
 
 
-        if (games_in_progress) {
+        if (games_in_progress?.kickoff) {
             await getStats(state.season, state.week)
 
             const min = new Date().getMinutes()
