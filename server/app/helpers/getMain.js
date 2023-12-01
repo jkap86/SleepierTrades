@@ -72,7 +72,7 @@ const getSchedule = async (state, interval = false) => {
 
     console.log({ games_in_progress })
 
-    if (games_in_progress?.kickoff) {
+   
         const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
 
         nflschedule = Object.entries(JSON.parse(nflschedule_json)).map(([key, value]) => {
@@ -81,14 +81,6 @@ const getSchedule = async (state, interval = false) => {
                 matchup: value
             }
         });
-
-    } else {
-        const nflschedule_update = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=ALL&JSON=1`)
-
-        nflschedule = nflschedule_update.data.fullNflSchedule.nflSchedule
-    }
-
-
 
     try {
 
