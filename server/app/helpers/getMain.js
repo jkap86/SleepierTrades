@@ -52,7 +52,7 @@ const getState = async (app) => {
     app.set('state', state.data, 0)
 }
 
-const getSchedule = async (state, week = true) => {
+const getSchedule = async (state, interval = false) => {
     console.log('Updating Schedule on ' + new Date())
 
 
@@ -60,7 +60,7 @@ const getSchedule = async (state, week = true) => {
 
     let nflschedule;
 
-    if (week) {
+    if (!interval) {
         const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
 
         nflschedule = Object.entries(JSON.parse(nflschedule_json)).map(([key, value]) => {
@@ -103,42 +103,46 @@ const getSchedule = async (state, week = true) => {
                 )
             )
 
-        if (games_in_progress) {
-            await getStats(state.season, state.week)
 
-            const min = new Date().getMinutes()
+        if (interval === true) {
+            if (games_in_progress) {
+                await getStats(state.season, state.week)
 
-            delay = (1 * 60 * 1000)
+                const min = new Date().getMinutes()
 
-        } else {
+                delay = (1 * 60 * 1000)
 
-            const next_kickoff = Math.min(...Object.keys(schedule)
-                .filter(week => schedule[week])
-                .flatMap(week => {
-                    return schedule[week]
-                        ?.filter(g => parseInt(g.kickoff * 1000) > new Date().getTime())
-                        ?.map(g => parseInt(g.kickoff * 1000))
-                }))
+            } else {
 
-            console.log({ next_kickoff: new Date(next_kickoff) })
+                const next_kickoff = Math.min(...Object.keys(schedule)
+                    .filter(week => schedule[week])
+                    .flatMap(week => {
+                        return schedule[week]
+                            ?.filter(g => parseInt(g.kickoff * 1000) > new Date().getTime())
+                            ?.map(g => parseInt(g.kickoff * 1000))
+                    }))
 
-            delay = next_kickoff - new Date().getTime()
+                console.log({ next_kickoff: new Date(next_kickoff) })
 
+                delay = next_kickoff - new Date().getTime()
+
+            }
+            const days_remainder = delay % (24 * 60 * 60 * 1000);
+            const hours_remainder = days_remainder % (60 * 60 * 1000);
+
+
+            console.log(
+                `next update in
+                    ${Math.floor(delay / (24 * 60 * 60 * 1000))} Days, 
+                    ${Math.floor((days_remainder) / (60 * 60 * 1000))} Hours, 
+                    ${Math.floor(hours_remainder / (60 * 1000))} Min,
+                `
+            )
+            setTimeout(() => {
+                getSchedule(state, games_in_progress)
+            }, delay)
         }
-        const days_remainder = delay % (24 * 60 * 60 * 1000);
-        const hours_remainder = days_remainder % (60 * 60 * 1000);
 
-
-        console.log(
-            `next update in
-        ${Math.floor(delay / (24 * 60 * 60 * 1000))} Days, 
-        ${Math.floor((days_remainder) / (60 * 60 * 1000))} Hours, 
-        ${Math.floor(hours_remainder / (60 * 1000))} Min,
-        `
-        )
-        setTimeout(() => {
-            getSchedule(state, games_in_progress)
-        }, delay)
     } catch (err) {
 
         setTimeout(() => {

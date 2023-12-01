@@ -91,6 +91,7 @@ const RecordsHeader = () => {
                 value={week}
                 onChange={(e) => dispatch(setStateLineups({ week: e.target.value }))}
                 className="active click"
+                disabled={primaryContent === 'Live Projections'}
             >
                 {
                     Array.from(Array(18).keys()).map(key =>
@@ -104,11 +105,12 @@ const RecordsHeader = () => {
                 value={primaryContent}
                 onChange={(e) => dispatch(setStateLineups({ primaryContent: e.target.value }))}
                 className="active click"
+                
             >
                 <option>Lineup Check</option>
                 <option>Starters/Bench</option>
                 <option
-                    disabled={!gamesInProgress}
+                  //  disabled={!gamesInProgress}
                 >
                     Live Projections
                 </option>

@@ -31,15 +31,23 @@ const PlayerStartBench = ({
             [
                 {
                     text: 'League',
-                    colSpan: 3
+                    colSpan: 9
+                },
+                {
+                    text: 'Rank',
+                    colSpan: 2
+                },
+                {
+                    text: 'W/L',
+                    colSpan: 2
                 },
                 {
                     text: 'PF',
-                    colSpan: 1
+                    colSpan: 3
                 },
                 {
                     text: <>PA <em>Median</em></>,
-                    colSpan: 2
+                    colSpan: 6
                 }
             ]
         ]
@@ -48,7 +56,7 @@ const PlayerStartBench = ({
 
     const getGroupBody = (leagues) => {
         return leagues
-            .map(league => {
+            ?.map(league => {
                 let proj_fp,
                     proj_fp_opp,
                     matchup_user,
@@ -62,7 +70,10 @@ const PlayerStartBench = ({
                     proj_score_user_optimal,
                     proj_score_opp_actual,
                     proj_score_opp_optimal,
-                    opp_roster;
+                    opp_roster,
+                    median_win,
+                    median_loss,
+                    proj_median
 
                 if (week >= state.week) {
                     proj_fp = league.settings.best_ball === 1
@@ -90,6 +101,10 @@ const PlayerStartBench = ({
 
                     opp_roster = league.rosters.find(r => r.roster_id === matchup_opp?.roster_id)
 
+                    median_win = lineupChecks[week]?.[hash]?.[league.league_id]?.median_win;
+                    median_loss = lineupChecks[week]?.[hash]?.[league.league_id]?.median_loss
+
+                    proj_median = lineupChecks[week]?.[hash]?.[league.league_id]?.proj_median
                 } else {
                     proj_fp = league.settings.best_ball === 1
                         ? lineupChecks[week]?.[league.league_id]?.lc_user?.proj_score_optimal
@@ -99,16 +114,28 @@ const PlayerStartBench = ({
                         ? lineupChecks[week]?.[league.league_id]?.lc_opp?.proj_score_optimal
                         : lineupChecks[week]?.[league.league_id]?.lc_opp?.proj_score_actual
 
+                    matchup_user = lineupChecks[week]?.[league.league_id]?.lc_user?.matchup;
+                    matchup_opp = lineupChecks[week]?.[league.league_id]?.lc_opp?.matchup;
+                    
+                    proj_score_user_optimal = lineupChecks[week]?.[league.league_id]?.lc_user?.proj_score_optimal;
+                    proj_score_user_actual = lineupChecks[week]?.[league.league_id]?.lc_user?.proj_score_actual;
+                    proj_score_opp_optimal = lineupChecks[week]?.[league.league_id]?.lc_opp?.proj_score_optimal;
+                    proj_score_opp_actual = lineupChecks[week]?.[league.league_id]?.lc_opp?.proj_score_actual;
+
+                    median_win = lineupChecks[week]?.[league.league_id]?.median_win
+                    median_loss = lineupChecks[week]?.[league.league_id]?.median_loss
+
+                    proj_median = lineupChecks[week]?.[league.league_id]?.act_median
                 }
 
-                const proj_median = lineupChecks[week]?.[hash]?.[league.league_id]?.proj_median
+
 
                 return {
                     id: league.league_id,
                     list: [
                         {
                             text: league.name,
-                            colSpan: 3,
+                            colSpan: 9,
                             className: 'left',
                             image: {
                                 src: league.avatar,
@@ -119,11 +146,72 @@ const PlayerStartBench = ({
                         {
                             text: <p
                                 className="stat check"
+                                style={getTrendColor(-((league.userRoster.rank / league.rosters.length) - .5), .0025)}
+                            >
+                                {league.userRoster.rank}
+                                <span className="small">
+                                    {
+                                        league.userRoster.rank === 1
+                                            ? 'st'
+                                            : league.userRoster.rank === 2
+                                                ? 'nd'
+                                                : league.userRoster.rank === 3
+                                                    ? 'rd'
+                                                    : 'th'
+                                    }
+                                </span>
+                            </p>,
+                            colSpan: 2
+                        },
+                        {
+                            text: <>
+                                {
+                                    (proj_fp && proj_fp_opp)
+                                        ? league.settings.best_ball === 1
+                                            ? proj_score_user_optimal > proj_score_opp_optimal
+                                                ? 'W'
+                                                : proj_score_user_optimal < proj_score_opp_optimal
+                                                    ? 'L'
+                                                    : '-'
+                                            : proj_score_user_actual > proj_score_opp_actual
+                                                ? 'W'
+                                                : proj_score_user_actual < proj_score_opp_actual
+                                                    ? 'L'
+                                                    : '-'
+                                        : '-'
+
+                                }
+                                {(
+                                    median_win > 0
+                                        ? <i className="fa-solid fa-trophy"></i>
+                                        : median_loss > 0
+                                            ? <i className="fa-solid fa-poop"></i>
+                                            : '')
+                                }
+                            </>,
+                            colSpan: 2,
+                            className: (proj_fp && proj_fp_opp)
+                                ? league.settings.best_ball !== 1
+                                    ? proj_score_user_actual > proj_score_opp_actual
+                                        ? 'greenb'
+                                        : proj_score_user_actual < proj_score_opp_actual
+                                            ? 'redb'
+                                            : '-'
+                                    : proj_score_user_optimal > proj_score_opp_optimal
+                                        ? 'greenb'
+                                        : proj_score_user_optimal < proj_score_opp_optimal
+                                            ? 'redb'
+                                            : '-'
+                                : '-',
+                        },
+                        {
+                            text: <p
+                                className="stat check"
                                 style={getTrendColor(((proj_fp - proj_fp_opp) / Math.max(proj_fp, proj_fp_opp)), .001)}
                             >
                                 {proj_fp?.toFixed(1)}
                             </p>,
-                            colSpan: 1
+                            colSpan: 3
                         },
                         {
                             text: <div className="flex">
@@ -139,12 +227,12 @@ const PlayerStartBench = ({
                                             className="stat check"
                                             style={getTrendColor(((proj_fp - proj_median) / Math.max(proj_fp, proj_median)), .001)}
                                         >
-                                           {proj_median?.toFixed(1)}
+                                            {proj_median?.toFixed(1)}
                                         </p></em>
                                         : null
                                 }
                             </div>,
-                            colSpan: 2
+                            colSpan: 6
                         }
                     ],
                     secondary_table: secondaryTable({

@@ -135,7 +135,8 @@ const LeaguemateRecords = ({ secondaryTable }) => {
                         >
                             {lm_wins}-{lm_losses}{lm_ties > 0 ? `-${lm_ties}` : ''}
                         </p>,
-                        colSpan: 2
+                        colSpan: 2,
+                        className: 'relative'
                     },
                     {
                         text: <p
@@ -150,7 +151,8 @@ const LeaguemateRecords = ({ secondaryTable }) => {
                         >
                             {lm_fpts?.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                         </p>,
-                        colSpan: 2
+                        colSpan: 2,
+                        className: 'relative'
                     },
                     {
                         text: <p
@@ -165,7 +167,8 @@ const LeaguemateRecords = ({ secondaryTable }) => {
                         >
                             {user_wins}-{user_losses}{user_ties > 0 ? `-${user_ties}` : ''}
                         </p>,
-                        colSpan: 2
+                        colSpan: 2,
+                        className: 'relative'
                     },
                     {
                         text: <p
@@ -180,7 +183,8 @@ const LeaguemateRecords = ({ secondaryTable }) => {
                         >
                             {user_fpts?.toLocaleString("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                         </p>,
-                        colSpan: 2
+                        colSpan: 2,
+                        className: 'relative'
                     }
                 ],
                 secondary_table: secondaryTable({ leaguemate: lm })

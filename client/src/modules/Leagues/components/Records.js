@@ -104,6 +104,7 @@ const Records = ({
                             {rank || '-'}
                         </p>,
                         colSpan: 2,
+                        className: 'relative'
                     }
                 ],
                 secondary_table: secondaryTable({ league })

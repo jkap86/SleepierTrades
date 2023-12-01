@@ -91,10 +91,39 @@ li {
 span.player_score,
 p.stat {
   font-family: 'Monomaniac One', sans-serif;
-  font-size: 2.5rem;
+  font-size: 2.75rem;
   width: 100%;
-
+  padding: 0 .5rem;
   display: inline;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+em {
+  position: relative;
+}
+
+p.stat:hover {
+  overflow: visible;
+  width: fit-content;
+  background-color: black;
+  position: absolute;
+  z-index: 2;
+  box-shadow: 0 0 1.5rem white;
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  right: 0;
+  left: 0;
+  margin: auto;
+}
+div.flex>p.stat:hover {
+  right: unset;
+}
+td:last-child>p.stat:hover,
+p.stat.value:hover {
+  
 }
 
 p.stat.value {

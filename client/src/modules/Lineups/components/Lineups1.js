@@ -9,9 +9,9 @@ const Linups1 = ({ secondaryTable }) => {
 
     useGetLineupChecks()
 
-    return primaryContent === 'Lineup Check'
-        ? <LineupChecks secondaryTable={secondaryTable} />
-        : <StartersBench secondaryTable={secondaryTable} />
+    return primaryContent === 'Starters/Bench'
+        ? <StartersBench secondaryTable={secondaryTable} />
+        : <LineupChecks secondaryTable={secondaryTable} />
 }
 
 export default Linups1;

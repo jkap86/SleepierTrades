@@ -18,7 +18,7 @@ const Records = ({ secondaryTable }) => {
         [
             {
                 text: 'Player',
-                colSpan: 10,
+                colSpan: 9,
 
             },
             {
@@ -160,7 +160,7 @@ const Records = ({ secondaryTable }) => {
                 list: [
                     {
                         text: player.id?.includes('_') ? pick_name : `${allplayers?.[player.id]?.position} ${allplayers?.[player.id]?.full_name} ${player.id?.includes('_') ? '' : allplayers?.[player.id]?.team || 'FA'}` || `INACTIVE PLAYER`,
-                        colSpan: 10,
+                        colSpan: 9,
                         className: 'left',
                         image: {
                             src: allplayers?.[player.id] ? player.id : headshot,

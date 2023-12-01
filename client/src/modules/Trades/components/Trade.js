@@ -107,7 +107,7 @@ const Trade = ({
                                     {no_qb.toString()} QB {no_sf.toString()} SF
                                 </div>
                                 <div>
-                                    {no_te.toString()} TE {te_prem.toLocaleString('en-US', { maximumFractionDigits: 2})} Prem
+                                    {no_te.toString()} TE {te_prem.toLocaleString('en-US', { maximumFractionDigits: 2 })} Prem
                                 </div>
                             </>,
                             colSpan: 3,
@@ -210,15 +210,17 @@ const Trade = ({
                                                     <td
                                                         colSpan={4}
                                                     >
-                                                        <p
-                                                            className={'stat value'}
-                                                            style={getTrendColor(trend, 1)}
-                                                        >
-                                                            {
-                                                                trend > 0 ? '+' : ''
-                                                            }
-                                                            {trend}
-                                                        </p>
+                                                        <div className="relative">
+                                                            <p
+                                                                className={'stat value'}
+                                                                style={getTrendColor(trend, 1)}
+                                                            >
+                                                                {
+                                                                    trend > 0 ? '+' : ''
+                                                                }
+                                                                {trend}
+                                                            </p>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             })
@@ -256,6 +258,7 @@ const Trade = ({
                                                         </td>
                                                         <td
                                                             colSpan={4}
+                                                            className="relative"
                                                         >
                                                             <p
                                                                 className={'stat value'}

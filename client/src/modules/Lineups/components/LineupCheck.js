@@ -7,6 +7,7 @@ import { fetchMatchups, syncLeague } from "../redux/actions";
 import { matchTeam } from "../../COMMON/services/helpers/matchTeam";
 import { getTrendColor } from "../../COMMON/services/helpers/getTrendColor";
 import { useEffect } from "react";
+import Matchup from "./Matchup";
 
 const LineupCheck = ({
     league,
@@ -849,7 +850,7 @@ const LineupCheck = ({
                                         </p>
                                         : <em className="score">
                                             {
-                                                (players_projections[opp_starter] || 0).toFixed(1)
+                                                (players_projections?.[opp_starter] || 0).toFixed(1)
                                                 || '-'
                                             }
                                         </em>
@@ -861,191 +862,145 @@ const LineupCheck = ({
                 }
             })
 
-    return week < state.week
-        ? <>
-            <div className="secondary nav">
-                <div>
-                    <button
-                        className={secondaryContent1 === 'Lineup' ? 'active click' : 'click'}
-                        onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Lineup' }))}
+    return <>
+        {
+            week < state.week
+                ? <div className="secondary nav">
+                    <div>
+                        <button
+                            className={secondaryContent1 === 'Lineup' ? 'active click' : 'click'}
+                            onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Lineup' }))}
 
-                    >
-                        Lineup
-                    </button>
-                    <p className="username">{username}</p>
-                    <button
-                        className={secondaryContent1 === 'Optimal' ? 'active click' : 'click'}
-                        onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Optimal' }))}
-                        disabled={true}
-                    >
-                        Optimal
-                    </button>
-                </div>
-                <button
-                    className={`sync ${syncing ? 'rotate' : 'click'}`}
-                    onClick={syncing ? null : () => handleSync(league.league_id)}
-
-                >
-                    <i className={`fa-solid fa-arrows-rotate ${syncing ? 'rotate' : ''}`}></i>
-                </button>
-                <div >
-                    {
-                        itemActive2
-                            ? <button
-                                className={'active click'}
-                                onClick={() => dispatch(setStateLineups({ itemActive2: '' }))}
-                            >
-                                Options
-                            </button>
-                            : <>
-
-                                <button
-                                    className={secondaryContent2 === 'Lineup' ? 'active click' : 'click'}
-                                    onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Lineup' }, 'LINEUPS'))}
-
-                                >
-                                    Lineup
-                                </button>
-                                <p className="username">{oppRoster?.username}</p>
-                                <button
-                                    className={secondaryContent2 === 'Optimal' ? 'active click' : 'click'}
-                                    onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Optimal' }, 'LINEUPS'))}
-                                    disabled={true}
-                                >
-                                    Optimal
-                                </button>
-                            </>
-                    }
-
-                </div>
-            </div>
-            {
-                <>
-                    <Roster
-                        league={league}
-                        roster={{
-                            ...league.userRoster,
-                            players: matchup_user?.players || [],
-                            starters: matchup_user?.starters || [],
-                        }}
-                        type={'secondary half'}
-                        previous={true}
-                        players_projections={players_projections}
-                        players_points={matchup_user?.players_points}
-                        total_points={
-                            secondaryContent1 === 'Lineup'
-                                ? matchup_user?.points
-                                : proj_score_user_optimal
-                        }
-                    />
-                    <Roster
-                        league={league}
-                        roster={{
-                            ...oppRoster,
-                            players: matchup_opp?.players || [],
-                            starters: matchup_opp?.starters || []
-                        }}
-                        type={'secondary half'}
-                        previous={true}
-                        players_projections={players_projections}
-                        players_points={matchup_opp?.players_points}
-                        total_points={
-                            secondaryContent2 === 'Lineup'
-                                ? matchup_opp?.points
-                                : proj_score_opp_optimal
-                        }
-                    />
-                </>
-            }
-        </>
-        : <>
-            <div className="secondary nav">
-                <div>
-                    <button
-                        className={(secondaryContent1 === 'Lineup' && league.settings.best_ball !== 1) ? 'active click' : 'click'}
-                        onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Lineup' }, 'LINEUPS'))}
-                        disabled={league.settings.best_ball === 1}
-                    >
-                        Lineup
-                    </button>
-                    <span>
+                        >
+                            Lineup
+                        </button>
                         <p className="username">{username}</p>
-                    </span>
+                        <button
+                            className={secondaryContent1 === 'Optimal' ? 'active click' : 'click'}
+                            onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Optimal' }))}
+                            disabled={true}
+                        >
+                            Optimal
+                        </button>
+                    </div>
                     <button
-                        className={(secondaryContent1 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
-                        onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Optimal' }, 'LINEUPS'))}
+                        className={`sync ${syncing ? 'rotate' : 'click'}`}
+                        onClick={syncing ? null : () => handleSync(league.league_id)}
+
                     >
-                        Optimal
+                        <i className={`fa-solid fa-arrows-rotate ${syncing ? 'rotate' : ''}`}></i>
                     </button>
-                </div>
-                <button
-                    className={`sync ${syncing ? 'rotate' : 'click'}`}
-                    onClick={syncing ? null : () => handleSync(league.league_id)}
-                >
-                    <i className={`fa-solid fa-arrows-rotate ${syncing ? 'rotate' : ''}`}></i>
-                </button>
-                <div >
-                    {
-                        itemActive2
-                            ? <>
-                                <button
-                                    className={'click'}
-                                    onClick={() => dispatch(setStateLineups({ itemActive2: '' }, 'LINEUPS'))}
-                                >
-                                    Opp
-                                </button>
-                                <button
+                    <div >
+                        {
+                            itemActive2
+                                ? <button
                                     className={'active click'}
-                                    onClick={() => dispatch(setStateLineups({ itemActive2: '' }, 'LINEUPS'))}
+                                    onClick={() => dispatch(setStateLineups({ itemActive2: '' }))}
                                 >
                                     Options
                                 </button>
-                            </>
-                            : <>
+                                : <>
 
-                                <button
-                                    className={(secondaryContent2 === 'Lineup' && league.settings.best_ball !== 1) ? 'active click' : 'click'}
-                                    onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Lineup' }, 'LINEUPS'))}
-                                    disabled={league.settings.best_ball === 1}
-                                >
-                                    Lineup
-                                </button>
-                                <span>
-                                    <p className="username">{opp_username}</p>
-                                </span>
-                                <button
-                                    className={(secondaryContent2 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
-                                    onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Optimal' }, 'LINEUPS'))}
-                                >
-                                    Optimal
-                                </button>
-                            </>
-                    }
+                                    <button
+                                        className={secondaryContent2 === 'Lineup' ? 'active click' : 'click'}
+                                        onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Lineup' }, 'LINEUPS'))}
 
-                </div>
-            </div>
-            {
-                lineup_body?.length >= 0 ?
-                    <>
-                        <TableMain
-                            type={'secondary half'}
-                            headers={lineup_headers}
-                            body={lineup_body}
-                            itemActive={itemActive2}
-                            setItemActive={(value) => dispatch(setStateLineups({ itemActive2: value }, 'LINEUPS'))}
-                        />
-                        <TableMain
-                            type={'secondary half'}
-                            headers={subs_headers}
-                            body={subs_body}
-                        />
-                    </>
-                    :
-                    <div>
-                        <h3>No Matchup</h3>
+                                    >
+                                        Lineup
+                                    </button>
+                                    <p className="username">{oppRoster?.username}</p>
+                                    <button
+                                        className={secondaryContent2 === 'Optimal' ? 'active click' : 'click'}
+                                        onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Optimal' }, 'LINEUPS'))}
+                                        disabled={true}
+                                    >
+                                        Optimal
+                                    </button>
+                                </>
+                        }
+
                     </div>
-            }
-        </>
+                </div>
+                : <div className="secondary nav">
+                    <div>
+                        <button
+                            className={(secondaryContent1 === 'Lineup' && league.settings.best_ball !== 1) ? 'active click' : 'click'}
+                            onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Lineup' }, 'LINEUPS'))}
+                            disabled={league.settings.best_ball === 1}
+                        >
+                            Lineup
+                        </button>
+                        <span>
+                            <p className="username">{username}</p>
+                        </span>
+                        <button
+                            className={(secondaryContent1 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
+                            onClick={() => dispatch(setStateLineups({ secondaryContent1: 'Optimal' }, 'LINEUPS'))}
+                        >
+                            Optimal
+                        </button>
+                    </div>
+                    <button
+                        className={`sync ${syncing ? 'rotate' : 'click'}`}
+                        onClick={syncing ? null : () => handleSync(league.league_id)}
+                    >
+                        <i className={`fa-solid fa-arrows-rotate ${syncing ? 'rotate' : ''}`}></i>
+                    </button>
+                    <div >
+                        {
+                            itemActive2
+                                ? <>
+                                    <button
+                                        className={'click'}
+                                        onClick={() => dispatch(setStateLineups({ itemActive2: '' }, 'LINEUPS'))}
+                                    >
+                                        Opp
+                                    </button>
+                                    <button
+                                        className={'active click'}
+                                        onClick={() => dispatch(setStateLineups({ itemActive2: '' }, 'LINEUPS'))}
+                                    >
+                                        Options
+                                    </button>
+                                </>
+                                : <>
+
+                                    <button
+                                        className={(secondaryContent2 === 'Lineup' && league.settings.best_ball !== 1) ? 'active click' : 'click'}
+                                        onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Lineup' }, 'LINEUPS'))}
+                                        disabled={league.settings.best_ball === 1}
+                                    >
+                                        Lineup
+                                    </button>
+                                    <span>
+                                        <p className="username">{opp_username}</p>
+                                    </span>
+                                    <button
+                                        className={(secondaryContent2 === 'Optimal' || league.settings.best_ball === 1) ? 'active click' : 'click'}
+                                        onClick={() => dispatch(setStateLineups({ secondaryContent2: 'Optimal' }, 'LINEUPS'))}
+                                    >
+                                        Optimal
+                                    </button>
+                                </>
+                        }
+
+                    </div>
+                </div>
+        }
+        <Matchup
+            league={league}
+            matchup_user={matchup_user}
+            matchup_opp={matchup_opp}
+            players_projections={players_projections}
+            proj_score_user_optimal={proj_score_user_optimal}
+            proj_score_opp_optimal={proj_score_opp_optimal}
+            oppRoster={oppRoster}
+            lineup_headers={lineup_headers}
+            lineup_body={lineup_body}
+            subs_body={subs_body}
+            subs_headers={subs_headers}
+        />
+    </>
 }
 
 export default LineupCheck;

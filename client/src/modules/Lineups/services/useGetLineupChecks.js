@@ -12,6 +12,7 @@ const useGetLineupChecks = () => {
     const { state, allplayers, schedule, projections } = useSelector(state => state.common)
     const { user_id, leagues, matchups, syncing, isLoadingMatchups } = useSelector(state => state.user);
     const {
+        primaryContent,
         includeTaxi,
         week,
         lineupChecks,
@@ -79,7 +80,7 @@ const useGetLineupChecks = () => {
                                     }
                                 }
 
-                                if (league.settings.best_ball === 1) {
+                                if (league.settings.best_ball === 1 && week >= state.week) {
                                     const optimal_lineup = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_user?.optimal_lineup
 
                                     if (optimal_lineup?.map(ol => ol.player)?.includes(player_id)) {
@@ -107,13 +108,13 @@ const useGetLineupChecks = () => {
                                     }
                                 }
 
-                                if (league.settings.best_ball === 1) {
+                                if (league.settings.best_ball === 1 && week >= state.week) {
                                     const optimal_lineup_opp = lineupChecks[week]?.[hash]?.[league.league_id]?.lc_opp?.optimal_lineup
 
                                     if (optimal_lineup_opp?.map(ol => ol.player)?.includes(player_id)) {
-                                        player_lineup_dict[player_id].start.push(league)
+                                        player_lineup_dict[player_id].start_opp.push(league)
                                     } else {
-                                        player_lineup_dict[player_id].bench.push(league)
+                                        player_lineup_dict[player_id].bench_opp.push(league)
                                     }
 
                                 } else {
@@ -132,6 +133,14 @@ const useGetLineupChecks = () => {
     }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, lineupChecks, week, hash, dispatch])
 
 
+    useEffect(() => {
+        const gamesInProgress = schedule[state.week]
+            ?.find(m => parseInt(m.gameSecondsRemaining) > 0 && parseInt(m.gameSecondsRemaining) < 3600);
+
+        if (gamesInProgress) {
+            dispatch(setStateLineups({ primaryContent: 'Live Projections' }))
+        }
+    }, [dispatch, schedule])
 
     const weeks = Array.from(Array(18).keys()).map(key => key + 1)
         .filter(key => {

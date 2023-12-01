@@ -83,9 +83,7 @@ const LeaguemateLeagues = ({
                         {lm_league.lmRoster.rank}
                     </p>,
                     colSpan: 2,
-                    className: lm_league.lmRoster.rank / lm_league.rosters.length <= .25 ? 'green' :
-                        lm_league.lmRoster.rank / lm_league.rosters.length >= .75 ? 'red' :
-                            null
+                    className: 'relative'
                 },
                 {
                     text: `${lm_league.userRoster.settings.wins}-${lm_league.userRoster.settings.losses}${lm_league.userRoster.ties > 0 ? `-${lm_league.userRoster.ties}` : ''}`,
@@ -100,9 +98,7 @@ const LeaguemateLeagues = ({
                         {lm_league.userRoster.rank}
                     </p>,
                     colSpan: 2,
-                    className: lm_league.userRoster.rank / lm_league.rosters.length <= .25 ? 'green' :
-                        lm_league.userRoster.rank / lm_league.rosters.length >= .75 ? 'red' :
-                            null
+                    className:'relative'
                 }
             ],
             secondary_table: (
