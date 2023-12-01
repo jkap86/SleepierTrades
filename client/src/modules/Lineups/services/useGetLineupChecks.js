@@ -37,28 +37,7 @@ const useGetLineupChecks = () => {
                 } else if (!projections) {
                     dispatch(fetchCommon('projections'));
 
-                    const games_in_progress = schedule?.[state.week]
-                        ?.find(
-                            g => parseInt(g.gameSecondsRemaining) > 0
-                                && parseInt(g.gameSecondsRemaining) < 3600
-                        )
 
-                    if (games_in_progress) {
-                        const min = new Date().getMinutes();
-
-                        const delay = ((((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)) + 60000;
-                        let fetchProjectionInterval;
-
-                        // setTimeout(() => {
-                        fetchProjectionInterval = setInterval(() => {
-                            dispatch(fetchCommon('projections'))
-                        }, 1 * 60 * 1000)
-                        //}, delay)
-
-                        return () => {
-                            clearInterval(fetchProjectionInterval)
-                        }
-                    }
                 }
 
             } else {
@@ -131,6 +110,34 @@ const useGetLineupChecks = () => {
             }
         }
     }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, lineupChecks, week, hash, dispatch])
+
+
+    const games_in_progress = schedule?.[state.week]
+        ?.find(
+            g => parseInt(g.gameSecondsRemaining) > 0
+                && parseInt(g.gameSecondsRemaining) < 3600
+        )
+
+
+    useEffect(() => {
+        if (games_in_progress) {
+            const min = new Date().getMinutes();
+    
+            const delay = ((((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)) + 60000;
+            let fetchProjectionInterval;
+    
+            // setTimeout(() => {
+            fetchProjectionInterval = setInterval(() => {
+                dispatch(fetchCommon('projections'))
+            }, 1 * 60 * 1000)
+            //}, delay)
+    
+            return () => {
+                clearInterval(fetchProjectionInterval)
+            }
+        }
+    }, [games_in_progress, dispatch])
+    
 
 
     useEffect(() => {
