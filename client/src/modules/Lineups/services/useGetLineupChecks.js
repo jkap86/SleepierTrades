@@ -122,22 +122,24 @@ const useGetLineupChecks = () => {
     useEffect(() => {
         if (games_in_progress?.kickoff) {
             const min = new Date().getMinutes();
-    
-            const delay = ((((60 - min) % 5) * 60 * 1000) || (5 * 60 * 1000)) + 60000;
+            const sec = new Date().getSeconds();
+
+            const delay = (((60 - min) % 5) * (60 - sec) * 1000);
             let fetchProjectionInterval;
-    
-            // setTimeout(() => {
-            fetchProjectionInterval = setInterval(() => {
-                dispatch(fetchCommon('projections'))
-            }, 1 * 60 * 1000)
-            //}, delay)
-    
+
+            setTimeout(() => {
+                fetchProjectionInterval = setInterval(() => {
+                    dispatch(fetchCommon('schedule'))
+                    dispatch(fetchCommon('projections'))
+                }, 5 * 60 * 1000)
+            }, delay)
+
             return () => {
                 clearInterval(fetchProjectionInterval)
             }
         }
     }, [games_in_progress, dispatch])
-    
+
 
 
     useEffect(() => {
