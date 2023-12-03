@@ -55,24 +55,24 @@ const getState = async (app) => {
 const getSchedule = async (state, interval = false) => {
     console.log('Updating Schedule on ' + new Date())
 
+    try {
+        let schedule;
+        let nflSchedule_week;
+        let nflschedule;
 
-    let schedule;
-    let nflSchedule_week;
-    let nflschedule;
+        nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=&JSON=1`)
 
-    nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/2023/export?TYPE=nflSchedule&W=&JSON=1`)
-
-    const games_in_progress = nflSchedule_week.data.nflSchedule.matchup
-        .find(
-            game => (
-                parseInt(game.gameSecondsRemaining) > 0
-                && parseInt(game.gameSecondsRemaining) < 3600
+        const games_in_progress = nflSchedule_week.data.nflSchedule.matchup
+            .find(
+                game => (
+                    parseInt(game.gameSecondsRemaining) > 0
+                    && parseInt(game.gameSecondsRemaining) < 3600
+                )
             )
-        )
 
-    console.log({ games_in_progress })
+        console.log({ games_in_progress })
 
-   
+
         const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
 
         nflschedule = Object.entries(JSON.parse(nflschedule_json)).map(([key, value]) => {
@@ -81,9 +81,6 @@ const getSchedule = async (state, interval = false) => {
                 matchup: value
             }
         });
-
-    try {
-
 
 
         schedule = Object.fromEntries(
@@ -108,7 +105,7 @@ const getSchedule = async (state, interval = false) => {
 
             const min = new Date().getMinutes()
 
-            delay = (1 * 60 * 1000)
+            delay = (5 * 60 * 1000)
 
         } else {
 
