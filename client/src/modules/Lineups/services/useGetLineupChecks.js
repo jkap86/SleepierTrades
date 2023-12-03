@@ -112,14 +112,16 @@ const useGetLineupChecks = () => {
     }, [leagues, matchups, week, isLoadingMatchups, schedule, projections, lineupChecks, week, hash, dispatch])
 
 
-    const games_in_progress = schedule?.[state.week]
-        ?.find(
-            g => parseInt(g.gameSecondsRemaining) > 0
-                && parseInt(g.gameSecondsRemaining) < 3600
-        )
+
 
 
     useEffect(() => {
+        const games_in_progress = schedule && state.week && schedule?.[state.week]
+            ?.find(
+                g => parseInt(g.gameSecondsRemaining) > 0
+                    && parseInt(g.gameSecondsRemaining) < 3600
+            )
+
         if (games_in_progress?.kickoff) {
             const min = new Date().getMinutes();
             const sec = new Date().getSeconds();
@@ -138,18 +140,9 @@ const useGetLineupChecks = () => {
                 clearInterval(fetchProjectionInterval)
             }
         }
-    }, [games_in_progress, dispatch])
+    }, [schedule, state.week, dispatch])
 
 
-
-    useEffect(() => {
-        const gamesInProgress = schedule[state.week]
-            ?.find(m => parseInt(m.gameSecondsRemaining) > 0 && parseInt(m.gameSecondsRemaining) < 3600);
-
-        if (gamesInProgress) {
-            dispatch(setStateLineups({ primaryContent: 'Live Projections' }))
-        }
-    }, [dispatch, schedule])
 
     const weeks = Array.from(Array(18).keys()).map(key => key + 1)
         .filter(key => {
