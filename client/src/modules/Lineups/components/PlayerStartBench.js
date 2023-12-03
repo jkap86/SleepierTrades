@@ -8,10 +8,6 @@ const PlayerStartBench = ({
     bench,
     start_opp,
     bench_opp,
-    page2_start,
-    page2_bench,
-    page2_start_opp,
-    page2_bench_opp,
     secondaryTable
 }) => {
     const dispatch = useDispatch();
@@ -21,7 +17,11 @@ const PlayerStartBench = ({
         week,
         lineupChecks,
         secondaryContent3,
-        itemActive3
+        itemActive3,
+        page2_start,
+        page2_bench,
+        page2_start_opp,
+        page2_bench_opp,
     } = useSelector(state => state.lineups);
 
     const hash = `${includeTaxi}-${true}`
@@ -116,7 +116,7 @@ const PlayerStartBench = ({
 
                     matchup_user = lineupChecks[week]?.[league.league_id]?.lc_user?.matchup;
                     matchup_opp = lineupChecks[week]?.[league.league_id]?.lc_opp?.matchup;
-                    
+
                     proj_score_user_optimal = lineupChecks[week]?.[league.league_id]?.lc_user?.proj_score_optimal;
                     proj_score_user_actual = lineupChecks[week]?.[league.league_id]?.lc_user?.proj_score_actual;
                     proj_score_opp_optimal = lineupChecks[week]?.[league.league_id]?.lc_opp?.proj_score_optimal;

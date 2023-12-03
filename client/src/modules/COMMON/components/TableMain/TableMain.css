@@ -84,6 +84,7 @@ div.secondary.nav p.username:hover {
     z-index: 2;
     background-color: black;
     width: fit-content;
+    box-shadow: 0 0 1.5rem white;
     
 }
 

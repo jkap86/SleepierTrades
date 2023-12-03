@@ -119,7 +119,7 @@ p.stat:hover {
   margin: auto;
 }
 div.flex>p.stat:hover {
-  right: unset;
+  right: 50%;
 }
 td:last-child>p.stat:hover,
 p.stat.value:hover {
