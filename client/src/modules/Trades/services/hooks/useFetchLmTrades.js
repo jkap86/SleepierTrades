@@ -18,7 +18,7 @@ const useFetchLmTrades = () => {
             && !lmTrades.searched_manager.id
             && !(lmTrades.trades[hash]?.trade_date === trade_date)
         ) {
-            dispatch(fetchLmTrades(user_id, leagues, state.league_season, 0, 125, hash, trade_date))
+            dispatch(fetchLmTrades(user_id, leagues, state.league_season, 0, 125, trade_date))
         }
     }, [
         user_id,

@@ -7,10 +7,11 @@ export const setStateTrades = (state_obj, tab) => ({
     payload: state_obj
 })
 
-export const fetchLmTrades = (user_id, leagues, season, offset, limit, hash, trade_date, more = false) => {
+export const fetchLmTrades = (user_id, leagues, season, offset, limit, trade_date, more = false) => {
     return async (dispatch) => {
         dispatch({ type: 'FETCH_TRADES_START' });
-
+        
+        const hash = `${'All'}-${'All'}`
         try {
             const trades = await axios.post('/trade/leaguemate', {
                 user_id: user_id,

@@ -1,11 +1,13 @@
 import TableMain from "../../COMMON/components/TableMain";
 import useFetchLmTrades from "../services/hooks/useFetchLmTrades";
+import useFetchFilteredLmTrades from "../services/hooks/useFetchFilteredLmTrades";
 import { useSelector, useDispatch } from "react-redux";
 import Trade from "./Trade";
 import { setStateTrades, fetchLmTrades, fetchFilteredLmTrades } from "../redux/actions";
-import {  useMemo } from "react";
+import { useMemo } from "react";
 import useFetchPlayerValues from "../../COMMON/services/hooks/useFetchPlayerValues";
 import LoadingIcon from '../../COMMON/components/LoadingIcon';
+import Search from "../../COMMON/components/Search";
 
 const LmTrades = ({
     trades_headers,
@@ -20,7 +22,9 @@ const LmTrades = ({
 
     useFetchLmTrades()
 
-    const hash = `${type1}-${type2}`
+    useFetchFilteredLmTrades()
+
+    const hash = `${'All'}-${'All'}`
 
     const tradesDisplay = (!lmTrades.searched_player?.id && !lmTrades.searched_manager?.id)
         ? lmTrades.trades?.[hash]?.trades || []
@@ -96,13 +100,45 @@ const LmTrades = ({
         }
     }
 
+    const managers_list = []
 
+    leagues
+        .forEach(league => {
+            league.rosters
+                .filter(r => parseInt(r.user_id) > 0)
+                .forEach(roster => {
+                    if (!managers_list.find(m => m.id === roster.user_id)) {
+                        managers_list.push({
+                            id: roster.user_id,
+                            text: roster.username,
+                            image: {
+                                src: roster.avatar,
+                                alt: 'user avatar',
+                                type: 'user'
+                            }
+                        })
+                    }
+                })
+        })
 
     return isLoading
         ? <LoadingIcon />
         : <>
             <div className="trade_search_wrapper">
-
+                <Search
+                    id={'By Player'}
+                    placeholder={`Player`}
+                    list={players_list}
+                    searched={lmTrades.searched_player}
+                    setSearched={(searched) => dispatch(setStateTrades({ lmTrades: { ...lmTrades, searched_player: searched } }, 'TRADES'))}
+                />
+                <Search
+                    id={'By Manager'}
+                    placeholder={`Manager`}
+                    list={managers_list}
+                    searched={lmTrades.searched_manager}
+                    setSearched={(searched) => dispatch(setStateTrades({ lmTrades: { ...lmTrades, searched_manager: searched } }, 'TRADES'))}
+                />
             </div>
             <TableMain
                 id={'trades'}

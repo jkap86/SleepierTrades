@@ -10,7 +10,7 @@ const Trades1 = ({ secondaryTable }) => {
     const { type1, type2, leagues } = useSelector(state => state.user);
     const { tabPrimary, trade_date, lmTrades, pricecheckTrades, isLoading } = useSelector(state => state.trades);
 
-    const hash = `${type1}-${type2}`;
+    const hash = `${'All'}-${'All'}`;
 
     let tradeCount;
 
