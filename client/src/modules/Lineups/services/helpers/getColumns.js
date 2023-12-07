@@ -1,10 +1,32 @@
 import { getTrendColor } from "../../../COMMON/services/helpers/getTrendColor"
 
 
-export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, act_proj, opp_opt_proj, opp_act_proj, proj_median, projections, week, opp_roster) => {
- 
+export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, act_proj, opp_opt_proj, opp_act_proj, proj_median, projections, week, opp_roster, state) => {
+
     if (['in_season', 'post_season'].includes(league.settings.status)) {
         switch (header) {
+            case 'Trade Deadline':
+                return {
+                    text: <p
+                        className={"stat check " + (
+                            league.settings.disable_trades
+                                ? 'red'
+                                : state.week > league.settings.trade_deadline
+                                    ? 'red'
+                                    : 'green '
+                        )}
+                    //style={getTrendColor(-((league.userRoster.rank / league.rosters.length) - .5), .0025)}
+                    >
+                        {
+                            league.settings.disable_trades
+                                ? 'X'
+                                : league.settings.trade_deadline === 99
+                                    ? <i className="fa-solid fa-infinity"></i>
+                                    : league.settings.trade_deadline
+                        }
+                    </p>,
+                    colSpan: 2
+                }
             case 'Rank':
                 return {
                     text: <p
@@ -18,12 +40,12 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
             case 'Opp Rank':
                 return {
                     text: <p
-                    className="stat check"
-                    style={getTrendColor(-((opp_roster.rank / league.rosters.length) - .5), .0025)}
-                >
-                    {opp_roster.rank}
-                </p>,
-                colSpan: 2
+                        className="stat check"
+                        style={getTrendColor(-((opp_roster.rank / league.rosters.length) - .5), .0025)}
+                    >
+                        {opp_roster.rank}
+                    </p>,
+                    colSpan: 2
                 }
             case 'Proj FP':
                 return {
@@ -56,7 +78,7 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                 }
             case 'Suboptimal':
                 return {
-                    text: !matchup?.matchup_id  ? '-' : lineup_check.filter(x => x.notInOptimal).length > 0 ?
+                    text: !matchup?.matchup_id ? '-' : lineup_check.filter(x => x.notInOptimal).length > 0 ?
                         lineup_check.filter(x => x.notInOptimal).length :
                         '√',
                     colSpan: 2,
