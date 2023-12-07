@@ -36,7 +36,7 @@ module.exports = async (app) => {
 
         const limit = new Date().getMinutes() < 15
             ? 19
-            : week + 1
+            : 19
 
         for (let i = week; i < limit; i++) {
             const projections_json = fs.readFileSync('./projections.json', 'utf-8')
@@ -44,28 +44,23 @@ module.exports = async (app) => {
             const projections = JSON.parse(projections_json).filter(p => p.week !== i);
 
             const projections_to_update = JSON.parse(projections_json).filter(p => p.week === i);
-            
+
+            const updated_projections = []
             try {
                 for (const position of ['QB', 'RB', 'WR', 'TE']) {
                     const projections_week = await axios.get(`https://api.sleeper.com/projections/nfl/${season}/${i}?season_type=regular&position[]=${position}&order_by=ppr`)
 
-
-
                     projections_week.data
                         .filter(pw => pw.stats.pts_ppr || pw.player.injury_status)
                         .forEach(pw => {
-                            const projection_object = projections_to_update.find(p => p.player_id === pw.player_id)
 
-                            if (projection_object) {
-                                projection_object.projection = pw.stats
-                            } else {
-                                projections_to_update.push({
-                                    week: i,
-                                    player_id: pw.player_id,
-                                    injury_status: pw.player.injury_status,
-                                    projection: pw.stats,
-                                })
-                            }
+                            updated_projections.push({
+                                week: i,
+                                player_id: pw.player_id,
+                                injury_status: pw.player.injury_status,
+                                projection: pw.stats,
+                            })
+
                         })
                 }
 
@@ -75,9 +70,9 @@ module.exports = async (app) => {
 
                 console.log(err.message + ` week $${i}`)
             }
-            console.log({[i]: projections_to_update.length})
+            console.log({ [i]: updated_projections.length })
 
-            projections.push(...projections_to_update)
+            projections.push(...updated_projections)
 
             console.log('Projections Update Complete')
             fs.writeFileSync('./projections.json', JSON.stringify(projections))
@@ -96,10 +91,10 @@ module.exports = async (app) => {
                     try {
                         await getProjections(state.season, state.week)
 
-                        setTimeout(async() => {
+                        setTimeout(async () => {
                             await getStats(state.season, state.week)
                         }, 3000)
-                        
+
                     } catch (error) {
                         console.log(error)
                     }

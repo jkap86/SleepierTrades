@@ -2,8 +2,12 @@ const initialState = {
     page: 1,
     itemActive: '',
     searched: '',
-    tabSecondary: 'Standings'
-
+    tabSecondary: 'Standings',
+    column1: 'Rank',
+    column2: 'Trade Deadline',
+    column3: 'Open Taxi',
+    column4: 'Open Roster',
+    primaryContent: 'Records'
 }
 
 const leaguesReducer = (state = initialState, action) => {

@@ -11,7 +11,7 @@ const Records = ({
 }) => {
     const dispatch = useDispatch();
     const { user_id, leagues, type1, type2 } = useSelector(state => state.user);
-    const { page, itemActive, itemActive2, searched } = useSelector(state => state.leagues);
+    const { page, itemActive, searched } = useSelector(state => state.leagues);
 
 
 

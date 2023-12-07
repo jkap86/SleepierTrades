@@ -1,12 +1,17 @@
 import TableMain from "../TableMain";
 import { useDispatch } from "react-redux";
 import Roster from "../Roster";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Standings = ({ league, trade_value_date, current_value_date }) => {
     const dispatch = useDispatch();
     const [itemActive2, setItemActive2] = useState('')
 
+    useEffect(() => {
+        if (league.userRoster) {
+            setItemActive2(league.userRoster.roster_id)
+        }
+    }, [league])
 
     const active_roster = league.rosters.find(x => x.roster_id === itemActive2);
 

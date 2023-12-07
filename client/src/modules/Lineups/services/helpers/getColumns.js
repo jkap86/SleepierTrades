@@ -25,7 +25,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                                     : league.settings.trade_deadline
                         }
                     </p>,
-                    colSpan: 2
+                    colSpan: 2,
+                    className: 'relative'
                 }
             case 'Rank':
                 return {
@@ -35,7 +36,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     >
                         {league.userRoster.rank}
                     </p>,
-                    colSpan: 2
+                    colSpan: 2,
+                    className: 'relative'
                 }
             case 'Opp Rank':
                 return {
@@ -45,7 +47,8 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                     >
                         {opp_roster.rank}
                     </p>,
-                    colSpan: 2
+                    colSpan: 2,
+                    className: 'relative'
                 }
             case 'Proj FP':
                 return {
