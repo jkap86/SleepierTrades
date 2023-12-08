@@ -152,12 +152,13 @@ export const getRecordDict = ({ week_to_fetch, state, leagues, allplayers, sched
                 player_ranks_filtered = player_ranks_filtered.filter(x => x.id !== optimal_player)
 
                 optimal_lineup.push({
+                    slot_raw: s.slot,
                     slot: position_abbrev[s.slot],
                     player: optimal_player
                 })
             })
 
-            return optimal_lineup
+            return optimal_lineup.sort((a, b) => starting_slots.indexOf(a.slot_raw) - starting_slots.indexOf(b.slot_raw))
         }
 
         let optimal_lineup = matchup ? getOptimalLineup() : []
