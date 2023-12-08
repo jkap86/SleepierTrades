@@ -34,9 +34,9 @@ module.exports = async (app) => {
                 : total_breakdown;
         }
 
-        const limit = new Date().getMinutes() < 15
+        const limit = new Date().getMinutes() < 5
             ? 19
-            : 19
+            : week + 1
 
         for (let i = week; i < limit; i++) {
             const projections_json = fs.readFileSync('./projections.json', 'utf-8')
