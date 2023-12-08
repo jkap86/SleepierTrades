@@ -65,8 +65,8 @@ const getSchedule = async (state) => {
         const games_in_progress = nflSchedule_week.data.nflSchedule.matchup
             .find(
                 game => (
-                    parseInt(game.gameSecondsRemaining) > 0
-                    && parseInt(game.gameSecondsRemaining) < 3600
+                    parseInt(game.gameSecondsRemaining) < 3600
+                   // && parseInt(game.gameSecondsRemaining) > 0
                 )
             )
 

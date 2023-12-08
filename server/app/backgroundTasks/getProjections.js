@@ -34,7 +34,7 @@ module.exports = async (app) => {
                 : total_breakdown;
         }
 
-        const limit = new Date().getMinutes() < 5
+        const limit = new Date().getMinutes() < 15
             ? 19
             : week + 1
 
@@ -50,17 +50,26 @@ module.exports = async (app) => {
                 for (const position of ['QB', 'RB', 'WR', 'TE']) {
                     const projections_week = await axios.get(`https://api.sleeper.com/projections/nfl/${season}/${i}?season_type=regular&position[]=${position}&order_by=ppr`)
 
+
+
                     projections_week.data
                         .filter(pw => pw.stats.pts_ppr || pw.player.injury_status)
                         .forEach(pw => {
+                            const projection_object = projections_to_update.find(p => p.player_id === pw.player_id)
 
-                            updated_projections.push({
-                                week: i,
-                                player_id: pw.player_id,
-                                injury_status: pw.player.injury_status,
-                                projection: pw.stats,
-                            })
-
+                            if (projection_object) {
+                                updated_projections.push({
+                                    ...projection_object,
+                                    projection: pw.stats
+                                })
+                            } else {
+                                updated_projections.push({
+                                    week: i,
+                                    player_id: pw.player_id,
+                                    injury_status: pw.player.injury_status,
+                                    projection: pw.stats,
+                                })
+                            }
                         })
                 }
 
@@ -70,9 +79,9 @@ module.exports = async (app) => {
 
                 console.log(err.message + ` week $${i}`)
             }
-            console.log({ [i]: updated_projections.length })
+            console.log({ [i]: projections_to_update.length })
 
-            projections.push(...updated_projections)
+            projections.push(...projections_to_update)
 
             console.log('Projections Update Complete')
             fs.writeFileSync('./projections.json', JSON.stringify(projections))
