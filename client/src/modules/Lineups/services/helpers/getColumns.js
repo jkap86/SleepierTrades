@@ -131,15 +131,19 @@ export const getColumnValue = (header, matchup, lineup_check, league, opt_proj, 
                             : 'green check'
                 }
             case 'Open Roster':
-                const user_active_players = league.userRoster.players.filter(p => !league.userRoster.taxi?.includes(p) && !league.userRoster.reserve?.includes(p))
+                const user_active_players = league.userRoster.players?.filter(p => !league.userRoster.taxi?.includes(p) && !league.userRoster.reserve?.includes(p))
                 return {
-                    text: league.roster_positions.length !== user_active_players?.length
-                        ? league.roster_positions.length - user_active_players?.length
-                        : '√',
+                    text: user_active_players
+                        ? league.roster_positions.length !== user_active_players?.length
+                            ? league.roster_positions.length - user_active_players?.length
+                            : '√'
+                        : '-',
                     colSpan: 2,
-                    className: league.roster_positions.length !== user_active_players?.length
-                        ? 'red check'
-                        : 'green check',
+                    className: user_active_players
+                        ? league.roster_positions.length !== user_active_players?.length
+                            ? 'red check'
+                            : 'green check'
+                        : 'check',
                 }
             case 'Open IR':
                 if (projections[week]) {

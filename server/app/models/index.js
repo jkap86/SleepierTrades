@@ -11,7 +11,7 @@ const sequelize = new Sequelize(dbConfig.DATABASE_URL, {
     logging: false,
     pool: {
         max: 30,
-        min: 2,
+        min: 0,
         acquire: 10000,
         idle: 10000
     }
