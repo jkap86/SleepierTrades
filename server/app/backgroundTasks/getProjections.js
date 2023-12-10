@@ -53,14 +53,13 @@ module.exports = async (app) => {
 
 
                     projections_week.data
-                        .filter(pw => pw.stats.pts_ppr || pw.player.injury_status)
                         .forEach(pw => {
                             const projection_object = projections_to_update.find(p => p.player_id === pw.player_id)
 
                             if (projection_object) {
                                 updated_projections.push({
                                     ...projection_object,
-                                    projection: pw.stats
+                                    projection: pw.stats || {}
                                 })
                             } else {
                                 updated_projections.push({
@@ -79,9 +78,9 @@ module.exports = async (app) => {
 
                 console.log(err.message + ` week $${i}`)
             }
-            console.log({ [i]: projections_to_update.length })
+            console.log({ [i]: updated_projections.length })
 
-            projections.push(...projections_to_update)
+            projections.push(...updated_projections)
 
             console.log('Projections Update Complete')
             fs.writeFileSync('./projections.json', JSON.stringify(projections))
