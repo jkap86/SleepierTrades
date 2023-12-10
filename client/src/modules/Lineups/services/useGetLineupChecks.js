@@ -126,14 +126,14 @@ const useGetLineupChecks = () => {
             const min = new Date().getMinutes();
             const sec = new Date().getSeconds();
 
-            const delay = (((60 - min) % 5) * (60 - sec) * 1000);
+            const delay = ((60 - sec + 30) * 1000);
             let fetchProjectionInterval;
 
             setTimeout(() => {
                 fetchProjectionInterval = setInterval(() => {
                     dispatch(fetchCommon('schedule'))
                     dispatch(fetchCommon('projections'))
-                }, 5 * 60 * 1000)
+                }, 1 * 60 * 1000)
             }, delay)
 
             return () => {

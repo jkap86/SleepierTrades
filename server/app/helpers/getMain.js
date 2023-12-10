@@ -103,9 +103,9 @@ const getSchedule = async (state, boot=false) => {
         if (games_in_progress?.kickoff || boot) {
             await getStats(state.season, state.week)
 
-            const min = new Date().getMinutes()
+            const sec = new Date().getSeconds()
 
-            delay = (5 * 60 * 1000)
+            delay = ((60 - sec) * 1000)
 
         } else {
 
