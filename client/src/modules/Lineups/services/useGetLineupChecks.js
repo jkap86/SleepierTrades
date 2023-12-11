@@ -122,6 +122,7 @@ const useGetLineupChecks = () => {
                     && parseInt(g.gameSecondsRemaining) < 3600
             )
 
+        console.log({ games_in_progress })
         if (games_in_progress?.kickoff) {
             const min = new Date().getMinutes();
             const sec = new Date().getSeconds();
