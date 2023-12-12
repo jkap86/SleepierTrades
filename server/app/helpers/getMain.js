@@ -60,7 +60,7 @@ const getSchedule = async (state, boot=false) => {
         let nflSchedule_week;
         let nflschedule;
 
-        nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/fflnetdynamic2023/nfl_sched.json`)
+        nflSchedule_week = await axios.get(`https://api.myfantasyleague.com/fflnetdynamic2023/nfl_sched_${state.week}.json`)
 
         const games_in_progress = nflSchedule_week.data.nflSchedule.matchup
             .find(
