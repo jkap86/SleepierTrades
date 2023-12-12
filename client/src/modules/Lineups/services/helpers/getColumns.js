@@ -274,7 +274,7 @@ export const getColumnValuePrev = (column, league_id, matchup_user, matchup_opp,
 
 
     const bench_points = matchup_user?.players
-        ?.filter(player_id => !matchup_user.starters.includes(player_id))
+        ?.filter(player_id => !matchup_user.starters?.includes(player_id))
         ?.reduce((acc, cur) => acc + matchup_user.players_points[cur], 0)
 
     const total_points = matchup_user?.players
