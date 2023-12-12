@@ -49,8 +49,7 @@ export const fetchMatchups = () => {
                                     || (
                                         key_week + 1 === parseInt(display_week)
                                         && (
-                                            new Date().getDay() >= 3
-                                            || (new Date().getDay() === 2 && new Date().getHours() > 18)
+                                            league.settings.last_scored_leg < key_week
                                         )
                                     )
                                 ) {
