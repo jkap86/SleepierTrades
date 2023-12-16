@@ -317,7 +317,7 @@ const LineupChecks = ({ secondaryTable }) => {
                                             : '-'
 
                                     }
-                                    {matchup_user.matchup_id && (
+                                    {matchup_user.matchup_id && (league.settings.playoff_week_start === 0 || week < league.settings.playoff_week_start) && (
                                         lineupChecks[week]?.[hash]?.[league.league_id]?.median_win > 0
                                             ? <i className="fa-solid fa-trophy"></i>
                                             : lineupChecks[week]?.[hash]?.[league.league_id]?.median_loss > 0
@@ -434,7 +434,7 @@ const LineupChecks = ({ secondaryTable }) => {
                                             : '-'
 
                                     }
-                                    {matchup_user.matchup_id && (
+                                    {matchup_user.matchup_id && (league.settings.playoff_week_start === 0 || week < league.settings.playoff_week_start) && (
                                         lineupChecks[week]?.[hash]?.[league.league_id]?.median_win > 0
                                             ? <i className="fa-solid fa-trophy"></i>
                                             : lineupChecks[week]?.[hash]?.[league.league_id]?.median_loss > 0
@@ -611,7 +611,7 @@ const LineupChecks = ({ secondaryTable }) => {
                 />
             ]}
             options2={[
-                <label className="playoffs"> 
+                <label className="playoffs">
                     <input type="radio" checked={playoffs} onClick={(e) => dispatch(setStateLineups({ playoffs: !playoffs }))} />
                     Playoff Leagues
                 </label>

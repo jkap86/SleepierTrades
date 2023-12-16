@@ -16,10 +16,10 @@ const RecordsHeader = () => {
 
     const projectedRecord = week >= state.week
         ? filterLeagues((leagues || []), type1, type2)
-        ?.filter(l => !playoffs || (
-            state.week >= l.settings.playoff_week_start
-            && l.settings.playoff_teams >= l.userRoster.rank
-        ))
+            ?.filter(l => !playoffs || (
+                state.week >= l.settings.playoff_week_start
+                && l.settings.playoff_teams >= l.userRoster.rank
+            ))
             .reduce((acc, cur) => {
                 const lc_league = lineupChecks[week]?.[hash]?.[cur.league_id]
 
@@ -33,8 +33,10 @@ const RecordsHeader = () => {
                     proj_score_opp = parseFloat(lc_league?.lc_opp?.[`proj_score_actual`]);
                 }
 
-                let wins = (lc_league?.win || 0) + (lc_league?.median_win || 0)
-                let losses = (lc_league?.loss || 0) + (lc_league?.median_loss || 0)
+                const playoffs = cur.settings.playoff_week_start > 0 && week >= cur.settings.playoff_week_start
+
+                let wins = (lc_league?.win || 0) + (!playoffs && lc_league?.median_win || 0)
+                let losses = (lc_league?.loss || 0) + (!playoffs && lc_league?.median_loss || 0)
                 let ties = lc_league?.tie || 0
 
 
@@ -98,12 +100,12 @@ const RecordsHeader = () => {
                 value={primaryContent}
                 onChange={(e) => dispatch(setStateLineups({ primaryContent: e.target.value }))}
                 className="active click"
-                
+
             >
                 <option>Lineup Check</option>
                 <option>Starters/Bench</option>
                 <option
-                  //  disabled={!gamesInProgress}
+                //  disabled={!gamesInProgress}
                 >
                     Live Projections
                 </option>

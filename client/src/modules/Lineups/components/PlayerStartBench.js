@@ -183,11 +183,14 @@ const PlayerStartBench = ({
 
                                 }
                                 {(
-                                    median_win > 0
-                                        ? <i className="fa-solid fa-trophy"></i>
-                                        : median_loss > 0
-                                            ? <i className="fa-solid fa-poop"></i>
-                                            : '')
+                                    (league.settings.playoff_week_start === 0 || week < league.settings.playoff_week_start)
+                                        ? median_win > 0
+                                            ? <i className="fa-solid fa-trophy"></i>
+                                            : median_loss > 0
+                                                ? <i className="fa-solid fa-poop"></i>
+                                                : ''
+                                        : ''
+                                )
                                 }
                             </>,
                             colSpan: 1,

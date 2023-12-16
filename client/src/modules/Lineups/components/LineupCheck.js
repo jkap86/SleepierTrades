@@ -411,7 +411,7 @@ const LineupCheck = ({
     const subs_headers = [
         [
             {
-                text: parseFloat(proj_median)
+                text: week < league.settings.playoff_week_start && parseFloat(proj_median)
                     ? <p className="median score">{proj_median.toFixed(2)}</p>
                     : null,
                 colSpan: 6,
