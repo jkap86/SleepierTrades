@@ -12,17 +12,6 @@ const RecordsHeader = () => {
 
     const hash = `${includeTaxi}-${true}`
 
-    const gamesInProgress = schedule[state.week]
-        ?.find(
-            matchup => parseInt(matchup?.gameSecondsRemaining) > 0
-                && parseInt(matchup?.gameSecondsRemaining) < 3600
-        )
-
-    useEffect(() => {
-        if (gamesInProgress) {
-            dispatch(setStateLineups({ primaryContent: 'Live Projections' }))
-        }
-    }, [gamesInProgress, dispatch])
 
 
     const projectedRecord = week >= state.week

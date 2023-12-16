@@ -7,8 +7,8 @@ import FilterIcons from "../../COMMON/components/FilterIcons";
 const StartersBench = ({ secondaryTable }) => {
     const dispatch = useDispatch();
     const { allplayers, state } = useSelector(state => state.common);
-    const { username, type1, type2 } = useSelector(state => state.user); 
-    const { page, itemActive, searched, filters, playerLineupDict, sortBy } = useSelector(state => state.lineups);
+    const { username, type1, type2 } = useSelector(state => state.user);
+    const { page, itemActive, searched, filters, playerLineupDict, sortBy, playoffs } = useSelector(state => state.lineups);
 
     const players_headers = [
         [
@@ -57,7 +57,7 @@ const StartersBench = ({ secondaryTable }) => {
         ]
     ]
 
-    console.log({playerLineupDict})
+    console.log({ playerLineupDict })
 
     const players_body = Object.keys(playerLineupDict)
         ?.filter(player_id => (
@@ -71,12 +71,34 @@ const StartersBench = ({ secondaryTable }) => {
                 filters.draftClass === 'All' || parseInt(filters.draftClass) === (state.league_season - allplayers[parseInt(player_id)]?.years_exp)
             )
         ))
-        ?.sort((a, b) => filterLeagues(playerLineupDict[b][sortBy], type1, type2).length - filterLeagues(playerLineupDict[a][sortBy], type1, type2).length)
+        ?.sort((a, b) => filterLeagues(playerLineupDict[b][sortBy], type1, type2)?.filter(l => !playoffs || (
+            state.week >= l.settings.playoff_week_start
+            && l.settings.playoff_teams >= l.userRoster.rank
+        )).length - filterLeagues(playerLineupDict[a][sortBy], type1, type2)?.filter(l => !playoffs || (
+            state.week >= l.settings.playoff_week_start
+            && l.settings.playoff_teams >= l.userRoster.rank
+        )).length)
         ?.map(player_id => {
             const start = filterLeagues(playerLineupDict[player_id]?.start || [], type1, type2)
+                ?.filter(l => !playoffs || (
+                    state.week >= l.settings.playoff_week_start
+                    && l.settings.playoff_teams >= l.userRoster.rank
+                ))
             const bench = filterLeagues(playerLineupDict[player_id]?.bench || [], type1, type2)
+                ?.filter(l => !playoffs || (
+                    state.week >= l.settings.playoff_week_start
+                    && l.settings.playoff_teams >= l.userRoster.rank
+                ))
             const start_opp = filterLeagues(playerLineupDict[player_id]?.start_opp || [], type1, type2)
+                ?.filter(l => !playoffs || (
+                    state.week >= l.settings.playoff_week_start
+                    && l.settings.playoff_teams >= l.userRoster.rank
+                ))
             const bench_opp = filterLeagues(playerLineupDict[player_id]?.bench_opp || [], type1, type2)
+                ?.filter(l => !playoffs || (
+                    state.week >= l.settings.playoff_week_start
+                    && l.settings.playoff_teams >= l.userRoster.rank
+                ))
 
             return {
                 id: player_id,
@@ -144,7 +166,7 @@ const StartersBench = ({ secondaryTable }) => {
             <FilterIcons
                 type={'team'}
                 filterTeam={filters.team}
-                setFilterTeam={(value) => dispatch(setStateLineups({ filters: {...filters, team: value} }))}
+                setFilterTeam={(value) => dispatch(setStateLineups({ filters: { ...filters, team: value } }))}
             />
         ]}
         options2={[
@@ -153,7 +175,11 @@ const StartersBench = ({ secondaryTable }) => {
                 filterPosition={filters.position}
                 setFilterPosition={(value) => dispatch(setStateLineups({ filters: { ...filters, position: value } }))}
                 picks={false}
-            />
+            />,
+            <label className="playoffs">
+                <input type="radio" checked={playoffs} onClick={(e) => dispatch(setStateLineups({ playoffs: !playoffs }))} />
+                Playoff Leagues
+            </label>
         ]}
     />
 }
