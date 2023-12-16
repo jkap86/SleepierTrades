@@ -30,7 +30,8 @@ const LineupChecks = ({ secondaryTable }) => {
         playerLineupDict,
         primaryContent,
         sortBy,
-        filters
+        filters,
+        playoffs
     } = useSelector(state => state.lineups);
 
     const hash = `${includeTaxi}-${true}`
@@ -212,6 +213,10 @@ const LineupChecks = ({ secondaryTable }) => {
     ]
 
     const lineups_body = filterLeagues(leagues, type1, type2)
+        ?.filter(l => !playoffs || (
+            state.week >= l.settings.playoff_week_start
+            && l.settings.playoff_teams >= l.userRoster.rank
+        ))
         ?.filter(l => !searched.id || searched.id === l.league_id)
         ?.map(league => {
             if (week >= state.week) {
@@ -604,6 +609,12 @@ const LineupChecks = ({ secondaryTable }) => {
                     includeTaxi={includeTaxi}
                     setIncludeTaxi={(value) => dispatch(setStateLineups({ includeTaxi: value }))}
                 />
+            ]}
+            options2={[
+                <label className="playoffs"> 
+                    <input type="radio" checked={playoffs} onClick={(e) => dispatch(setStateLineups({ playoffs: !playoffs }))} />
+                    Playoff Leagues
+                </label>
             ]}
         />
 }

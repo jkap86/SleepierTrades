@@ -38,6 +38,7 @@ const initialState = {
         team: 'All',
         draftClass: 'All'
     },
+    playoffs: false
 }
 
 const lineupsReducer = (state = initialState, action) => {

@@ -45,6 +45,10 @@ body {
 
 }
 
+label.playoffs {
+  font-size: 2.5rem;
+}
+
 .click:hover {
   cursor: pointer;
 }
