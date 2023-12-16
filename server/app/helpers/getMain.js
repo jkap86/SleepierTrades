@@ -72,6 +72,7 @@ const getSchedule = async (state, boot=false) => {
 
         console.log({ games_in_progress })
 
+        console.log(nflSchedule_week.data?.nflSchedule?.matchup?.length || 'ERROR')
 
         const nflschedule_json = fs.readFileSync('./schedule.json', 'utf-8');
 
