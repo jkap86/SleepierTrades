@@ -52,7 +52,7 @@ const getState = async (app) => {
     app.set('state', state.data, 0)
 }
 
-const getSchedule = async (state, boot=false) => {
+const getSchedule = async (state, boot = false) => {
     console.log('Updating Schedule on ' + new Date())
 
     try {
@@ -65,8 +65,11 @@ const getSchedule = async (state, boot=false) => {
         const games_in_progress = nflSchedule_week.data.nflSchedule.matchup
             .find(
                 game => (
-                    parseInt(game.gameSecondsRemaining) < 3600
-                    && parseInt(game.gameSecondsRemaining) > 0
+                    parseInt(game.gameSecondsRemaining) > 0
+                    && (
+                        parseInt(game.gameSecondsRemaining) < 3600
+                        || parseInt(game.kickoff) * 1000 < new Date().getTime()
+                    )
                 )
             )
 
