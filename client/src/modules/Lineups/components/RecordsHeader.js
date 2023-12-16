@@ -8,7 +8,7 @@ const RecordsHeader = () => {
     const dispatch = useDispatch();
     const { state, schedule } = useSelector(state => state.common);
     const { leagues, type1, type2 } = useSelector(state => state.user);
-    const { includeTaxi, lineupChecks, week, primaryContent } = useSelector(state => state.lineups);
+    const { includeTaxi, lineupChecks, week, primaryContent, playoffs } = useSelector(state => state.lineups);
 
     const hash = `${includeTaxi}-${true}`
 
@@ -16,6 +16,10 @@ const RecordsHeader = () => {
 
     const projectedRecord = week >= state.week
         ? filterLeagues((leagues || []), type1, type2)
+        ?.filter(l => !playoffs || (
+            state.week >= l.settings.playoff_week_start
+            && l.settings.playoff_teams >= l.userRoster.rank
+        ))
             .reduce((acc, cur) => {
                 const lc_league = lineupChecks[week]?.[hash]?.[cur.league_id]
 
