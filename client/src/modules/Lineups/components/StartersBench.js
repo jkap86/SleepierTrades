@@ -6,9 +6,9 @@ import FilterIcons from "../../COMMON/components/FilterIcons";
 
 const StartersBench = ({ secondaryTable }) => {
     const dispatch = useDispatch();
-    const { allplayers, state } = useSelector(state => state.common);
+    const { allplayers, state, projections } = useSelector(state => state.common);
     const { username, type1, type2 } = useSelector(state => state.user);
-    const { page, itemActive, searched, filters, playerLineupDict, sortBy, playoffs } = useSelector(state => state.lineups);
+    const { page, itemActive, searched, filters, playerLineupDict, sortBy, playoffs, week } = useSelector(state => state.lineups);
 
     const players_headers = [
         [
@@ -16,6 +16,11 @@ const StartersBench = ({ secondaryTable }) => {
                 text: 'Player',
                 colSpan: 3,
                 rowSpan: 2,
+                className: 'half'
+            },
+            {
+                text: 'PPR',
+                colSpan: 2,
                 className: 'half'
             },
             {
@@ -30,6 +35,16 @@ const StartersBench = ({ secondaryTable }) => {
             }
         ],
         [
+            {
+                text: 'Proj',
+                colSpan: 1,
+                className: 'half'
+            },
+            {
+                text: 'Actual',
+                colSpan: 1,
+                className: 'half'
+            },
             {
                 text: 'Start',
                 colSpan: 1,
@@ -100,6 +115,9 @@ const StartersBench = ({ secondaryTable }) => {
                     && l.settings.playoff_teams >= l.userRoster.rank
                 ))
 
+            const ppr_projection = projections?.[week]?.[player_id]?.projection?.pts_ppr
+            const ppr_points = projections?.[week]?.[player_id]?.stats?.pts_ppr
+
             return {
                 id: player_id,
                 search: {
@@ -120,6 +138,16 @@ const StartersBench = ({ secondaryTable }) => {
                         },
                         className: 'left',
                         colSpan: 3
+                    },
+                    {
+                        text: ppr_projection?.toString() || '-',
+                        colSpan: 1,
+                        className: ''
+                    },
+                    {
+                        text: ppr_points?.toString() || '-',
+                        colSpan: 1,
+                        className: ''
                     },
                     {
                         text: start.length.toString(),
