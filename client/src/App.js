@@ -16,18 +16,10 @@ const Pool = lazy(() => import('./modules/Pool'));
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
+      <BrowserRouter basename='/lineups'>
         <Suspense fallback={<LoadingIcon />}>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/:username/leagues" element={<Layout display={<Leagues />} />} />
-            <Route path="/:username/players" element={<Layout display={<Players />} />} />
-            <Route path="/:username/trades" element={<Layout display={<Trades />} />} />
-            <Route path="/:username/lineups" element={<Layout display={<Lineups />} />} />
-            <Route path='/:username/leaguemates' element={<Layout display={<Leaguemates />} />} />
-            <Route path='/picktracker/:league_id' element={<PickTracker />} />
-            <Route path='/pools/rof' element={<Pool pool={'rof'} title={'Ring of Fire'} startSeason={2021} />} />
-            <Route path='/pools/osr' element={<Pool pool={'osr'} title={'Save the Sharks'} startSeason={2020} />} />
+            <Route path='/:username' element={<Layout display={<Trades />} />} />
           </Routes>
         </Suspense>
       </BrowserRouter>

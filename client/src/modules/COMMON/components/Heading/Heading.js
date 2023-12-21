@@ -25,9 +25,14 @@ const Heading = () => {
         : filterLeagues((leagues || []), type1, type2)?.length
 
     return !user_id ? '' : <>
-        <Link to="/" className="home">
+        <a
+            className="home"
+            onChange={
+                (e) => window.location.href = `${window.location.protocol}//${window.location.hostname}`
+            }
+        >
             Home
-        </Link>
+        </a>
         <div className="heading">
             <h1>
                 {state.league_season}
@@ -74,7 +79,9 @@ const Heading = () => {
                 <select
                     className="nav active click"
                     value={navTab}
-                    onChange={(e) => navigate(`/${username}/${e.target.value}`)}
+                    onChange={
+                        (e) => window.location.href = `${window.location.protocol}//${window.location.hostname}/${e.target.value}/${username}`
+                    }
                 >
                     <option>players</option>
                     <option>trades</option>
